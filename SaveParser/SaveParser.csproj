@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <RootNamespace>SaveParser</RootNamespace>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Nullable>enable</Nullable>
+        <Configurations>Debug;Release;DEBUG_WITH_PHYS</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <NoWarn>1701;1702;8618</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <NoWarn>1701;1702;8618</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'DEBUG_WITH_PHYS' ">
+      <OutputPath>bin\Debug\</OutputPath>
+      <DebugSymbols>true</DebugSymbols>
+      <NoWarn>1701;1702;8618</NoWarn>
+      <DefineConstants>TRACE;DEBUG</DefineConstants>
+    </PropertyGroup>
+
+</Project>

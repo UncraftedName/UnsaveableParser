@@ -1,0 +1,47 @@
+using SaveParser.Utils;
+using SaveParser.Utils.BitStreams;
+
+namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
+	
+	public class ConceptHistories : ParsedSaveField {
+
+		public (string conceptName, ParsedDataMap history, ParsedDataMap? response)[] Histories;
+		
+		
+		public ConceptHistories(TypeDesc desc) : base(desc) {}
+		
+		
+		public override void AppendToWriter(IIndentedWriter iw) {
+			iw.Append($"{Histories.Length} concept histories:");
+			iw.FutureIndent++;
+			foreach ((string conceptName, ParsedDataMap history, ParsedDataMap? response) in Histories) {
+				iw.Append($"\n{conceptName}:");
+				iw.FutureIndent++;
+				iw.AppendLine();
+				history.AppendToWriter(iw);
+				iw.AppendLine();
+				if (response == null)
+					iw.Append("no response");
+				else
+					response.AppendToWriter(iw);
+				iw.FutureIndent--;
+			}
+			iw.FutureIndent--;
+		}
+
+
+		public static ConceptHistories Restore(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr) {
+			int count = bsr.ReadSInt();
+			var histories = new (string conceptName, ParsedDataMap history, ParsedDataMap? response)[count];
+			for (int i = 0; i < count; i++) {
+				bsr.StartBlock(info);
+				histories[i].conceptName = bsr.ReadNullTerminatedString();
+				histories[i].history = bsr.ReadDataMap("ConceptHistory_t", info);
+				if (bsr.ReadByte() != 0)
+					histories[i].response = bsr.ReadDataMap("AI_Response", info);
+				bsr.EndBlock(info);
+			}
+			return new ConceptHistories(typeDesc) {Histories = histories};
+		}
+	}
+}
