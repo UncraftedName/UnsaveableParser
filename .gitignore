@@ -1,0 +1,10 @@
+bin/
+obj/
+/packages/
+*.user
+*.DotSettings
+.vs/
+*.iws
+*.ipr
+*.iml
+.idea/
