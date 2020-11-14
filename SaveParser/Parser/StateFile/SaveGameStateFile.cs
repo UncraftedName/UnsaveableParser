@@ -55,8 +55,7 @@ namespace SaveParser.Parser.StateFile {
 
 			SaveHeader = bsr.ReadDataMap("Save Header", SaveInfo);
 			
-			// todo something about this?
-			SaveInfo.BaseTime = SaveHeader.GetFieldOrDefault<Time>("time");
+			SaveInfo.BaseTime = SaveHeader.GetFieldOrDefault<Time>("time__USE_VCR_MODE");
 			//SaveInfo.LandmarkPos // todo gotten from adjacency list?
 			
 			int connections = SaveHeader.GetFieldOrDefault<int>("connectionCount"); // to other maps?

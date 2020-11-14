@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
@@ -50,7 +51,8 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		}
 	}
 	
-	public readonly struct Ehandle {
+	public readonly struct Ehandle : IEquatable<Ehandle> {
+
 		public readonly int Index;
 		public static implicit operator int(Ehandle t) => t.Index;
 		public static explicit operator Ehandle(int i) => new Ehandle(i);
@@ -72,6 +74,21 @@ namespace SaveParser.Parser.SaveFieldInfo {
 
 		public override string ToString() {
 			return $"index={Index}";
+		}
+		
+		
+		public bool Equals(Ehandle other) {
+			return Index == other.Index;
+		}
+
+
+		public override bool Equals(object? obj) {
+			return obj is Ehandle other && Equals(other);
+		}
+
+
+		public override int GetHashCode() {
+			return Index;
 		}
 	}
 
@@ -172,6 +189,7 @@ namespace SaveParser.Parser.SaveFieldInfo {
 
 
 	public readonly struct MaterialIndexStr {
+		
 		public readonly string Str;
 		public static implicit operator string(MaterialIndexStr mn) => mn.Str;
 		public static explicit operator MaterialIndexStr(string s) => new MaterialIndexStr(s);
@@ -212,7 +230,6 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		}
 
 
-		// todo some better way?
 		public override string ToString() {
 			return Enumerable.Range(0, 4).Select(i => Enumerable.Range(0, 4).Select(j => Mat[i, j]).SequenceToString()).SequenceToString();
 		}
@@ -254,7 +271,6 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		}
 		
 		
-		// todo some better way?
 		public override string ToString() {
 			return Enumerable.Range(0, 3).Select(i => Enumerable.Range(0, 4).Select(j => Mat[i, j]).SequenceToString()).SequenceToString();
 		}
