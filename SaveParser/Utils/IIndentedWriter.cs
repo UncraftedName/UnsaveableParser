@@ -10,7 +10,7 @@ namespace SaveParser.Utils {
 	public interface IIndentedWriter : IDisposable {
 		int FutureIndent {get;set;}
 		int LastLineLength {get;}
-		void Append(string s);
+		void Append(string? s);
 		void AppendLine(string s);
 		void AppendLine();
 		void AppendFormat(string format, params object?[] args);
@@ -42,7 +42,8 @@ namespace SaveParser.Utils {
 		}
 
 
-		public void Append(string s) {
+		public void Append(string? s) {
+			s ??= "null";
 			string[] newLines = s.Split('\n');
 			for (int i = 0; i < newLines.Length; i++) {
 				if (i == 0) {
@@ -143,7 +144,8 @@ namespace SaveParser.Utils {
 		}
 
 
-		public void Append(string s) {
+		public void Append(string? s) {
+			s ??= "null";
 			if (s.Length == 0)
 				return;
 			CheckForIndent();
