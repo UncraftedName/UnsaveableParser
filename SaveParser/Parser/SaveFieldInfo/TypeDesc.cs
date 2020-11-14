@@ -8,6 +8,8 @@ using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
 namespace SaveParser.Parser.SaveFieldInfo {
 	
+	public delegate ParsedSaveField? CustomReadFunc(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr);
+	
 	public class TypeDesc {
 		
 		public readonly FieldType FieldType;
@@ -161,8 +163,6 @@ namespace SaveParser.Parser.SaveFieldInfo {
 	// ReSharper disable InconsistentNaming
 	// ReSharper disable IdentifierTypo
 	// ReSharper disable CommentTypo
-	
-	
 	public enum FieldType {
 		BYTE = -1, // same as char, but I actually care about the specific data type
 		

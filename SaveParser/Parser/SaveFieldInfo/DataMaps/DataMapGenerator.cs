@@ -19,11 +19,13 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		internal readonly List<DataMap> DataMaps = new List<DataMap>();
 		internal readonly List<(string, string)> Links = new List<(string, string)>();
 		internal readonly List<string> EmptyRoots = new List<string>();
+		
 		// temporary info for the datamap that is currently being constructed
-		private string? _tmpName;
+		
+		private string? _tmpName; // name of last class (might just be a proxy)
 		private string? _tmpBaseClass;
-		private bool _mapReady = false;
-		internal readonly List<TypeDesc> TmpFields = new List<TypeDesc>();
+		private bool _mapReady = false; // little botch to make the proxies work
+		private DataMap CurMap => DataMaps[^1];
 
 
 		public void Generate() {
@@ -32,12 +34,16 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		}
 
 
+		private void AddFieldPrivate(TypeDesc td)
+			=> CurMap.FieldDict.Add(td.Name, td);
+
+
 		protected void BeginDataMap(string className, string? baseClass = null) {
 			FinishDataMap();
 			_tmpName = className;
 			_tmpBaseClass = baseClass;
-			TmpFields.Clear();
 			_mapReady = true;
+			DataMaps.Add(new DataMap(_tmpName));
 		}
 
 
@@ -63,48 +69,50 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		}
 
 
-		protected void DefineRootClassNoMap(string name) {
-			EmptyRoots.Add(name);
-		}
+		protected void DefineRootClassNoMap(string name)
+			=> EmptyRoots.Add(name);
 
 
 		protected void DefineFunction(string name)
-			=> TmpFields.Add(new TypeDesc(name, FUNCTION,  FTYPEDESC_SAVE));
+			=> AddFieldPrivate(new TypeDesc(name, FUNCTION));
 
 
 		// todo consider creating a special DefineEHandle where you can add what type of handle it is
 		protected void DefineField(string name, FieldType fieldType, ushort count = 1)
-			=> TmpFields.Add(new TypeDesc(name, fieldType, FTYPEDESC_SAVE, count));
+			=> AddFieldPrivate(new TypeDesc(name, fieldType, FTYPEDESC_SAVE, count));
 
 
-		protected void DefineInput(string name, string inputName, FieldType fieldType, ushort count = 1) {
-			TmpFields.Add(new TypeDesc(name, fieldType, FTYPEDESC_SAVE | FTYPEDESC_KEY | FTYPEDESC_INPUT, count, inputName: inputName));
+		protected void DefineInput(string name, string inputName, FieldType fieldType, ushort count = 1)
+			=> AddFieldPrivate(new TypeDesc(name, fieldType, FTYPEDESC_SAVE | FTYPEDESC_KEY | FTYPEDESC_INPUT, count, inputName));
+
+
+		protected void DefineOutput(string name, string outputName) {
+			var td = new TypeDesc(name, FTYPEDESC_SAVE | FTYPEDESC_KEY | FTYPEDESC_OUTPUT, EventsSave.Restore, outputName: outputName);
+			AddFieldPrivate(td);
+			CurMap.Functions.Add(new OutputDataMapFunc(td, name, outputName));
 		}
-
-
-		protected void DefineOutput(string name, string outputName)
-			=> TmpFields.Add(new TypeDesc(name, FTYPEDESC_SAVE | FTYPEDESC_KEY | FTYPEDESC_OUTPUT, EventsSave.Restore, outputName: outputName));
 
 
 		protected void DefineKeyField(string name, string mapName, FieldType fieldType, ushort count = 1)
-			=> TmpFields.Add(new TypeDesc(name, fieldType, FTYPEDESC_SAVE | FTYPEDESC_KEY, count, mapName: mapName));
+			=> AddFieldPrivate(new TypeDesc(name, fieldType, FTYPEDESC_SAVE | FTYPEDESC_KEY, count, mapName: mapName));
 		
 		
 		protected void DefineInputAndKeyField(string name, string mapName, string inputName, FieldType fieldType, ushort count = 1)
-			=> TmpFields.Add(new TypeDesc(name, fieldType, FTYPEDESC_SAVE | FTYPEDESC_KEY, count, mapName: mapName, inputName: inputName));
+			=> AddFieldPrivate(new TypeDesc(name, fieldType, FTYPEDESC_SAVE | FTYPEDESC_KEY, count, mapName: mapName, inputName: inputName));
 
 
-		protected void DefineGlobalField(string name, FieldType fieldType, ushort count = 1) {
-			TmpFields.Add(new TypeDesc(name, fieldType, FTYPEDESC_SAVE | FTYPEDESC_GLOBAL, count));
-		}
+		protected void DefineGlobalField(string name, FieldType fieldType, ushort count = 1)
+			=> AddFieldPrivate(new TypeDesc(name, fieldType, FTYPEDESC_SAVE | FTYPEDESC_GLOBAL, count));
 
 
 		protected void DefineGlobalKeyField(string name, string mapName, FieldType fieldType, ushort count = 1)
-			=> TmpFields.Add(new TypeDesc(name, fieldType, FTYPEDESC_SAVE | FTYPEDESC_GLOBAL | FTYPEDESC_KEY, count, mapName: mapName));
+			=> AddFieldPrivate(new TypeDesc(name, fieldType, FTYPEDESC_SAVE | FTYPEDESC_GLOBAL | FTYPEDESC_KEY, count, mapName: mapName));
 		
 		
-		// i don't think this is relevant for save files
-		protected void DefineInputFunc(string inputName, string inputFunc, FieldType fieldType) {}
+		// not relevant for save files, but i'll save these anyways
+		protected void DefineInputFunc(string inputName, string inputFunc, FieldType fieldType) {
+			DataMaps[^1].Functions.Add(new InputDataMapFunc(inputFunc, inputName, fieldType));
+		}
 		
 		// i don't even know what these are for
 		protected void DefineThinkFunc(string funcName) {}
@@ -118,7 +126,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			object?[]? customParams = null,
 			DescFlags flags = FTYPEDESC_SAVE)
 		{
-			TmpFields.Add(new TypeDesc(name, flags, customReadFunc, customParams));
+			AddFieldPrivate(new TypeDesc(name, flags, customReadFunc, customParams));
 		}
 
 
@@ -127,7 +135,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 
 		protected void DefinePhysPtr(string name) {
 			// phys stuff is actually restored during the phys block handler, it's only queued for restore in the ents
-			TmpFields.Add(new TypeDesc(name, FTYPEDESC_SAVE, VPhysPtrSave.QueueRestore));
+			AddFieldPrivate(new TypeDesc(name, FTYPEDESC_SAVE, VPhysPtrSave.QueueRestore));
 		}
 
 
@@ -138,7 +146,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			ushort count = 1)
 		{
 			var td = new TypeDesc(name,EMBEDDED, FTYPEDESC_SAVE, count);
-			TmpFields.Add(td);
+			AddFieldPrivate(td);
 			UnlinkedEmbeddedMaps.Add((embeddedMap, td));
 		}
 
@@ -159,30 +167,27 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			DescFlags vecFlags = FTYPEDESC_SAVE,
 			CustomReadFunc? elemReadFunc = null)
 		{
-			CustomReadFunc vecReadFunc = (CustomReadFunc)typeof(UtilVector<>).MakeGenericType(TypeDesc.GetNetTypeFromFieldType(elemFieldType))
+			CustomReadFunc vecReadFunc =
+				(CustomReadFunc)typeof(UtilVector<>).MakeGenericType(TypeDesc.GetNetTypeFromFieldType(elemFieldType))
 				.GetMethods(BindingFlags.Static | BindingFlags.Public)
 				.Single(info => info.Name == "Restore" && ParserUtils.IsMethodCompatibleWithDelegate<CustomReadFunc>(info))!
 				.CreateDelegate(typeof(CustomReadFunc));
 			
 			object?[] customParams = {elemFieldType, elemReadFunc, null}; // see UtilVector to see how these are used
-			TmpFields.Add(new TypeDesc(name, vecFlags, vecReadFunc, customParams));
+			AddFieldPrivate(new TypeDesc(name, vecFlags, vecReadFunc, customParams));
 		}
 
 
 		private void FinishDataMap() {
-			if (_mapReady) {
-				var map = new DataMap(_tmpName!, TmpFields);
-				DataMaps.Add(map);
-				if (_tmpBaseClass != null)
-					UnlinkedBaseClasses.Add((_tmpBaseClass, map));
-			}
+			if (_mapReady && _tmpBaseClass != null)
+				UnlinkedBaseClasses.Add((_tmpBaseClass, CurMap));
 		}
-
+		
 		
 		protected void DefineMaterialIndexDataOps(string name) {
 			static ParsedSaveField MatReadFunc(TypeDesc desc, SaveInfo info, ref BitStreamReader bsr)
 				=> new ParsedSaveField<MaterialIndexStr>((MaterialIndexStr)bsr.ReadStringOfLength(bsr.ReadSInt()), desc);
-			TmpFields.Add(new TypeDesc(name, FTYPEDESC_SAVE, MatReadFunc));
+			AddFieldPrivate(new TypeDesc(name, FTYPEDESC_SAVE, MatReadFunc));
 		}
 		
 
