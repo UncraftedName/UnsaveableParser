@@ -173,7 +173,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			CustomReadFunc vecReadFunc =
 				(CustomReadFunc)typeof(UtilVector<>).MakeGenericType(TypeDesc.GetNetTypeFromFieldType(elemFieldType))
 				.GetMethods(BindingFlags.Static | BindingFlags.Public)
-				.Single(info => info.Name == "Restore" && ParserUtils.IsMethodCompatibleWithDelegate<CustomReadFunc>(info))!
+				.Single(info => info.Name == nameof(UtilVector<object>.Restore)
+								&& ParserUtils.IsMethodCompatibleWithDelegate<CustomReadFunc>(info))!
 				.CreateDelegate(typeof(CustomReadFunc));
 			
 			object?[] customParams = {elemFieldType, elemReadFunc, null}; // see UtilVector to see how these are used
