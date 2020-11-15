@@ -58,8 +58,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 					TypeDesc t = new TypeDesc(s, type);
 					DataMap m = new DataMap("m_Value", new [] {t});
 					var pm = bsr.ReadDataMap(m, info);
-					if (pm.FieldsDict.Any())
-						psf = pm.FieldsDict.Single().Value;
+					if (pm.ParsedFields.Any())
+						psf = pm.ParsedFields.Single().Value;
 				}
 				bsr.EndBlock(info);
 			} else if (fieldsSaved != 0) {

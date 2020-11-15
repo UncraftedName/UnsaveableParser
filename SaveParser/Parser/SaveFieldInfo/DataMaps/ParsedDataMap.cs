@@ -12,7 +12,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		private readonly OrderedDictionary<string, ParsedSaveField> _thisFields;
 		private ParsedDataMap? _baseParsedMap;
 		private OrderedDictionary<string, ParsedSaveField>? _combinedFields;
-		public IReadOnlyDictionary<string, ParsedSaveField> FieldsDict => _combinedFields ?? _thisFields;
+		public IReadOnlyDictionary<string, ParsedSaveField> ParsedFields => _combinedFields ?? _thisFields;
 
 		private int _capacity;
 
@@ -47,7 +47,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			Debug.Assert(!_baseAdded);
 			_baseAdded = true;
 			_baseParsedMap = dataMap;
-			_combinedFields = new OrderedDictionary<string, ParsedSaveField>((IOrderedDictionary<string, ParsedSaveField>)_baseParsedMap.FieldsDict);
+			_combinedFields = new OrderedDictionary<string, ParsedSaveField>((IOrderedDictionary<string, ParsedSaveField>)_baseParsedMap.ParsedFields);
 			// here we have the same duplicate key problem as above, but now it's with A.field == B.field where A : B
 			foreach (var (key, value) in _thisFields)
 				if (!_combinedFields.TryAdd(key, value) && !Equals(_combinedFields[key].FieldAsObj, value.FieldAsObj))
@@ -55,17 +55,17 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		}
 		
 		public ParsedSaveField<T> GetField<T>(string name) {
-			return (ParsedSaveField<T>)FieldsDict[name];
+			return (ParsedSaveField<T>)ParsedFields[name];
 		}
 
 
 		public T GetCustomTypeField<T>(string name) where T : ParsedSaveField {
-			return (T)FieldsDict[name];
+			return (T)ParsedFields[name];
 		}
 		
 		
 		public bool TryGetField<T>(string name, out ParsedSaveField<T>? field) {
-			if (FieldsDict.TryGetValue(name, out ParsedSaveField? tmp)) {
+			if (ParsedFields.TryGetValue(name, out ParsedSaveField? tmp)) {
 				field = (ParsedSaveField<T>)tmp;
 				return true;
 			}
@@ -75,7 +75,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		
 		
 		public bool TryGetCustomField<T>(string name, out T? field) where T : ParsedSaveField {
-			if (FieldsDict.TryGetValue(name, out ParsedSaveField? tmp)) {
+			if (ParsedFields.TryGetValue(name, out ParsedSaveField? tmp)) {
 				field = (T)tmp;
 				return true;
 			}
@@ -86,14 +86,14 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 
 		// if T is a ref type then you should be doing T? = GetValueOrDefault<T>
 		public ParsedSaveField<T> GetFieldOrDefault<T>(string name) {
-			if (FieldsDict.TryGetValue(name, out ParsedSaveField? saveField))
+			if (ParsedFields.TryGetValue(name, out ParsedSaveField? saveField))
 				return ((ParsedSaveField<T>)saveField)!;
 			return new ParsedSaveField<T>(default!, DataMap.FieldDict.GetValueOrDefault(name)!);
 		}
 
 
 		public T GetCustomTypeFieldOrDefault<T>(string name) where T : ParsedSaveField, new() {
-			if (FieldsDict.TryGetValue(name, out ParsedSaveField? saveField))
+			if (ParsedFields.TryGetValue(name, out ParsedSaveField? saveField))
 				return (T)saveField;
 			return (T)Activator.CreateInstance(typeof(T), DataMap.FieldDict.GetValueOrDefault(name))!;
 		}

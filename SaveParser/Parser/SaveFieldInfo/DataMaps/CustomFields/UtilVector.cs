@@ -66,7 +66,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 			T[] res = new T[count];
 			for (int i = 0; i < count; i++) {
 				ParsedDataMap mapReadResult = bsr.ReadDataMap(vecMap, info);
-				res[i] = (ParsedSaveField<T>)mapReadResult.FieldsDict.Single().Value;
+				res[i] = (ParsedSaveField<T>)mapReadResult.ParsedFields.Single().Value;
 			}
 			return new UtilVector<T>(res, elemDesc, vecDesc);
 		}

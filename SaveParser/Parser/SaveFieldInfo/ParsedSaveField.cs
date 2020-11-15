@@ -59,7 +59,7 @@ namespace SaveParser.Parser.SaveFieldInfo {
 						if (!(Field is ParsedDataMap))
 							throw new Exception($"Unexpected type for embedded field: {Field!.GetType()}");
 						iw.Append($" {Desc.Name}:");
-						EnumerableAppendHelper(((ParsedDataMap)FieldAsObj).FieldsDict.Values, iw);
+						EnumerableAppendHelper(((ParsedDataMap)FieldAsObj).ParsedFields.Values, iw);
 					} else {
 						iw.Append($"[{ElemCount}] {Desc.Name}:");
 						EnumerableAppendHelper((FieldAsObj as IEnumerable<ParsedDataMap>)!, iw);
