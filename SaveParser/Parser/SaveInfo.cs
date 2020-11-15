@@ -4,7 +4,6 @@ using System.Numerics;
 using SaveParser.Parser.SaveFieldInfo;
 using SaveParser.Parser.StateFile.SaveStateData.EntData;
 using SaveParser.Utils;
-using static SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields.VPhysPtrSave;
 
 namespace SaveParser.Parser {
 	

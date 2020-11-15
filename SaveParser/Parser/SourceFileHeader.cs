@@ -1,4 +1,3 @@
-using SaveParser.Utils;
 using SaveParser.Utils.BitStreams;
 
 namespace SaveParser.Parser {

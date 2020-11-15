@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using SaveParser.Parser.SaveFieldInfo;
 
 namespace SaveParser.Utils.BitStreams {
 	

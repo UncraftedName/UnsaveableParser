@@ -1,4 +1,3 @@
-using System;
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
 using SaveParser.Utils;
 using SaveParser.Utils.BitStreams;
