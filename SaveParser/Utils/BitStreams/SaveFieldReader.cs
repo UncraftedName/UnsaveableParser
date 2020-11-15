@@ -57,8 +57,12 @@ namespace SaveParser.Utils.BitStreams {
 
 		public ParsedDataMap ReadDataMap(string dataMapName, SaveInfo info)
 			=> ReadDataMap(GlobalDataMapCollection.MapsByName[dataMapName], info);
-
-
+		
+		
+		/* A small header that contains the size of this block and sometimes has a symbol which has the name of whatever
+		 * is currently being parsed (only used in specific places). Combined with EndBlock(), this is useful for
+		 * determining if the correct number of bytes was read.
+		 */
 		public void StartBlock(SaveInfo info, out short byteSize, out string? symbol) {
 			byteSize = ReadSShort();
 			symbol = ReadSymbol(info);
@@ -78,8 +82,12 @@ namespace SaveParser.Utils.BitStreams {
 
 		public void EndBlock(SaveInfo info) {
 			int expected = info.ParseContext.Blocks.Pop();
-			if (expected != CurrentByteIndex)
-				throw new ConstraintException($"wrong amount of bytes read, expected = {expected}, current = {CurrentByteIndex}");
+			if (expected != CurrentByteIndex) {
+				// skip the block to not leave the stream in a broken state; so you can catch this exception
+				int tmp = CurrentByteIndex;
+				CurrentByteIndex = expected;
+				throw new ConstraintException($"wrong amount of bytes read, expected = {expected}, current = {tmp}");
+			}
 		}
 
 
