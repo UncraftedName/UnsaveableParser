@@ -4,7 +4,18 @@ using static SaveParser.Parser.SaveFieldInfo.FieldType;
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 	
 	public class EntMaps5 : DataMapGenerator {
+
+		public const int RAGDOLL_MAX_ELEMENTS = 24;
+
+
+		private void DefineRagdollElement(int i) {
+			DefineField($"m_ragdoll.list[{i}].originParentSpace", VECTOR);
+			DefinePhysPtr($"m_ragdoll.list[{i}].pObject");
+			DefinePhysPtr($"m_ragdoll.list[{i}].pConstraint");
+			DefineField($"m_ragdoll.list[{i}].parentIndex", INTEGER);
+		}
 		
+
 		protected override void CreateDataMaps() {
 			BeginDataMap("CBaseButton", "CBaseToggle");
 			DefineKeyField("m_vecMoveDir", "movedir", VECTOR);
@@ -258,6 +269,48 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			LinkNamesToMap("updateitem2");
 			DefineField("m_hDinosaur_Signal", EHANDLE);
 			DefineField("m_bAlreadyDiscovered", BOOLEAN);
+			
+			BeginDataMap("CRagdollProp", "CBaseAnimating");
+			LinkNamesToMap("prop_ragdoll", "physics_prop_ragdoll");
+			DefineField("m_ragdoll.boneIndex", INTEGER, RAGDOLL_MAX_ELEMENTS);
+			DefineField("m_ragPos", POSITION_VECTOR, RAGDOLL_MAX_ELEMENTS);
+			DefineField("m_ragAngles", VECTOR, RAGDOLL_MAX_ELEMENTS);
+			DefineKeyField("m_anglesOverrideString", "angleOverride", STRING);
+			DefineField("m_lastUpdateTickCount", INTEGER);
+			DefineField("m_allAsleep", BOOLEAN);
+			DefineField("m_hDamageEntity", EHANDLE);
+			DefineField("m_hKiller", EHANDLE);
+			DefineKeyField("m_bStartDisabled", "StartDisabled", BOOLEAN);
+			DefineInputFunc("StartRagdollBoogie", "InputStartRadgollBoogie", VOID);
+			DefineInputFunc("EnableMotion", "InputEnableMotion", VOID);
+			DefineInputFunc("DisableMotion", "InputDisableMotion", VOID);
+			DefineInputFunc("Enable", "InputTurnOn", VOID);
+			DefineInputFunc("Disable", "InputTurnOff", VOID);
+			DefineInputFunc("FadeAndRemove", "InputFadeAndRemove", FLOAT);
+			DefineField("m_hUnragdoll", EHANDLE);
+			DefineField("m_bFirstCollisionAfterLaunch", BOOLEAN);
+			DefineField("m_flBlendWeight", FLOAT);
+			DefineField("m_nOverlaySequence", INTEGER);
+			DefineField("m_ragdollMins", VECTOR, RAGDOLL_MAX_ELEMENTS);
+			DefineField("m_ragdollMaxs", VECTOR, RAGDOLL_MAX_ELEMENTS);
+			DefineField("m_hPhysicsAttacker", EHANDLE);
+			DefineField("m_flLastPhysicsInfluenceTime", TIME);
+			DefineField("m_flFadeOutStartTime", TIME);
+			DefineField("m_flFadeTime", FLOAT);
+			DefineField("m_strSourceClassName", STRING);
+			DefineField("m_bHasBeenPhysgunned", BOOLEAN);
+			DefineThinkFunc("SetDebrisThink");
+			DefineThinkFunc("ClearFlagsThink");
+			DefineThinkFunc("FadeOutThink");
+			DefineField("m_ragdoll.listCount", INTEGER);
+			DefineField("m_ragdoll.allowStretch", BOOLEAN);
+			DefinePhysPtr("m_ragdoll.pGroup");
+			DefineField("m_flDefaultFadeScale", FLOAT);
+			for (int i = 0; i < 24; i++)
+				DefineRagdollElement(i);
+			
+			DataMapProxy("CFuncIllusionary", "CBaseEntity"); // A simple entity that looks solid but lets you walk through it.
+			LinkNamesToMap("func_illusionary");
 		}
 	}
 }

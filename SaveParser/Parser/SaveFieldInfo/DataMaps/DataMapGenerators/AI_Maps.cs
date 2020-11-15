@@ -660,6 +660,16 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefinePhysPtr("m_pController");
 			DefineField("m_angularLimit", FLOAT);
 			DefineField("m_pParentTurret", CLASSPTR);
+			
+			BeginDataMap("CAI_SpeechFilter", "CBaseEntity"); // An entity that can be used to control speech behaviour for a group of NPCs.
+			LinkNamesToMap("ai_speechfilter");
+			DefineKeyField("m_iszSubject", "subject", STRING);
+			DefineKeyField("m_flIdleModifier", "IdleModifier", FLOAT);
+			DefineKeyField("m_bNeverSayHello", "NeverSayHello", BOOLEAN);
+			DefineKeyField("m_bDisabled", "StartDisabled", BOOLEAN);
+			DefineInputFunc("Enable", "InputEnable", VOID);
+			DefineInputFunc("Disable", "InputDisable", VOID);
+			DefineInputFunc("SetIdleModifier", "InputSetIdleModifier", FLOAT);
 		}
 	}
 }

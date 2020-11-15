@@ -73,10 +73,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			=> EmptyRoots.Add(name);
 
 
-		protected void DefineFunction(string name)
-			=> AddFieldPrivate(new TypeDesc(name, FUNCTION));
-
-
 		// todo consider creating a special DefineEHandle where you can add what type of handle it is
 		protected void DefineField(string name, FieldType fieldType, ushort count = 1)
 			=> AddFieldPrivate(new TypeDesc(name, fieldType, FTYPEDESC_SAVE, count));
@@ -97,6 +93,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			=> AddFieldPrivate(new TypeDesc(name, fieldType, FTYPEDESC_SAVE | FTYPEDESC_KEY, count, mapName: mapName));
 		
 		
+		// some fields have a key and a input... I can't handle them separately so here they are together
 		protected void DefineInputAndKeyField(string name, string mapName, string inputName, FieldType fieldType, ushort count = 1)
 			=> AddFieldPrivate(new TypeDesc(name, fieldType, FTYPEDESC_SAVE | FTYPEDESC_KEY, count, mapName: mapName, inputName: inputName));
 
@@ -116,7 +113,13 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		
 		// i don't even know what these are for
 		protected void DefineThinkFunc(string funcName) {}
+		protected void DefineEntityFunc(string funcName) {}
 		protected void DefineUseFunc(string funcName) {}
+
+
+		// this should be related to the above Func methods..
+		protected void DefineFunction(string name)
+			=> AddFieldPrivate(new TypeDesc(name, FUNCTION));
 
 
 		// custom field requires a custom read function (I allow null as a placeholder)

@@ -427,6 +427,18 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			LinkNamesToMap("env_splash");
 			DefineKeyField("m_flScale", "scale", FLOAT);
 			DefineInputFunc("Splash", "InputSplash", VOID);
+			
+			BeginDataMap("CFuncSmokeVolume", "CBaseParticleEntity");
+			LinkNamesToMap("func_smokevolume");
+			DefineKeyField("m_Color1", "Color1", COLOR32);
+			DefineKeyField("m_Color2", "Color2", COLOR32);
+			DefineKeyField("m_String_tMaterialName", "Material", STRING);
+			DefineKeyField("m_ParticleDrawWidth", "ParticleDrawWidth", FLOAT);
+			DefineKeyField("m_ParticleSpacingDistance", "ParticleSpacingDistance", FLOAT);
+			DefineKeyField("m_DensityRampSpeed", "DensityRampSpeed", FLOAT);
+			DefineInputAndKeyField("m_RotationSpeed", "RotationSpeed", "SetRotationSpeed", FLOAT);
+			DefineInputAndKeyField("m_MovementSpeed", "MovementSpeed", "SetMovementSpeed", FLOAT);
+			DefineInputAndKeyField("m_Density", "Density", "SetDensity", FLOAT);
 		}
 	}
 }

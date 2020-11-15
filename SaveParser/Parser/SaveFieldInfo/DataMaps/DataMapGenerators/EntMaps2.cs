@@ -100,59 +100,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			//DefineINPUTFUNC("SetInvert", BOOLEAN);
 			
 			DataMapProxy("CBaseProp", "CBaseAnimating");
-
-			BeginDataMap("CBreakableProp", "CBaseProp");
-			DefineKeyField("m_explodeDamage", "ExplodeDamage", FLOAT);
-			DefineKeyField("m_explodeRadius", "ExplodeRadius", FLOAT);
-			DefineKeyField("m_iMinHealthDmg", "minhealthdmg", INTEGER);
-			DefineField("m_createTick", INTEGER);
-			DefineField("m_hBreaker", EHANDLE);
-			DefineKeyField("m_PerformanceMode", "PerformanceMode", INTEGER);
-			DefineField("m_flDmgModBullet", FLOAT);
-			DefineField("m_flDmgModClub", FLOAT);
-			DefineField("m_flDmgModExplosive", FLOAT);
-			DefineField("m_iszPhysicsDamageTableName", STRING);
-			DefineField("m_iszBreakableModel", STRING);
-			DefineField("m_iBreakableSkin", INTEGER);
-			DefineField("m_iBreakableCount", INTEGER);
-			DefineField("m_iMaxBreakableSize", INTEGER);
-			DefineField("m_iszBasePropData", STRING);
-			DefineField("m_iInteractions", INTEGER);
-			DefineField("m_iNumBreakableChunks", INTEGER);
-			DefineField("m_nPhysgunState", BYTE);
-			DefineKeyField("m_iszPuntSound", "puntsound", STRING);
-			DefineKeyField("m_flPressureDelay", "PressureDelay", FLOAT);
-			DefineField("m_preferredCarryAngles", VECTOR);
-			DefineField("m_flDefaultFadeScale", FLOAT);
-			DefineField("m_bUsePuntSound", BOOLEAN);
-			//DefineINPUTFUNC("Break", VOID);
-			//DefineINPUTFUNC("SetHealth", INTEGER);
-			//DefineINPUTFUNC("AddHealth", INTEGER);
-			//DefineINPUTFUNC("RemoveHealth", INTEGER);
-			DefineInput("m_impactEnergyScale", "physdamagescale", FLOAT);
-			//DefineINPUTFUNC("EnablePhyscannonPickup", VOID);
-			//DefineINPUTFUNC("DisablePhyscannonPickup", VOID);
-			//DefineINPUTFUNC("EnablePuntSound", VOID);
-			//DefineINPUTFUNC("DisablePuntSound", VOID);
-			DefineOutput("m_OnBreak", "OnBreak");
-			DefineOutput("m_OnHealthChanged", "OnHealthChanged");
-			DefineOutput("m_OnTakeDamage", "OnTakeDamage");
-			DefineOutput("m_OnPhysCannonDetach", "OnPhysCannonDetach");
-			DefineOutput("m_OnPhysCannonAnimatePreStarted", "OnPhysCannonAnimatePreStarted");
-			DefineOutput("m_OnPhysCannonAnimatePullStarted", "OnPhysCannonAnimatePullStarted");
-			DefineOutput("m_OnPhysCannonAnimatePostStarted", "OnPhysCannonAnimatePostStarted");
-			DefineOutput("m_OnPhysCannonPullAnimFinished", "OnPhysCannonPullAnimFinished");
-			//DEFINE_THINKFUNC( BreakThink ),
-			//DEFINE_THINKFUNC( AnimateThink ),
-			//DEFINE_THINKFUNC( RampToDefaultFadeScale ),
-			//DEFINE_ENTITYFUNC( BreakablePropTouch ),
-			DefineField("m_hPhysicsAttacker", EHANDLE);
-			DefineField("m_flLastPhysicsInfluenceTime", TIME);
-			DefineField("m_bOriginalBlockLOS", BOOLEAN);
-			DefineField("m_bBlockLOSSetByPropData", BOOLEAN);
-			DefineField("m_bIsWalkableSetByPropData", BOOLEAN);
-			DefineField("m_hLastAttacker", EHANDLE);
-			DefineField("m_hFlareEnt", EHANDLE);
 			
 			BeginDataMap("physfollower_t");
 			DefineField("boneIndex", INTEGER);
@@ -316,33 +263,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			//DefineINPUTFUNC("Toggle", VOID);
 			//DefineINPUTFUNC("TurnOn", VOID);
 			//DefineINPUTFUNC("TurnOff", VOID);
-			
-			BeginDataMap("CPhysicsProp", "CBreakableProp");
-			LinkNamesToMap("physics_prop", "prop_physics", "prop_physics_override");
-			//DefineINPUTFUNC("EnableMotion", VOID);
-			//DefineINPUTFUNC("DisableMotion", VOID);
-			//DefineINPUTFUNC("Wake", VOID);
-			//DefineINPUTFUNC("Sleep", VOID);
-			//DefineINPUTFUNC("DisableFloating", VOID);
-			DefineField("m_bAwake", BOOLEAN);
-			DefineKeyField("m_massScale", "massscale", FLOAT);
-			DefineKeyField("m_inertiaScale", "inertiascale", FLOAT);
-			DefineKeyField("m_damageType", "Damagetype", INTEGER);
-			DefineKeyField("m_iszOverrideScript", "overridescript", STRING);
-			DefineKeyField("m_damageToEnableMotion", "damagetoenablemotion", INTEGER);
-			DefineKeyField("m_flForceToEnableMotion", "forcetoenablemotion", FLOAT);
-			DefineOutput("m_OnAwakened", "OnAwakened");
-			DefineOutput("m_MotionEnabled", "OnMotionEnabled");
-			DefineOutput("m_OnPhysGunPickup", "OnPhysGunPickup");
-			DefineOutput("m_OnPhysGunOnlyPickup", "OnPhysGunOnlyPickup");
-			DefineOutput("m_OnPhysGunPunt", "OnPhysGunPunt");
-			DefineOutput("m_OnPhysGunDrop", "OnPhysGunDrop");
-			DefineOutput("m_OnPlayerUse", "OnPlayerUse");
-			DefineOutput("m_OnPlayerPickup", "OnPlayerPickup");
-			DefineOutput("m_OnOutOfWorld", "OnOutOfWorld");
-			DefineField("m_bThrownByPlayer", BOOLEAN);
-			DefineField("m_bFirstCollisionAfterLaunch", BOOLEAN);
-			DefineThinkFunc("ClearFlagsThink");
 			
 			BeginDataMap("CPhysicsShake");
 			DefineField("m_force", VECTOR);
