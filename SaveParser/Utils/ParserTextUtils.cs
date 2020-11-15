@@ -36,6 +36,11 @@ namespace SaveParser.Utils {
 		}
 
 
+		public static string CamelCaseToLowerSpaced(string str) {
+			return string.Concat(str.Select((x,i) => i > 0 && char.IsUpper(x) ? " " + x : x.ToString())).ToLower();
+		}
+
+
 		/*public static string UnderscoreToCamelCase(string str) {
 			string[] sections = str.Split('_');
 			if (sections.Length == 1)

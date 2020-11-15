@@ -3,6 +3,7 @@
 using System;
 
 namespace SaveParser.Parser {
+	// todo move these to their respective files
 	public static class Constants {
 		public const int MaxEdictBits = 11;
 		public const int MaxEdicts = 1 << MaxEdictBits;
@@ -37,8 +38,6 @@ namespace SaveParser.Parser {
 		public const int MAX_SCENE_FILENAME = 128;
 		public const int kMAXCONTROLPOINTS = 63;
 		public const int cchMapNameMost = 32;
-		public const int VEHICLE_MAX_AXLE_COUNT = 4;
-		public const int VEHICLE_MAX_WHEEL_COUNT = 2 * VEHICLE_MAX_AXLE_COUNT;
 		public const int VEHICLE_MAX_GEAR_COUNT = 6;
 		public const int SECURITY_CAMERA_NUM_ROPES = 2;
 		public const int MAX_BEAM_ENTS = 10;

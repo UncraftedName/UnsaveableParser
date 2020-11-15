@@ -138,7 +138,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 
 		protected void DefinePhysPtr(string name) {
 			// phys stuff is actually restored during the phys block handler, it's only queued for restore in the ents
-			AddFieldPrivate(new TypeDesc(name, FTYPEDESC_SAVE, VPhysPtrSave.QueueRestore));
+			AddFieldPrivate(new TypeDesc(name, FTYPEDESC_SAVE, CPhysicsEnvironment.QueueRestore));
 		}
 
 
@@ -184,13 +184,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		private void FinishDataMap() {
 			if (_mapReady && _tmpBaseClass != null)
 				UnlinkedBaseClasses.Add((_tmpBaseClass, CurMap));
-		}
-		
-		
-		protected void DefineMaterialIndexDataOps(string name) {
-			static ParsedSaveField MatReadFunc(TypeDesc desc, SaveInfo info, ref BitStreamReader bsr)
-				=> new ParsedSaveField<MaterialIndexStr>((MaterialIndexStr)bsr.ReadStringOfLength(bsr.ReadSInt()), desc);
-			AddFieldPrivate(new TypeDesc(name, FTYPEDESC_SAVE, MatReadFunc));
 		}
 		
 

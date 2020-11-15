@@ -3,20 +3,36 @@ using System.Diagnostics.CodeAnalysis;
 using SaveParser.Parser.StateFile.SaveStateData.EntData;
 using SaveParser.Utils;
 using SaveParser.Utils.BitStreams;
+using static SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields.PhysicsConstraint;
+using static SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields.PhysicsConstraint.ConstraintType;
 using static SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields.PhysInterfaceId_t;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
+
+	public abstract class RestoredVPhysicsObject : ParsedSaveField {
+		
+		public int OldObj; // I think this is a pointer from before the save?
+		
+		protected RestoredVPhysicsObject(TypeDesc desc) : base(desc) {}
+		
+
+		public override void AppendToWriter(IIndentedWriter iw) {
+			iw.Append(ParserTextUtils.CamelCaseToLowerSpaced(GetType().Name));
+			iw.Append($" (old obj = {OldObj}):");
+		}
+	}
 	
-	public class PhysicsObject : ParsedSaveField {
+	
+	public class PhysicsObject : RestoredVPhysicsObject {
 		
 		public ParsedDataMap ObjectTemplate;
 		public ParsedDataMap? ControllerTemplate;
-		
-		
+
 		public PhysicsObject(TypeDesc desc) : base(desc) {}
 		
+		
 		public override void AppendToWriter(IIndentedWriter iw) {
-			iw.Append("physics object:");
+			base.AppendToWriter(iw);
 			iw.FutureIndent++;
 			iw.AppendLine();
 			ObjectTemplate.AppendToWriter(iw);
@@ -27,33 +43,82 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 			iw.FutureIndent--;
 		}
 	}
-	
-	
-	public class VPhysPtrSave : ParsedSaveField {
+
+
+	public class PhysicsConstraintGroup : RestoredVPhysicsObject {
+
+		public ParsedDataMap GroupTemplate;
 		
-		public VPhysPtrSave(TypeDesc desc) : base(desc) {}
+		public PhysicsConstraintGroup(TypeDesc desc) : base(desc) {}
 		
-		
+
 		public override void AppendToWriter(IIndentedWriter iw) {
-			iw.Append("VPHYSPTR NOT IMPLEMENTED");
+			base.AppendToWriter(iw);
+			iw.FutureIndent++;
+			iw.AppendLine();
+			GroupTemplate.AppendToWriter(iw);
+			iw.FutureIndent--;
+		}
+	}
+
+
+	public class PhysicsConstraint : RestoredVPhysicsObject {
+
+		public ConstraintType PhysicsConstraintType;
+		public ParsedDataMap Header;
+		public ParsedDataMap? Constraint;
+		
+		
+		public PhysicsConstraint(TypeDesc desc) : base(desc) {}
+
+
+		public override void AppendToWriter(IIndentedWriter iw) {
+			base.AppendToWriter(iw);
+			iw.FutureIndent++;
+			iw.AppendLine();
+			Header.AppendToWriter(iw);
+			if (Constraint != null) {
+				iw.AppendLine();
+				Constraint.AppendToWriter(iw);
+			}
+			iw.FutureIndent--;
 		}
 
 
-		// return type needs to exist to match with the CustomReadFunc delegate
-		public static VPhysPtrSave? QueueRestore(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr) {
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		public enum ConstraintType {
+			CONSTRAINT_UNKNOWN = 0,
+			CONSTRAINT_RAGDOLL,
+			CONSTRAINT_HINGE,
+			CONSTRAINT_FIXED,
+			CONSTRAINT_BALLSOCKET,
+			CONSTRAINT_SLIDING,
+			CONSTRAINT_PULLEY,
+			CONSTRAINT_LENGTH,
+		}
+	}
+	
+	
+	public static class CPhysicsEnvironment {
+
+		// return type needs to exist to match with the CustomReadFunc delegate, but I'll always return null
+		public static ParsedSaveField? QueueRestore(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr) {
 			info.ParseContext.VPhysicsRestoreInfo!.Enqueue((info.ParseContext.CurrentEntity!, typeDesc));
 			return null;
 		}
 
 
-		public static ParsedSaveField Restore(
+		// same name as in game code - CPhysicsEnvironment::Restore
+		public static ParsedSaveField? Restore(
 			SaveInfo saveInfo,
 			ParsedDataMap physHeader,
 			(ParsedEntData ent, TypeDesc typeDesc) physRestoreInfo,
-			PhysInterfaceId_t physType,
 			ref BitStreamReader bsr)
 		{
 			var oldObj = bsr.ReadSInt();
+			PhysInterfaceId_t physType = (PhysInterfaceId_t)physHeader.GetFieldOrDefault<int>("type").Field;
+			var typeDesc = physRestoreInfo.typeDesc;
+			
 			switch (physType) {
 				case PIID_IPHYSICSOBJECT:
 					var ot = bsr.ReadDataMap("vphysics_save_cphysicsobject_t", saveInfo);
@@ -61,15 +126,27 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 						ot.GetFieldOrDefault<bool>("hasShadowController")
 							? bsr.ReadDataMap("vphysics_save_cshadowcontroller_t", saveInfo)
 							: null;
-					return new PhysicsObject(physRestoreInfo.typeDesc) {ObjectTemplate = ot, ControllerTemplate = ct};
+					return new PhysicsObject(typeDesc) {OldObj = oldObj, ObjectTemplate = ot, ControllerTemplate = ct};
 				case PIID_IPHYSICSFLUIDCONTROLLER:
 					break;
 				case PIID_IPHYSICSSPRING:
 					break;
 				case PIID_IPHYSICSCONSTRAINTGROUP:
-					break;
+					var gt = bsr.ReadDataMap("vphysics_save_cphysicsconstraintgroup_t", saveInfo);
+					return new PhysicsConstraintGroup(typeDesc) {OldObj = oldObj, GroupTemplate = gt};
 				case PIID_IPHYSICSCONSTRAINT:
-					break;
+					var header = bsr.ReadDataMap("vphysics_save_cphysicsconstraint_t", saveInfo);
+					ConstraintType type = (ConstraintType)(int)header.GetFieldOrDefault<int>("constraintType");
+					ParsedDataMap? constraint = null;
+					if (type != CONSTRAINT_UNKNOWN
+						&& header.ParsedFields.ContainsKey("pObjAttached")
+						&& header.ParsedFields.ContainsKey("pObjReference"))
+					{
+						string datamapName = $"vphysics_save_{type.ToString().Replace("_", "").ToLower()}_t";
+						constraint = bsr.ReadDataMap(datamapName, saveInfo);
+					}
+					return new PhysicsConstraint(typeDesc)
+						{OldObj = oldObj, Header = header, PhysicsConstraintType = type, Constraint = constraint};
 				case PIID_IPHYSICSSHADOWCONTROLLER:
 					break;
 				case PIID_IPHYSICSPLAYERCONTROLLER:
@@ -84,7 +161,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 					throw new ArgumentOutOfRangeException(nameof(physType), $"bad phys type: {physType}");
 			}
 			saveInfo.AddError($"phys parsing not implemented for {physType}");
-			return null!;
+			return null;
 		}
 	}
 	

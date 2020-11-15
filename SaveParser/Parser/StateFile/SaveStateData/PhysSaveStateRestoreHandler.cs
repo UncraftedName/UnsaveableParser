@@ -28,9 +28,13 @@ namespace SaveParser.Parser.StateFile.SaveStateData {
 					objects = new ParsedSaveField[count];
 					for (int i = 0; i < count; i++) {
 						bsr.StartBlock(SaveInfo);
-						PhysInterfaceId_t pType = (PhysInterfaceId_t)header.GetFieldOrDefault<int>("type").Field;
-						objects[i] = VPhysPtrSave.Restore(SaveInfo, header, physRestoreInfo, pType, ref bsr);
-						bsr.EndBlock(SaveInfo);
+						var physObj = CPhysicsEnvironment.Restore(SaveInfo, header, physRestoreInfo, ref bsr);
+						if (physObj == null) {
+							bsr.SkipCurrentBlock(SaveInfo);
+						} else {
+							objects[i] = physObj;
+							bsr.EndBlock(SaveInfo);
+						}
 					}
 				}
 				PhysObjects.Add((header, objects));

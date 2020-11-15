@@ -1,9 +1,58 @@
 // ReSharper disable All
+
+using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
+using SaveParser.Utils.BitStreams;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 	
 	public class VPhysicsMaps : DataMapGenerator {
+
+		public const int VEHICLE_MAX_AXLE_COUNT = 4;
+		public const int VEHICLE_MAX_WHEEL_COUNT = 2 * VEHICLE_MAX_AXLE_COUNT;
+		
+
+		// todo this returns fields that don't format the ToString with spaces - "custom materialIndex: metal"
+		protected void DefineMaterialIndexDataOps(string name) {
+			static ParsedSaveField MatReadFunc(TypeDesc desc, SaveInfo info, ref BitStreamReader bsr)
+				=> new ParsedSaveField<MaterialIndexStr>((MaterialIndexStr)bsr.ReadStringOfLength(bsr.ReadSInt()), desc);
+			DefineCustomField(name, MatReadFunc);
+		}
+		
+		
+		// this is different from PhysPtr, here the datamap is read right away (since we're in the vphys section)
+		// todo, the custom read func will just return a ref to another vphys object (i think)
+		private void DefineVPhysPtr(string name) {
+			static ParsedSaveField ReadFunc(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr)
+				=> new ParsedSaveField<int>(bsr.ReadSInt(), typeDesc);
+			DefineCustomField(name, ReadFunc);
+		}
+
+		
+		// todo link like above
+		private void DefineVPhysPtrArray(string name, int count) {
+			static ParsedSaveField ReadFunc(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr) {
+				int[] arr = new int[(int)typeDesc.CustomParams![0]!];
+				for (int i = 0; i < arr.Length; i++)
+					arr[i] = bsr.ReadSInt();
+				return new ParsedSaveField<int[]>(arr, typeDesc, arr.Length);
+			}
+			DefineCustomField(name, ReadFunc, new object?[] {count});
+		}
+
+
+		// todo link like above
+		private void DefineVPhysPtrVector(string name) {
+			static ParsedSaveField ReadFunc(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr) {
+				int count = bsr.ReadSInt();
+				int[] arr = new int[count];
+				for (int i = 0; i < arr.Length; i++)
+					arr[i] = bsr.ReadSInt();
+				return new ParsedSaveField<int[]>(arr, typeDesc, arr.Length);
+			}
+			DefineCustomField(name, ReadFunc);
+		}
+		
 		
 		protected override void CreateDataMaps() { // todo redo the vehicles part
 			BeginDataMap("PhysBlockHeader_t");
@@ -59,7 +108,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("savedRI.k", FLOAT, 3);
 			DefineField("currentSpeed.k", FLOAT, 3);
 			DefineField("savedMass", FLOAT);
-			DefineField("savedFlags", INTEGER);
+			DefineField("savedFlags", INTEGER); // todo
 			DefineMaterialIndexDataOps("savedMaterial");
 			DefineField("enable", BOOLEAN);
 			DefineField("allowPhysicsMovement", BOOLEAN);
@@ -86,8 +135,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("endPosition", VECTOR); // relative
 			DefineField("useLocalPositions", BOOLEAN);
 			DefineField("onlyStretch", BOOLEAN);
-			//DEFINE_VPHYSPTR( pObjStart ), // how does this work in this context?
-			//DEFINE_VPHYSPTR( pObjEnd ),
+			DefineVPhysPtr("pObjStart");
+			DefineVPhysPtr("pObjEnd");
 			
 			BeginDataMap("vphysics_save_cphysicsconstraintgroup_t");
 			DefineField("isActive", BOOLEAN);
@@ -97,12 +146,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 
 			BeginDataMap("vphysics_save_cphysicsconstraint_t");
 			DefineField("constraintType", INTEGER);
-			//DEFINE_VPHYSPTR( pGroup ),
-			//DEFINE_VPHYSPTR( pObjReference ),
-			//DEFINE_VPHYSPTR( pObjAttached ),
+			DefineVPhysPtr("pGroup");
+			DefineVPhysPtr("pObjReference");
+			DefineVPhysPtr("pObjAttached");
 			
 			BeginDataMap("vphysics_save_motioncontroller_t");
-			//DEFINE_VPHYSPTR_UTLVECTOR( m_objectList ),
+			DefineVPhysPtrVector("m_objectList");
 			DefineField("m_nPriority", INTEGER);
 			
 			BeginDataMap("vehicle_bodyparams_t");
@@ -188,7 +237,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("axleCount", INTEGER);
 			DefineField("wheelsPerAxle", INTEGER);
 			DefineEmbeddedField("body", "vehicle_bodyparams_t");
-			DefineEmbeddedField("axles", "vehicle_axleparams_t", Constants.VEHICLE_MAX_AXLE_COUNT);
+			DefineEmbeddedField("axles", "vehicle_axleparams_t", VEHICLE_MAX_AXLE_COUNT);
 			DefineEmbeddedField("engine", "vehicle_engineparams_t");
 			DefineEmbeddedField("steering", "vehicle_steeringparams_t");
 			
@@ -206,7 +255,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("isTorqueBoosting", BOOLEAN);
 			
 			BeginDataMap("vphysics_save_cvehiclecontroller_t");
-			//DEFINE_VPHYSPTR( m_pCarBody ),
+			DefineVPhysPtr("m_pCarBody");
 			DefineField("m_wheelCount", INTEGER);
 			DefineEmbeddedField("m_vehicleData", "vehicleparams_t");
 			DefineEmbeddedField("m_currentState", "vehicle_operatingparams_t");
@@ -214,9 +263,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_totalWheelMass", FLOAT);
 			DefineField("m_gravityLength", FLOAT);
 			DefineField("m_torqueScale", FLOAT);
-			//DEFINE_VPHYSPTR_ARRAY( m_pWheels, VEHICLE_MAX_WHEEL_COUNT ),
-			DefineField("m_wheelPosition_Bs", VECTOR, Constants.VEHICLE_MAX_WHEEL_COUNT);
-			DefineField("m_tracePosition_Bs", VECTOR, Constants.VEHICLE_MAX_WHEEL_COUNT);
+			DefineVPhysPtrArray("m_pWheels", VEHICLE_MAX_WHEEL_COUNT);
+			DefineField("m_wheelPosition_Bs", VECTOR, VEHICLE_MAX_WHEEL_COUNT);
+			DefineField("m_tracePosition_Bs", VECTOR, VEHICLE_MAX_WHEEL_COUNT);
 			DefineField("m_vehicleFlags", INTEGER);
 			DefineField("m_nTireType", INTEGER);
 			DefineField("m_nVehicleType", INTEGER);
@@ -224,6 +273,29 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_bOccupied", BOOLEAN);
 			DefineField("m_bEngineDisable", BOOLEAN);
 			DefineField("m_flVelocity", FLOAT, 3);
+			
+			BeginDataMap("vphysics_save_constraintbreakable_t");
+			DefineField("strength", FLOAT);               // strength of constraint [0,1]
+			DefineField("forceLimit", FLOAT);             // constraint force limit to break (0 means never break)
+			DefineField("torqueLimit", FLOAT);            // constraint torque limit to break (0 means never break)
+			DefineField("bodyMassScale", FLOAT, 2); // scale applied to mass of reference/attached object before solving constraint
+			DefineField("isActive", BOOLEAN);
+			
+			BeginDataMap("vphysics_save_constraintfixed_t");
+			DefineField("attachedRefXform", MATRIX3X4_WORLDSPACE);
+			DefineEmbeddedField("constraint", "vphysics_save_constraintbreakable_t");
+			
+			BeginDataMap("vphysics_save_constraintaxislimit_t");
+			DefineField("minRotation", FLOAT);
+			DefineField("maxRotation", FLOAT);
+			DefineField("angularVelocity", FLOAT);
+			DefineField("torque", FLOAT);
+			
+			BeginDataMap("vphysics_save_constrainthinge_t");
+			DefineField("worldPosition", POSITION_VECTOR);
+			DefineField("worldAxisDirection", VECTOR);
+			DefineEmbeddedField("constraint", "vphysics_save_constraintbreakable_t");
+			DefineEmbeddedField("hingeAxis", "vphysics_save_constraintaxislimit_t");
 		}
 	}
 }
