@@ -394,7 +394,7 @@ namespace SaveParser.Utils {
 
 
 		object IOrderedDictionary.this[int index] {
-			get => this[index];
+			get => this[index]!;
 			set => this[index] = (TValue)value;
 		}
 
@@ -403,7 +403,7 @@ namespace SaveParser.Utils {
 		#region IDictionary
 
 		void IDictionary.Add(object key, object? value) {
-			Add((TKey)key, (TValue)value);
+			Add((TKey)key, (TValue)value!);
 		}
 
 
@@ -436,9 +436,9 @@ namespace SaveParser.Utils {
 
 		ICollection IDictionary.Values => (ICollection)Values;
 
-		object IDictionary.this[object key] {
-			get => this[(TKey)key];
-			set => this[(TKey)key] = (TValue)value;
+		object? IDictionary.this[object key] {
+			get => this[(TKey)key]!;
+			set => this[(TKey)key] = (TValue)value!;
 		}
 
 		#endregion
@@ -522,16 +522,17 @@ namespace SaveParser.Utils {
 		#region Constructors
 
 		public Comparer2(Comparison<T> comparison) {
-			if (comparison == null) throw new ArgumentNullException("comparison");
-			_compareFunction = comparison;
+			_compareFunction = comparison ?? throw new ArgumentNullException(nameof(comparison));
 		}
 
 		#endregion
 
 
+#pragma warning disable 8765
 		public override int Compare(T arg1, T arg2) {
 			return _compareFunction(arg1, arg2);
 		}
+#pragma warning restore 8765
 	}
 
 	public class DictionaryEnumerator<TKey, TValue> : IDictionaryEnumerator, IDisposable where TKey : notnull {
