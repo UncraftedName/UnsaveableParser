@@ -1,3 +1,31 @@
+# This is an extremely botched script, too bad! This allows me to copy datamaps from the game code and convert them to
+# the format I use. So you can find something like this in game code:
+#
+# BEGIN_DATADESC( CBreakableSurface )
+#     DEFINE_KEYFIELD( m_nSurfaceType, FIELD_INTEGER, "surfacetype"),
+#     // some possibly informative comment
+#     // DEFINE_FIELD(m_bad_someTerribleField, FIELD_INTEGER), // THIS LINE SHOULD BE REMOVED MANUALLY AFTER PASTING
+#     DEFINE_KEYFIELD( m_nFragility, FIELD_INTEGER, "fragility"), // some other stupid comment
+#     DEFINE_FIELD( m_nNumBrokenPanes, FIELD_INTEGER),
+#     ...
+# END_DATADESC()
+#
+# Copy that, run this script and press enter. Then you can simply past the clipboard into a DataMapGenerator class and
+# it should be mostly valid code; it'll look something like this after pasting:
+#
+# BeginDataMap("CBreakableSurface");
+# DefineKeyField("m_nSurfaceType", "surfacetype", INTEGER);
+# // some possibly informative comment
+# // DEFINE_FIELD(m_bad_someTerribleField, FIELD_INTEGER), // THIS LINE SHOULD BE REMOVED MANUALLY AFTER PASTING
+# DefineKeyField("m_nFragility", "fragility", INTEGER);
+# DefineField("m_nNumBrokenPanes", INTEGER);
+#
+# There's plenty of stuff that you'll have check manually such as custom fields, preprocessor directives, and name
+# linking, but overall this script saves a LOT of time compared to typing out all of the datamaps by hand. I urge you
+# to refrain from reading the code - you will see lots of regex and if statements. I've only implemented datamaps that I
+# have seen show up in save files; there are a LOT of datamaps so straight up doing all of them I believe would be a
+# huge waste of time. As the import suggests, I assume this only works in windows.
+
 import re
 import win32clipboard
 
