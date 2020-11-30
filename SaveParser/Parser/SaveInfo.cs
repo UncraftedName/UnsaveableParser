@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using SaveParser.Parser.SaveFieldInfo;
+using SaveParser.Parser.SaveFieldInfo.DataMaps;
 using SaveParser.Parser.StateFile.SaveStateData.EntData;
 using SaveParser.Utils;
 
@@ -14,10 +15,22 @@ namespace SaveParser.Parser {
 		
 		public Vector3 LandmarkPos;
 		public Time BaseTime;
-		public float TickInterval = 0.015f; // todo
+		public readonly float TickInterval;
+		public Game Game;
+		public string? SaveDir;
+		public readonly IReadOnlyDictionary<string, DataMap> DataMapLookup;
 
-		public SaveInfo() {
+		
+		public SaveInfo(Game game) {
 			ParseContext = new ParseContext(0);
+			Game = game;
+			TickInterval = game switch {
+				Game.Portal13420 => 0.015f,
+				Game.Portal2 => 1.0f / 60,
+				_ => throw new ArgumentOutOfRangeException(nameof(game), game, "invalid game type")
+			};
+			// should be last
+			DataMapLookup = GlobalDataMapGenerator.GetDataMapList(this);
 		}
 
 
@@ -50,5 +63,12 @@ namespace SaveParser.Parser {
 			CurrentEntity = null;
 			VPhysicsRestoreInfo = new Queue<(ParsedEntData, TypeDesc)>();
 		}
+	}
+
+
+	// if your game doesn't exist here, the save should™ still parse
+	public enum Game {
+		Portal13420,
+		Portal2
 	}
 }

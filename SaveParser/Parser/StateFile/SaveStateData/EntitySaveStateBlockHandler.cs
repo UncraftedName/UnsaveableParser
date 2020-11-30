@@ -21,7 +21,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData {
 				string? className = entHeader.GetFieldOrDefault<string>("classname");
 				if (className == null) // todo
 					continue;
-				if (!GlobalDataMapCollection.MapsByName.TryGetValue(className, out DataMap? entMap)) {
+				if (!SaveInfo.DataMapLookup.TryGetValue(className, out DataMap? entMap)) {
 					string s = $"{nameof(EntitySaveStateBlock)}.{nameof(Parse)} - datamap for \"{className}\" not found";
 					if (bsr.ReadSInt() == 4)
 						s += $"; probably of type \"{bsr.ReadSymbol(SaveInfo)}\"";

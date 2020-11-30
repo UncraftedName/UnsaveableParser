@@ -13,24 +13,22 @@ namespace SaveParser.Parser {
 		private BitStreamReader _privateReader;
 		public override BitStreamReader Reader => _privateReader.FromBeginning();
 
-		public new SaveInfo SaveInfo;
+		public new readonly SaveInfo SaveInfo;
 		public SourceFileHeader SourceFileHeader;
 		public ParsedDataMap GameHeader, Globals;
 		public EmbeddedStateFile[] StateFiles;
 
 
-		// make sure the data maps are init'ed before we begin parsing
-		static SourceSave() {
-			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(typeof(GlobalDataMapCollection).TypeHandle);
-		}
-
-
-		public SourceSave(byte[] bytes) : base(null) {
+		// i don't have a good way of getting the game from the file itself, so that will have to be passed in manually
+		public SourceSave(byte[] bytes, Game game) : base(null) {
 			_privateReader = new BitStreamReader(bytes);
+			SaveInfo = new SaveInfo(game);
 		}
 
 
-		public SourceSave(string dir) : this(File.ReadAllBytes(dir)) {}
+		public SourceSave(string dir, Game game) : this(File.ReadAllBytes(dir), game) {
+			SaveInfo.SaveDir = dir;
+		}
 
 
 		internal BitStreamReader ReaderFromOffset(int offset, int bitLength) {
@@ -39,7 +37,6 @@ namespace SaveParser.Parser {
 
 
 		protected override void Parse(ref BitStreamReader bsr) {
-			SaveInfo = new SaveInfo();
 			SourceFileHeader = new SourceFileHeader(this);
 			SourceFileHeader.ParseStream(ref bsr);
 			SaveInfo.ParseContext.CurrentSymbolTable = bsr.ReadSymbolTable(SourceFileHeader.TokenCount, SourceFileHeader.TokenTableSize)!;
@@ -65,6 +62,7 @@ namespace SaveParser.Parser {
 
 
 		public override void AppendToWriter(IIndentedWriter iw) {
+			iw.Append("");
 			SourceFileHeader.AppendToWriter(iw);
 			iw.AppendLine();
 			GameHeader.AppendToWriter(iw);

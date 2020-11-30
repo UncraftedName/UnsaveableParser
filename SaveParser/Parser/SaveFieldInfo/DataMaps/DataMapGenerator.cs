@@ -10,6 +10,10 @@ using static SaveParser.Parser.SaveFieldInfo.FieldType;
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 	
 	public abstract class DataMapGenerator {
+		
+		// possibly useful fields during datamap generation
+		internal SaveInfo SaveInfo;
+		protected Game Game => SaveInfo.Game;
 
 		// not meant to be accessed in inheriting classes
 		internal readonly List<(string, DataMap)> UnlinkedBaseClasses = new List<(string, DataMap)>();
@@ -20,7 +24,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		internal readonly List<string> EmptyRoots = new List<string>();
 		
 		// temporary info for the datamap that is currently being constructed
-		
 		private string? _tmpName; // name of last class (might just be a proxy)
 		private string? _tmpBaseClass;
 		private bool _mapReady = false; // little botch to make the proxies work

@@ -31,8 +31,8 @@ namespace SaveParser.Utils.BitStreams {
 		public string? ReadSymbol(SaveInfo info) => info.ParseContext.CurrentSymbolTable![ReadSShort()];
 
 
-		private static bool TryGetMapFromString(string name, out DataMap? map) {
-			if (!GlobalDataMapCollection.MapsByName.TryGetValue(name, out map)) {
+		private static bool TryGetMapFromString(string name, SaveInfo info, out DataMap? map) {
+			if (!info.DataMapLookup.TryGetValue(name, out map)) {
 				var caller = new StackTrace().GetFrame(2)!.GetMethod()!;
 				Console.Out.WriteLineColored($"{caller.ReflectedType!.FullName}.{caller.Name} - datamap for \"{name}\" not found");
 				return false;
@@ -42,7 +42,7 @@ namespace SaveParser.Utils.BitStreams {
 
 
 		public bool TryReadDataMapRecursive(string dataMapName, SaveInfo info, out ParsedDataMap? result) {
-			if (TryGetMapFromString(dataMapName, out DataMap? map)) {
+			if (TryGetMapFromString(dataMapName, info, out DataMap? map)) {
 				try {
 					result = ReadDataMapRecursive(map!, info);
 					return true;
@@ -66,7 +66,7 @@ namespace SaveParser.Utils.BitStreams {
 
 
 		public ParsedDataMap ReadDataMap(string dataMapName, SaveInfo info)
-			=> ReadDataMapRecursive(GlobalDataMapCollection.MapsByName[dataMapName], info);
+			=> ReadDataMapRecursive(info.DataMapLookup[dataMapName], info);
 		
 		
 		/* A small header that contains the size of this block and sometimes has a symbol which has the name of whatever
@@ -106,7 +106,7 @@ namespace SaveParser.Utils.BitStreams {
 				throw new ConstraintException($"bad first value while parsing datamap \"{map.Name}\", expected 4");
 			string sym = ReadSymbol(info)!;
 			if (sym != map.Name) {
-				GlobalDataMapCollection.MapsByName.TryGetValue(sym, out DataMap? cmpMap);
+				info.DataMapLookup.TryGetValue(sym, out DataMap? cmpMap);
 				if (cmpMap != map)
 					throw new ArgumentException($"bad symbol, expected \"{map.Name}\" but read \"{sym}\"");
 			}
