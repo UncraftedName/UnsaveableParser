@@ -6,6 +6,24 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 	
 	public sealed class EntMaps1 : DataMapGenerator {
 		
+		public const int NUM_BONECTRLS = 4;
+		public const int NUM_POSEPAREMETERS = 24;
+		public const int NUM_AUDIO_LOCAL_SOUNDS = 8;
+		public const int MAX_AREA_STATE_BYTES = 32;
+		public const int MAX_AREA_PORTAL_STATE_BYTES = 24;
+		public const int MAX_PLACE_NAME_LENGTH = 18;
+		public const int CDMG_TIMEBASED = 8;
+		public const int MAX_VIEWMODELS = 2;
+		public const int MAX_PLAYER_NAME_LENGTH = 32;
+		public const int MAX_NETWORKID_LENGTH = 64;
+		public const int MAX_ITEMS = 5;
+		public const int CSUITPLAYLIST = 4;
+		public const int CSUITNOREPEAT = 32;
+		public const int MAX_AMMO_SLOTS = 32;
+		public const int MAX_WEAPONS = 48;
+		public const int MAXSTUDIOFLEXCTRL = 96;
+		
+		
 		protected override void CreateDataMaps() {
 			BeginDataMap("CBaseEntity");
 			DefineKeyField("m_iClassname", "classname", STRING);
@@ -173,8 +191,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInputAndKeyField("m_nBody", "body", "SetBodyGroup", INTEGER);
 			DefineKeyField("m_nHitboxSet", "hitboxset", INTEGER);
 			DefineKeyField("m_nSequence", "sequence", INTEGER);
-			DefineField("m_flPoseParameter", FLOAT, Constants.NUM_POSEPAREMETERS);
-			DefineField("m_flEncodedController", FLOAT, Constants.NUM_BONECTRLS);
+			DefineField("m_flPoseParameter", FLOAT, NUM_POSEPAREMETERS);
+			DefineField("m_flEncodedController", FLOAT, NUM_BONECTRLS);
 			DefineKeyField("m_flPlaybackRate", "playbackrate", FLOAT);
 			DefineKeyField("m_flCycle", "cycle", FLOAT);
 			//DEFINE_CUSTOM_FIELD( m_pIk, &s_IKSaveRestoreOp ), // just read bool?
@@ -207,7 +225,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineEmbeddedVector("m_AnimOverlay", "CAnimationLayer");
 			
 			BeginDataMap("CBaseFlex", "CBaseAnimatingOverlay"); // Animated characters who have vertex flex capability (e.g., facial expressions)
-			DefineField("m_flexWeight", FLOAT, Constants.MAXSTUDIOFLEXCTRL);
+			DefineField("m_flexWeight", FLOAT, MAXSTUDIOFLEXCTRL);
 			DefineField("m_viewtarget", POSITION_VECTOR);
 			DefineField("m_flAllowResponsesEndTime", TIME);
 			DefineField("m_flLastFlexAnimationTime", TIME);
@@ -231,8 +249,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInput("m_impactEnergyScale", "physdamagescale", FLOAT);
 			DefineField("m_CurrentWeaponProficiency", INTEGER);
 			DefineEmbeddedVector("m_Relationship", "Relationship_t");
-			DefineField("m_iAmmo", INTEGER, Constants.MAX_AMMO_SLOTS);
-			DefineField("m_hMyWeapons", EHANDLE, Constants.MAX_WEAPONS);
+			DefineField("m_iAmmo", INTEGER, MAX_AMMO_SLOTS);
+			DefineField("m_hMyWeapons", EHANDLE, MAX_WEAPONS);
 			DefineField("m_hActiveWeapon", EHANDLE);
 			DefineField("m_bForceServerRagdoll", BOOLEAN);
 			DefineField("m_bPreventWeaponPickup", BOOLEAN);
@@ -274,26 +292,26 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_iRespawnFrames", FLOAT);
 			DefineField("m_afPhysicsFlags", INTEGER);
 			DefineField("m_hVehicle", EHANDLE);
-			DefineField("m_szNetworkIDString", CHARACTER, Constants.MAX_NETWORKID_LENGTH);
+			DefineField("m_szNetworkIDString", CHARACTER, MAX_NETWORKID_LENGTH);
 			DefineField("m_oldOrigin", POSITION_VECTOR);
 			DefineField("m_vecSmoothedVelocity", VECTOR);
 			DefineField("m_iTargetVolume", INTEGER);
-			DefineField("m_rgItems", INTEGER, Constants.MAX_ITEMS);
+			DefineField("m_rgItems", INTEGER, MAX_ITEMS);
 			DefineField("m_flSwimTime", TIME);
 			DefineField("m_flDuckTime", TIME);
 			DefineField("m_flDuckJumpTime", TIME);
 			DefineField("m_flSuitUpdate", TIME);
-			DefineField("m_rgSuitPlayList", INTEGER, Constants.CSUITPLAYLIST);
+			DefineField("m_rgSuitPlayList", INTEGER, CSUITPLAYLIST);
 			DefineField("m_iSuitPlayNext", INTEGER);
-			DefineField("m_rgiSuitNoRepeat", INTEGER, Constants.CSUITNOREPEAT);   // suit sentence no repeat list
-			DefineField("m_rgflSuitNoRepeatTime", TIME, Constants.CSUITNOREPEAT); // how long to wait before allowing repeat
+			DefineField("m_rgiSuitNoRepeat", INTEGER, CSUITNOREPEAT);   // suit sentence no repeat list
+			DefineField("m_rgflSuitNoRepeatTime", TIME, CSUITNOREPEAT); // how long to wait before allowing repeat
 			DefineField("m_bPauseBonusProgress", BOOLEAN);
 			DefineField("m_iBonusProgress", INTEGER);
 			DefineField("m_iBonusChallenge", INTEGER);
 			DefineField("m_lastDamageAmount", INTEGER);
 			DefineField("m_tbdPrev", TIME);
 			DefineField("m_flStepSoundTime", FLOAT);
-			DefineField("m_szNetname", CHARACTER, Constants.MAX_PLAYER_NAME_LENGTH);
+			DefineField("m_szNetname", CHARACTER, MAX_PLAYER_NAME_LENGTH);
 			DefineField("m_idrowndmg", INTEGER);
 			DefineField("m_idrownrestored", INTEGER);
 			DefineField("m_nPoisonDmg", INTEGER);
@@ -313,7 +331,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_AirFinished", TIME);
 			DefineField("m_PainFinished", TIME);
 			DefineField("m_iPlayerLocked", INTEGER);
-			DefineField("m_hViewModel", EHANDLE, Constants.MAX_VIEWMODELS);
+			DefineField("m_hViewModel", EHANDLE, MAX_VIEWMODELS);
 			DefineField("m_flMaxspeed", FLOAT);
 			DefineField("m_flWaterJumpTime", TIME);
 			DefineField("m_vecWaterJumpVel", VECTOR);
@@ -324,7 +342,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_nDrownDmgRate", INTEGER);
 			DefineField("m_iSuicideCustomKillFlags", INTEGER);
 			DefineField("m_bitsDamageType", INTEGER);
-			DefineField("m_rgbTimeBasedDamage", BYTE, Constants.CDMG_TIMEBASED);
+			DefineField("m_rgbTimeBasedDamage", BYTE, CDMG_TIMEBASED);
 			DefineField("m_fLastPlayerTalkTime", FLOAT);
 			DefineField("m_hLastWeapon", EHANDLE);
 			DefineField("m_flOldPlayerZ", FLOAT);
@@ -341,7 +359,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_vNewVPhysicsPosition", VECTOR);
 			DefineField("m_vNewVPhysicsVelocity", VECTOR);
 			DefineField("m_bSinglePlayerGameEnding", BOOLEAN);
-			DefineField("m_szLastPlaceName", CHARACTER, Constants.MAX_PLACE_NAME_LENGTH);
+			DefineField("m_szLastPlaceName", CHARACTER, MAX_PLACE_NAME_LENGTH);
 			DefineField("m_autoKickDisabled", BOOLEAN);
 			DefineFunction("PlayerDeathThink");
 			//DefineINPUTFUNC("SetHealth", INTEGER);
@@ -435,7 +453,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineEmbeddedField("fog", "fogparams_t");
 			
 			BeginDataMap("audioparams_t");
-			DefineField("localSound", VECTOR, Constants.NUM_AUDIO_LOCAL_SOUNDS);
+			DefineField("localSound", VECTOR, NUM_AUDIO_LOCAL_SOUNDS);
 			DefineField("soundscapeIndex", INTEGER); // index of the current soundscape from soundscape.txt
 			DefineField("localBits", INTEGER);       // if bits 0,1,2,3 are set then position 0,1,2,3 are valid/used
 			DefineField("entIndex", INTEGER);        // the entity setting the soundscape
@@ -458,8 +476,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_flNewFarZ", FLOAT);
 			
 			BeginDataMap("CPlayerLocalData");
-			DefineField("m_chAreaBits", BYTE, Constants.MAX_AREA_STATE_BYTES);
-			DefineField("m_chAreaPortalBits", BYTE, Constants.MAX_AREA_STATE_BYTES);
+			DefineField("m_chAreaBits", BYTE, MAX_AREA_STATE_BYTES);
+			DefineField("m_chAreaPortalBits", BYTE, MAX_AREA_STATE_BYTES);
 			DefineField("m_iHideHUD", INTEGER);
 			DefineField("m_flFOVRate", FLOAT);
 			DefineField("m_vecOverViewpoint", VECTOR);

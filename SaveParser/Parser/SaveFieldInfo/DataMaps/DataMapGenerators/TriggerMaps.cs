@@ -5,6 +5,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 	
 	public class TriggerMaps : DataMapGenerator {
 		
+		public const int cchMapNameMost = 32;
+		
+		
 		protected override void CreateDataMaps() {
 			BeginDataMap("CTriggerGravity", "CBaseTrigger");
 			LinkNamesToMap("trigger_gravity");
@@ -28,8 +31,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			
 			BeginDataMap("CChangeLevel", "CBaseTrigger");
 			LinkNamesToMap("trigger_changelevel");
-			DefineField("m_szMapName", CHARACTER, Constants.cchMapNameMost);
-			DefineField("m_szLandmarkName", CHARACTER, Constants.cchMapNameMost);
+			DefineField("m_szMapName", CHARACTER, cchMapNameMost);
+			DefineField("m_szLandmarkName", CHARACTER, cchMapNameMost);
 			DefineFunction("TouchChangeLevel");
 			//DefineINPUTFUNC("ChangeLevel", VOID);
 			DefineOutput("m_OnChangeLevel", "OnChangeLevel");

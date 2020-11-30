@@ -10,6 +10,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 
 		public const int VEHICLE_MAX_AXLE_COUNT = 4;
 		public const int VEHICLE_MAX_WHEEL_COUNT = 2 * VEHICLE_MAX_AXLE_COUNT;
+		public const int VEHICLE_MAX_GEAR_COUNT = 6;
 		
 
 		// todo this returns fields that don't format the ToString with spaces - "custom materialIndex: metal"
@@ -201,7 +202,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("axleRatio", FLOAT); // ratio of engine rev to axle rev
 			DefineField("throttleTime", FLOAT); // time to reach full throttle in seconds
 			DefineField("gearCount", INTEGER);
-			DefineField("gearRatio", FLOAT, Constants.VEHICLE_MAX_GEAR_COUNT);
+			DefineField("gearRatio", FLOAT, VEHICLE_MAX_GEAR_COUNT);
 			DefineField("shiftUpRPM", FLOAT); // max rpm to switch to a higher gear
 			DefineField("shiftDownRPM", FLOAT); // min rmp to switch to a lower gear
 			DefineField("boostForce", FLOAT);

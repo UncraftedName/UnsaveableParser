@@ -5,6 +5,11 @@ using static SaveParser.Parser.SaveFieldInfo.FieldType;
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 	
 	public sealed class AI_Maps : DataMapGenerator {
+		
+		public const int PORTAL_FLOOR_TURRET_NUM_ROPES = 4;
+		public const int SECURITY_CAMERA_NUM_ROPES = 2;
+		public const int SNPCINT_NUM_PHASES = 3;
+		
 
 		// this is a class that extends from CUtlVector<CAI_InterestTarget_t> but doesn't have its own datamap
 		private void Define_CAI_InterestTarget(string fieldName)
@@ -155,7 +160,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("flDistSqr", FLOAT);
 			DefineField("iszMyWeapon", STRING);
 			DefineField("iszTheirWeapon", STRING);
-			DefineEmbeddedField("sPhases", "ScriptedNPCInteraction_Phases_t", Constants.SNPCINT_NUM_PHASES);
+			DefineEmbeddedField("sPhases", "ScriptedNPCInteraction_Phases_t", SNPCINT_NUM_PHASES);
 			DefineField("matDesiredLocalToWorld", VMATRIX);
 			DefineField("bValidOnCurrentEnemy", BOOLEAN);
 			DefineField("flNextAttemptTime", TIME);
@@ -420,7 +425,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			
 			BeginDataMap("CNPC_SecurityCamera", "CNPCBaseInteractive<CAI_BaseNPC>");
 			LinkNamesToMap("npc_security_camera");
-			DefineField("m_hRopes", EHANDLE, Constants.SECURITY_CAMERA_NUM_ROPES);
+			DefineField("m_hRopes", EHANDLE, SECURITY_CAMERA_NUM_ROPES);
 			DefineField("m_hEyeGlow", EHANDLE);
 			DefineField("m_bAutoStart", BOOLEAN);
 			DefineField("m_bActive", BOOLEAN);
@@ -504,7 +509,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			
 			BeginDataMap("CNPC_Portal_FloorTurret", "CNPC_FloorTurret");
 			LinkNamesToMap("npc_portal_turret_floor");
-			DefineField("m_hRopes", EHANDLE, Constants.PORTAL_FLOOR_TURRET_NUM_ROPES);
+			DefineField("m_hRopes", EHANDLE, PORTAL_FLOOR_TURRET_NUM_ROPES);
 			DefineField("m_bOutOfAmmo", BOOLEAN);
 			DefineField("m_bLaserOn", BOOLEAN);
 			DefineField("m_sLaserHaloSprite", INTEGER);

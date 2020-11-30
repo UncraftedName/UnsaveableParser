@@ -3,21 +3,31 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using SaveParser.Parser;
 using SaveParser.Parser.SaveFieldInfo;
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
-using static SaveParser.Parser.Constants;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
+using static SaveParser.Utils.BitStreams.BitStreamReader.EncodeConstants;
 
 // ReSharper disable CompareOfFloatsByEqualityOperator
 
 namespace SaveParser.Utils.BitStreams {
 	
 	public partial struct BitStreamReader {
-		
+
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
+		public static class EncodeConstants {
+			public const int TICK_NEVER_THINK = -1;
+			public const int TICK_NEVER_THINK_ENCODE = int.MaxValue - 3;
+			public const float FLT_MAX = 3.402823466e+38f;
+			public const float ZERO_TIME = FLT_MAX * 0.5f;
+			public const float INVALID_TIME = FLT_MAX * -1.0f;
+		}
+
 		public string? ReadSymbol(SaveInfo info) => info.ParseContext.CurrentSymbolTable![ReadSShort()];
 
 

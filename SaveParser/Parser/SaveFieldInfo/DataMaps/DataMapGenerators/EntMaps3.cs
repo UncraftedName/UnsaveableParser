@@ -5,6 +5,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 	
 	public class EntMaps3 : DataMapGenerator {
 		
+		public const int kMAXCONTROLPOINTS = 63;
+		public const int MAX_SCENE_FILENAME = 128;
+		
+		
 		protected override void CreateDataMaps() {
 			BeginDataMap("CProp_Portal", "CBaseAnimating");
 			LinkNamesToMap("prop_portal");
@@ -140,7 +144,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_bHadOwner", BOOLEAN);
 			DefineField("m_flPostSpeakDelay", FLOAT);
 			DefineField("m_flPreDelay", FLOAT);
-			DefineField("m_szInstanceFilename", CHARACTER, Constants.MAX_SCENE_FILENAME);
+			DefineField("m_szInstanceFilename", CHARACTER, MAX_SCENE_FILENAME);
 			DefineField("m_bIsBackground", BOOLEAN);
 			
 			BeginDataMap("CBaseCombatWeapon", "CBaseAnimating");
@@ -338,7 +342,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_iControlPointParents[4]", "cpoint5_parent", CHARACTER);
 			DefineKeyField("m_iControlPointParents[5]", "cpoint6_parent", CHARACTER);
 			DefineKeyField("m_iControlPointParents[6]", "cpoint7_parent", CHARACTER);
-			DefineField("m_hControlPointEnts", EHANDLE, Constants.kMAXCONTROLPOINTS);
+			DefineField("m_hControlPointEnts", EHANDLE, kMAXCONTROLPOINTS);
 			//DefineINPUTFUNC("Start", VOID);
 			//DefineINPUTFUNC("Stop", VOID);
 			//DEFINE_THINKFUNC( StartParticleSystemThink ),

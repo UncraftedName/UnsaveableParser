@@ -4,6 +4,12 @@ using static SaveParser.Parser.SaveFieldInfo.FieldType;
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 	
 	public sealed class EntMaps2 : DataMapGenerator {
+
+		public const int SS_NUM_STATES = 20;
+		public const int VS_NUM_SOUNDS = 9;
+		public const int MATERIAL_MODIFY_STRING_SIZE = 255;
+		public const int MAX_WORLD_SOUNDS_SP = 64;
+		
 		
 		protected override void CreateDataMaps() {
 			BeginDataMap("CSound");
@@ -24,7 +30,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_iFreeSound", INTEGER);
 			DefineField("m_iActiveSound", INTEGER);
 			DefineField("m_cLastActiveSounds", INTEGER);
-			DefineEmbeddedField("m_SoundPool", "CSound", Constants.MAX_WORLD_SOUNDS_SP);
+			DefineEmbeddedField("m_SoundPool", "CSound", MAX_WORLD_SOUNDS_SP);
 			
 			DataMapProxy("CServerOnlyEntity", "CBaseEntity");
 
@@ -212,9 +218,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			
 			BeginDataMap("CMaterialModifyControl", "CBaseEntity");
 			LinkNamesToMap("material_modify_control");
-			DefineField("m_szMaterialName", CHARACTER, Constants.MATERIAL_MODIFY_STRING_SIZE);
-			DefineField("m_szMaterialVar", CHARACTER, Constants.MATERIAL_MODIFY_STRING_SIZE);
-			DefineField("m_szMaterialVarValue", CHARACTER, Constants.MATERIAL_MODIFY_STRING_SIZE);
+			DefineField("m_szMaterialName", CHARACTER, MATERIAL_MODIFY_STRING_SIZE);
+			DefineField("m_szMaterialVar", CHARACTER, MATERIAL_MODIFY_STRING_SIZE);
+			DefineField("m_szMaterialVarValue", CHARACTER, MATERIAL_MODIFY_STRING_SIZE);
 			DefineField("m_iFrameStart", INTEGER);
 			DefineField("m_iFrameEnd", INTEGER);
 			DefineField("m_bWrap", BOOLEAN);
@@ -279,11 +285,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("gearLimit", INTEGER);
 			
 			BeginDataMap("vehiclesounds_t");
-			DefineField("iszSound", STRING, Constants.VS_NUM_SOUNDS);
+			DefineField("iszSound", STRING, VS_NUM_SOUNDS);
 			DefineEmbeddedVector("pGears", "vehicle_gear_t");
 			DefineEmbeddedVector("crashSounds", "vehicle_crashsound_t");
-			DefineField("iszStateSounds", STRING, Constants.SS_NUM_STATES);
-			DefineField("minStateTime", FLOAT, Constants.SS_NUM_STATES);
+			DefineField("iszStateSounds", STRING, SS_NUM_STATES);
+			DefineField("minStateTime", FLOAT, SS_NUM_STATES);
 			
 			BeginDataMap("CPassengerInfo");
 			DefineField("m_hPassenger", EHANDLE);

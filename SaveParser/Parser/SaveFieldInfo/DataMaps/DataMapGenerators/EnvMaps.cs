@@ -412,7 +412,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			LinkNamesToMap("_firesmoke");
 			DefineField("m_flStartScale", FLOAT);
 			DefineField("m_flScale", FLOAT);
-			DefineField("m_flScaleTime", FLOAT);
+			DefineField("m_flScaleTime", FLOAT); // this collides with TIME m_flScaleTime from CBaseFire
 			DefineField("m_nFlags", INTEGER);
 			DefineField("m_nFlameModelIndex", MODELINDEX);
 			DefineField("m_nFlameFromAboveModelIndex", MODELINDEX);

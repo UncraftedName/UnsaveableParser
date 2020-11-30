@@ -6,6 +6,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 	
 	public class EntMaps4 : DataMapGenerator {
 		
+		public const int MAX_BEAM_ENTS = 10;
+		
+		
 		protected override void CreateDataMaps() {
 			DataMapProxy("CInfoTarget", "CPointEntity");
 			LinkNamesToMap("info_target");
@@ -81,8 +84,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_nBeamType", INTEGER);
 			DefineField("m_nBeamFlags", INTEGER);
 			DefineField("m_nNumBeamEnts", INTEGER);
-			DefineField("m_hAttachEntity", EHANDLE, Constants.MAX_BEAM_ENTS);
-			DefineField("m_nAttachIndex", INTEGER, Constants.MAX_BEAM_ENTS);
+			DefineField("m_hAttachEntity", EHANDLE, MAX_BEAM_ENTS);
+			DefineField("m_nAttachIndex", INTEGER, MAX_BEAM_ENTS);
 			DefineField("m_nMinDXLevel", INTEGER);
 			DefineField("m_fWidth", FLOAT);
 			DefineField("m_fEndWidth", FLOAT);

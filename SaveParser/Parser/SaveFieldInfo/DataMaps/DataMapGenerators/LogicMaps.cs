@@ -4,6 +4,9 @@ using static SaveParser.Parser.SaveFieldInfo.FieldType;
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 	
 	public sealed class LogicMaps : DataMapGenerator {
+
+		public const int MAX_LOGIC_CASES = 16;
+		
 		
 		protected override void CreateDataMaps() {
 			BeginDataMap("CLogicAuto", "CBaseEntity");
@@ -171,7 +174,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_nCase[15]", "Case16", STRING);
 			DefineField("m_nShuffleCases", INTEGER);
 			DefineField("m_nLastShuffleCase", INTEGER);
-			DefineField("m_uchShuffleCaseMap", CHARACTER, Constants.MAX_LOGIC_CASES);
+			DefineField("m_uchShuffleCaseMap", CHARACTER, MAX_LOGIC_CASES);
 			DefineInputFunc("InValue", "InputValue", INPUT);
 			DefineInputFunc("PickRandom", "InputPickRandom", VOID);
 			DefineInputFunc("PickRandomShuffle", "InputPickRandomShuffle", VOID);

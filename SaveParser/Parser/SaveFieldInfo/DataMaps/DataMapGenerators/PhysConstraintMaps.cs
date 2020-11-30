@@ -7,6 +7,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 
 		public const int MAX_NUM_PANELS = 16;
 		
+		
 		protected override void CreateDataMaps() {
 			BeginDataMap("CPhysConstraint", "CLogicalEntity");
 			DefinePhysPtr("m_pConstraint");
