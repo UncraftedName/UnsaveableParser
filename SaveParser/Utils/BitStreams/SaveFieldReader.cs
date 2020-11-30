@@ -37,7 +37,7 @@ namespace SaveParser.Utils.BitStreams {
 					result = ReadDataMapRecursive(map!, info);
 					return true;
 				} catch (Exception e) {
-					info.AddError($"exception while reading map \"{dataMapName}\" recursively: {e.Message}");
+					info.AddError($"exception while reading datamap \"{dataMapName}\" recursively: {e.Message}");
 				}
 			}
 			result = null;
@@ -48,15 +48,15 @@ namespace SaveParser.Utils.BitStreams {
 		public ParsedDataMap ReadDataMapRecursive(DataMap map, SaveInfo info) {
 			if (map.BaseMap == null)
 				return ReadDataMap(map, info);
-			ParsedDataMap baseFields = ReadDataMapRecursive(map.BaseMap, info);
-			ParsedDataMap thisFields = ReadDataMap(map, info);
-			thisFields.AddBaseParsedMap(baseFields);
-			return thisFields;
+			ParsedDataMap baseMap = ReadDataMapRecursive(map.BaseMap, info);
+			ParsedDataMap thisMap = ReadDataMap(map, info);
+			thisMap.AddBaseParsedMap(baseMap);
+			return thisMap;
 		}
 
 
 		public ParsedDataMap ReadDataMap(string dataMapName, SaveInfo info)
-			=> ReadDataMap(GlobalDataMapCollection.MapsByName[dataMapName], info);
+			=> ReadDataMapRecursive(GlobalDataMapCollection.MapsByName[dataMapName], info);
 		
 		
 		/* A small header that contains the size of this block and sometimes has a symbol which has the name of whatever
@@ -91,10 +91,9 @@ namespace SaveParser.Utils.BitStreams {
 		}
 
 
-
 		public ParsedDataMap ReadDataMap(DataMap map, SaveInfo info) {
 			if (ReadSShort() != 4)
-				throw new ConstraintException("first entry in data map should be 4");
+				throw new ConstraintException($"bad first value while parsing datamap \"{map.Name}\", expected 4");
 			string sym = ReadSymbol(info)!;
 			if (sym != map.Name) {
 				GlobalDataMapCollection.MapsByName.TryGetValue(sym, out DataMap? cmpMap);
@@ -116,7 +115,7 @@ namespace SaveParser.Utils.BitStreams {
 							ret.AddSaveField(f);
 						}
 					} catch (Exception e) {
-						info.AddError($"exception while reading field {s}: {e.Message}");
+						info.AddError($"exception while reading field {s} from datamap \"{map.Name}\": {e.Message}");
 						skip = true;
 					}
 				} else {

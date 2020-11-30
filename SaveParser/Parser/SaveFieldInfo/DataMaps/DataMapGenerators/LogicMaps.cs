@@ -142,6 +142,56 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInputFunc("DisableCappedPhysicsDamage", "InputDisableCappedPhysicsDamage", VOID);
 			DefineInputFunc("SetLocatorTargetEntity", "InputSetLocatorTargetEntity", STRING);
 			DefineField("m_hPlayer", EHANDLE);
+			
+			BeginDataMap("CPhysConvert", "CLogicalEntity");
+			LinkNamesToMap("phys_convert");
+			DefineKeyField("m_swapModel", "swapmodel", STRING);
+			DefineKeyField("m_flMassOverride", "massoverride", FLOAT);
+			DefineInputFunc("ConvertTarget", "InputConvertTarget", VOID);
+			DefineOutput("m_OnConvert", "OnConvert");
+			
+			// compares a single string input to up to 16 case values, firing the corresponding output or default
+			BeginDataMap("CLogicCase", "CLogicalEntity");
+			LinkNamesToMap("logic_case");
+			DefineKeyField("m_nCase[0]", "Case01", STRING);
+			DefineKeyField("m_nCase[1]", "Case02", STRING);
+			DefineKeyField("m_nCase[2]", "Case03", STRING);
+			DefineKeyField("m_nCase[3]", "Case04", STRING);
+			DefineKeyField("m_nCase[4]", "Case05", STRING);
+			DefineKeyField("m_nCase[5]", "Case06", STRING);
+			DefineKeyField("m_nCase[6]", "Case07", STRING);
+			DefineKeyField("m_nCase[7]", "Case08", STRING);
+			DefineKeyField("m_nCase[8]", "Case09", STRING);
+			DefineKeyField("m_nCase[9]", "Case10", STRING);
+			DefineKeyField("m_nCase[10]", "Case11", STRING);
+			DefineKeyField("m_nCase[11]", "Case12", STRING);
+			DefineKeyField("m_nCase[12]", "Case13", STRING);
+			DefineKeyField("m_nCase[13]", "Case14", STRING);
+			DefineKeyField("m_nCase[14]", "Case15", STRING);
+			DefineKeyField("m_nCase[15]", "Case16", STRING);
+			DefineField("m_nShuffleCases", INTEGER);
+			DefineField("m_nLastShuffleCase", INTEGER);
+			DefineField("m_uchShuffleCaseMap", CHARACTER, Constants.MAX_LOGIC_CASES);
+			DefineInputFunc("InValue", "InputValue", INPUT);
+			DefineInputFunc("PickRandom", "InputPickRandom", VOID);
+			DefineInputFunc("PickRandomShuffle", "InputPickRandomShuffle", VOID);
+			DefineOutput("m_OnCase[0]", "OnCase01");
+			DefineOutput("m_OnCase[1]", "OnCase02");
+			DefineOutput("m_OnCase[2]", "OnCase03");
+			DefineOutput("m_OnCase[3]", "OnCase04");
+			DefineOutput("m_OnCase[4]", "OnCase05");
+			DefineOutput("m_OnCase[5]", "OnCase06");
+			DefineOutput("m_OnCase[6]", "OnCase07");
+			DefineOutput("m_OnCase[7]", "OnCase08");
+			DefineOutput("m_OnCase[8]", "OnCase09");
+			DefineOutput("m_OnCase[9]", "OnCase10");
+			DefineOutput("m_OnCase[10]", "OnCase11");
+			DefineOutput("m_OnCase[11]", "OnCase12");
+			DefineOutput("m_OnCase[12]", "OnCase13");
+			DefineOutput("m_OnCase[13]", "OnCase14");
+			DefineOutput("m_OnCase[14]", "OnCase15");
+			DefineOutput("m_OnCase[15]", "OnCase16");
+			DefineOutput("m_OnDefault", "OnDefault");
 		}
 	}
 }

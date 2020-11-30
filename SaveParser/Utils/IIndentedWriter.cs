@@ -242,12 +242,16 @@ namespace SaveParser.Utils {
 
 
 		public static void EnumerableAppendHelper<T>(
-			IEnumerable<T> appendables,
+			IEnumerable<T>? appendables,
 			IIndentedWriter iw,
 			bool lastField = true,
 			bool enumerate = false
 		) where T : IAppendable
 		{
+			if (appendables == null) {
+				iw.Append("null");
+				return;
+			}
 			iw.FutureIndent++;
 			int i = 0;
 			foreach (var appendable in appendables) {

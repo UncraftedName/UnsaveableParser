@@ -52,8 +52,12 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		
 		// a wee bit silly
 		public override void AppendToWriter(IIndentedWriter iw) {
+			if (Field == null) {
+				iw.Append("null");
+				return;
+			}
 			switch (Desc.FieldType) {
-				case FieldType.EMBEDDED: {
+				case FieldType.EMBEDDED:
 					iw.Append($"{Desc.EmbeddedMap!.Name}");
 					if (ElemCount == 1) {
 						if (!(Field is ParsedDataMap))
@@ -62,20 +66,15 @@ namespace SaveParser.Parser.SaveFieldInfo {
 						EnumerableAppendHelper(((ParsedDataMap)FieldAsObj).ParsedFields.Values, iw);
 					} else {
 						iw.Append($"[{ElemCount}] {Desc.Name}:");
-						EnumerableAppendHelper((FieldAsObj as IEnumerable<ParsedDataMap>)!, iw);
+						EnumerableAppendHelper(FieldAsObj as IEnumerable<ParsedDataMap>, iw);
 					}
 					return;
-				}
 				case FieldType.CUSTOM:
-					iw.Append($"{Desc}: ");
+					iw.Append($"{Desc}: "); //todo custom spacing doesn't always work
 					break;
 				default:
 					iw.Append($"{Desc.TypeString.PadRight(12)} {Desc.Name}: ");
 					break;
-			}
-			if (Field == null) {
-				iw.Append("null");
-				return;
 			}
 			if (ElemCount == 1) {
 				if (Field is IAppendable ap)

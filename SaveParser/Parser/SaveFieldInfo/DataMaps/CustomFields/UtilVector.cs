@@ -62,6 +62,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 				EmbeddedMap = embMap
 			};
 			
+			// Sometimes the count is one but the read result does not have an element. I'm not sure if this is
+			// intended or not but by default that will cause an exception.
 			DataMap vecMap = new DataMap(embMap == null ? "elems" : "uv", new[] {elemDesc});
 			T[] res = new T[count];
 			for (int i = 0; i < count; i++) {

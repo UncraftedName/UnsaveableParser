@@ -4,6 +4,8 @@ using static SaveParser.Parser.SaveFieldInfo.FieldType;
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 	
 	public class PhysConstraintMaps : DataMapGenerator {
+
+		public const int MAX_NUM_PANELS = 16;
 		
 		protected override void CreateDataMaps() {
 			BeginDataMap("CPhysConstraint", "CLogicalEntity");
@@ -253,6 +255,29 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_bIsWalkableSetByPropData", BOOLEAN);
 			DefineField("m_hLastAttacker", EHANDLE);
 			DefineField("m_hFlareEnt", EHANDLE);
+			
+			BeginDataMap("CBreakableSurface", "CBreakable");
+			LinkNamesToMap("func_breakable_surf");
+			DefineKeyField("m_nSurfaceType", "surfacetype", INTEGER);
+			DefineKeyField("m_nFragility", "fragility", INTEGER);
+			DefineKeyField("m_vLLVertex", "lowerleft", VECTOR);
+			DefineKeyField("m_vULVertex", "upperleft", VECTOR);
+			DefineKeyField("m_vLRVertex", "lowerright", VECTOR);
+			DefineKeyField("m_vURVertex", "upperright", VECTOR);
+			DefineKeyField("m_nQuadError", "error", INTEGER);
+			DefineField("m_nNumWide", INTEGER);
+			DefineField("m_nNumHigh", INTEGER);
+			DefineField("m_flPanelWidth", FLOAT);
+			DefineField("m_flPanelHeight", FLOAT);
+			DefineField("m_vNormal", VECTOR);
+			DefineField("m_vCorner", POSITION_VECTOR);
+			DefineField("m_bIsBroken", BOOLEAN);
+			DefineField("m_nNumBrokenPanes", INTEGER);
+			DefineField("m_flSupport", FLOAT, MAX_NUM_PANELS * MAX_NUM_PANELS);
+			DefineField("m_RawPanelBitVec", BOOLEAN, MAX_NUM_PANELS * MAX_NUM_PANELS);
+			DefineThinkFunc("BreakThink");
+			DefineEntityFunc("SurfaceTouch");
+			DefineInputFunc("Shatter", "InputShatter", VECTOR);
 		}
 	}
 }

@@ -49,9 +49,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			_baseParsedMap = dataMap;
 			_combinedFields = new OrderedDictionary<string, ParsedSaveField>((IOrderedDictionary<string, ParsedSaveField>)_baseParsedMap.ParsedFields);
 			// here we have the same duplicate key problem as above, but now it's with A.field == B.field where A : B
-			foreach (var (key, value) in _thisFields)
-				if (!_combinedFields.TryAdd(key, value) && !Equals(_combinedFields[key].FieldAsObj, value.FieldAsObj))
-					throw new ConstraintException($"two duplicate keys with different values in child/parent classes for key \"{key}\"");
+			foreach (var (key, value) in _thisFields) {
+				if (!_combinedFields.TryAdd(key, value) && !Equals(_combinedFields[key].FieldAsObj, value.FieldAsObj)) {
+					// formatting is dumb, too bad!
+					throw new ConstraintException($"duplicate field names, {DataMap.Name}::{{{_combinedFields[key].ToString()}}} does not match {dataMap.DataMap.Name}::{{{value.ToString()}}}");
+				}
+			}
 		}
 		
 		public ParsedSaveField<T> GetField<T>(string name) {

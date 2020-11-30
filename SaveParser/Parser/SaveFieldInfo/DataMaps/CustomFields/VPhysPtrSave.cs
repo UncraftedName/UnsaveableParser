@@ -97,6 +97,60 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 			CONSTRAINT_LENGTH,
 		}
 	}
+
+
+	public class PhysicsMotionController : RestoredVPhysicsObject {
+		
+		public ParsedDataMap MotionController;
+		
+		
+		public PhysicsMotionController(TypeDesc desc) : base(desc) {}
+		
+
+		public override void AppendToWriter(IIndentedWriter iw) {
+			base.AppendToWriter(iw);
+			iw.FutureIndent++;
+			iw.AppendLine();
+			MotionController.AppendToWriter(iw);
+			iw.FutureIndent--;
+		}
+	}
+
+
+	public class PhysicsSpring : RestoredVPhysicsObject {
+
+		public ParsedDataMap Spring;
+		
+
+		public PhysicsSpring(TypeDesc desc) : base(desc) {}
+
+
+		public override void AppendToWriter(IIndentedWriter iw) {
+			base.AppendToWriter(iw);
+			iw.FutureIndent++;
+			iw.AppendLine();
+			Spring.AppendToWriter(iw);
+			iw.FutureIndent--;
+		}
+	}
+
+
+	public class PhysicsVehicleController : RestoredVPhysicsObject {
+
+		public ParsedDataMap Controller;
+		
+		
+		public PhysicsVehicleController(TypeDesc desc) : base(desc) {}
+
+
+		public override void AppendToWriter(IIndentedWriter iw) {
+			base.AppendToWriter(iw);
+			iw.FutureIndent++;
+			iw.AppendLine();
+			Controller.AppendToWriter(iw);
+			iw.FutureIndent--;
+		}
+	}
 	
 	
 	public static class CPhysicsEnvironment {
@@ -130,7 +184,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 				case PIID_IPHYSICSFLUIDCONTROLLER:
 					break;
 				case PIID_IPHYSICSSPRING:
-					break;
+					var s = bsr.ReadDataMap("vphysics_save_cphysicsspring_t", saveInfo);
+					return new PhysicsSpring(typeDesc) {OldObj = oldObj, Spring = s};
 				case PIID_IPHYSICSCONSTRAINTGROUP:
 					var gt = bsr.ReadDataMap("vphysics_save_cphysicsconstraintgroup_t", saveInfo);
 					return new PhysicsConstraintGroup(typeDesc) {OldObj = oldObj, GroupTemplate = gt};
@@ -152,9 +207,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 				case PIID_IPHYSICSPLAYERCONTROLLER:
 					break;
 				case PIID_IPHYSICSMOTIONCONTROLLER:
-					break;
+					var mc = bsr.ReadDataMap("vphysics_save_motioncontroller_t", saveInfo);
+					return new PhysicsMotionController(typeDesc) {OldObj = oldObj, MotionController = mc};
 				case PIID_IPHYSICSVEHICLECONTROLLER:
-					break;
+					var vc = bsr.ReadDataMap("vphysics_save_cvehiclecontroller_t", saveInfo);
+					return new PhysicsVehicleController(typeDesc) {OldObj = oldObj, Controller = vc};
 				case PIID_IPHYSICSGAMETRACE:
 					break;
 				default:

@@ -670,6 +670,18 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInputFunc("Enable", "InputEnable", VOID);
 			DefineInputFunc("Disable", "InputDisable", VOID);
 			DefineInputFunc("SetIdleModifier", "InputSetIdleModifier", FLOAT);
+			
+			BeginDataMap("CNPC_Bullseye", "CAI_BaseNPC");
+			LinkNamesToMap("npc_bullseye");
+			DefineField("m_hPainPartner", EHANDLE);
+			DefineKeyField("m_fAutoaimRadius", "autoaimradius", FLOAT);
+			DefineKeyField("m_flFieldOfView", "minangle", FLOAT);
+			DefineKeyField("m_flMinDistValidEnemy", "mindist", FLOAT);
+			DefineThinkFunc("BullseyeThink");
+			DefineInputFunc("InputTargeted", "InputTargeted", VOID);
+			DefineInputFunc("InputReleased", "InputReleased", VOID);
+			DefineOutput("m_OnTargeted", "OnTargeted");
+			DefineOutput("m_OnReleased", "OnReleased");
 		}
 	}
 }

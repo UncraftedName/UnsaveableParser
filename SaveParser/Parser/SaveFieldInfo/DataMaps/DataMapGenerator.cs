@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
 using static SaveParser.Parser.SaveFieldInfo.DescFlags;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
@@ -35,7 +34,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 
 
 		private void AddFieldPrivate(TypeDesc td)
-			=> CurMap.FieldDict.Add(td.Name, td);
+			=> CurMap.FieldDictInternal.Add(td.Name, td);
 
 
 		protected void BeginDataMap(string className, string? baseClass = null) {
@@ -85,7 +84,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		protected void DefineOutput(string name, string outputName) {
 			var td = new TypeDesc(name, FTYPEDESC_SAVE | FTYPEDESC_KEY | FTYPEDESC_OUTPUT, EventsSave.Restore, outputName: outputName);
 			AddFieldPrivate(td);
-			CurMap.Functions.Add(new OutputDataMapFunc(td, name, outputName));
+			CurMap.FunctionsInternal.Add(new OutputDataMapFunc(td, name, outputName));
 		}
 
 
@@ -108,10 +107,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		
 		// not relevant for save files, but i'll save these anyways
 		protected void DefineInputFunc(string inputName, string inputFunc, FieldType fieldType) {
-			DataMaps[^1].Functions.Add(new InputDataMapFunc(inputFunc, inputName, fieldType));
+			CurMap.FunctionsInternal.Add(new InputDataMapFunc(inputFunc, inputName, fieldType));
 		}
 		
-		// i don't even know what these are for
+		// i don't even know what these are for, but they seem to be implemented the same as DEFINE_FUNCTION
 		protected void DefineThinkFunc(string funcName) {}
 		protected void DefineEntityFunc(string funcName) {}
 		protected void DefineUseFunc(string funcName) {}
@@ -173,7 +172,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			CustomReadFunc vecReadFunc =
 				(CustomReadFunc)typeof(UtilVector<>).MakeGenericType(TypeDesc.GetNetTypeFromFieldType(elemFieldType))
 				.GetMethods(BindingFlags.Static | BindingFlags.Public)
-				.Single(info => info.Name == nameof(UtilVector<object>.Restore)
+				.Single(info => info.Name == nameof(UtilVector<object>.Restore) // dummy generic type
 								&& ParserUtils.IsMethodCompatibleWithDelegate<CustomReadFunc>(info))!
 				.CreateDelegate(typeof(CustomReadFunc));
 			

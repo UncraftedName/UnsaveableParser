@@ -7,29 +7,31 @@ using SaveParser.Utils;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 
-	public class DataMap {
+	public class DataMap : IEquatable<DataMap> {
 
 		public readonly string Name;
 		public DataMap? BaseMap {get;internal set;}
-		public Dictionary<string, TypeDesc> FieldDict {get;}
-		public int TotalFieldCount => FieldDict.Count + (BaseMap?.TotalFieldCount ?? 0);
-		public List<DataMapFunc> Functions {get;}
+		internal readonly Dictionary<string, TypeDesc> FieldDictInternal;
+		public IReadOnlyDictionary<string, TypeDesc> FieldDict => FieldDictInternal;
+		public int TotalFieldCount => FieldDictInternal.Count + (BaseMap?.TotalFieldCount ?? 0);
+		public readonly List<DataMapFunc> FunctionsInternal;
+		public IReadOnlyList<DataMapFunc> Functions => FunctionsInternal;
 
 
 		// other fields are populated after initialization
 		internal DataMap(string name, IEnumerable<TypeDesc>? dataDesc = null) {
 			if (dataDesc == null) {
-				FieldDict = new Dictionary<string, TypeDesc>();
+				FieldDictInternal = new Dictionary<string, TypeDesc>();
 			} else {
 				try {
-					FieldDict = dataDesc.ToDictionary(field => field.Name);
+					FieldDictInternal = dataDesc.ToDictionary(field => field.Name);
 				} catch (Exception e) {
 					Console.Out.WriteLineColored($"dictionary threw exception while creating datamap \"{name}\": {e.Message}");
 					throw;
 				}
 			}
 			Name = name;
-			Functions = new List<DataMapFunc>();
+			FunctionsInternal = new List<DataMapFunc>();
 		}
 
 
@@ -37,11 +39,44 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 
 
 		public override string ToString() {
-			StringBuilder sb = new StringBuilder($"{{{Name}, {FieldDict.Count} fields");
+			StringBuilder sb = new StringBuilder($"{{{Name}, {FieldDictInternal.Count} fields");
 			if (BaseMap != null)
 				sb.Append($" ({TotalFieldCount} total)");
 			sb.Append('}');
 			return sb.ToString();
+		}
+
+
+		public bool Equals(DataMap? other) {
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return Name == other.Name
+				   && Equals(BaseMap, other.BaseMap)
+				   && FieldDictInternal.Count == other.FieldDictInternal.Count && !FieldDictInternal.Except(other.FieldDictInternal).Any()
+				   && Functions.SequenceEqual(other.Functions);
+		}
+
+
+		public override bool Equals(object? obj) {
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != this.GetType()) return false;
+			return Equals((DataMap)obj);
+		}
+
+
+		public override int GetHashCode() {
+			return HashCode.Combine(Name, BaseMap, FieldDictInternal, Functions);
+		}
+
+
+		public static bool operator ==(DataMap? left, DataMap? right) {
+			return Equals(left, right);
+		}
+
+
+		public static bool operator !=(DataMap? left, DataMap? right) {
+			return !Equals(left, right);
 		}
 	}
 

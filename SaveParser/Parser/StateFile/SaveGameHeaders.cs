@@ -8,36 +8,36 @@ namespace SaveParser.Parser.StateFile {
 	public abstract class SaveGameHeader : SaveComponent {
 		
 		public readonly ParsedDataMap DataHeader;
-		public readonly string Category;
+		public string Name => (CharArray)DataHeader.GetField<CharArray>("szName");
+		
 
-		protected SaveGameHeader(SourceSave? saveRef, ParsedDataMap dataHeader, string category) : base(saveRef) {
+		protected SaveGameHeader(SourceSave? saveRef, ParsedDataMap dataHeader) : base(saveRef) {
 			DataHeader = dataHeader;
-			Category = category;
 		}
 
 
-		public static SaveGameHeader? CreateForCategory(SourceSave? saveRef, ParsedDataMap dataHeader) {
-			CharArray category = dataHeader.GetField<CharArray>("szName");
-			switch (category) {
+		public static SaveGameHeader? CreateFromHeaderInfo(SourceSave? saveRef, ParsedDataMap dataHeader) {
+			CharArray name = dataHeader.GetField<CharArray>("szName");
+			switch (name) {
 				case "Entities":
-					return new ETableHeader(saveRef, dataHeader, category);
+					return new ETableHeader(saveRef, dataHeader);
 				case "Physics":
-					return new PhysicsInfoHeader(saveRef, dataHeader, category);
+					return new PhysicsInfoHeader(saveRef, dataHeader);
 				case "AI":
 				case "Templates":
 				case "ResponseSystem":
 				case "Commentary":
 				case "EventQueue":
 				case "Achievement":
-					return new VersionableSaveGameHeader(saveRef, dataHeader, category);
+					return new VersionableSaveGameHeader(saveRef, dataHeader);
 				default:
-					saveRef!.SaveInfo.AddError($"unknown header category: {category}");
+					saveRef!.SaveInfo.AddError($"unknown header name: {name}");
 					return null;
 			}
 		}
 
 		public override void AppendToWriter(IIndentedWriter iw) {
-			iw.Append($"category: {Category}, ");
+			iw.Append($"name: {Name}, ");
 		}
 	}
 
@@ -47,8 +47,7 @@ namespace SaveParser.Parser.StateFile {
 		public ParsedDataMap[] EntHeaders;
 		
 
-		public ETableHeader(SourceSave? saveRef, ParsedDataMap dataHeader, string category)
-			: base(saveRef, dataHeader, category) {}
+		public ETableHeader(SourceSave? saveRef, ParsedDataMap dataHeader) : base(saveRef, dataHeader) {}
 
 
 		protected override void Parse(ref BitStreamReader bsr) {
@@ -76,8 +75,7 @@ namespace SaveParser.Parser.StateFile {
 
 		public int Version;
 		
-		public VersionableSaveGameHeader(SourceSave? saveRef, ParsedDataMap dataHeader, string category)
-			: base(saveRef, dataHeader, category) {}
+		public VersionableSaveGameHeader(SourceSave? saveRef, ParsedDataMap dataHeader) : base(saveRef, dataHeader) {}
 		
 		protected override void Parse(ref BitStreamReader bsr) {
 			Version = bsr.ReadSShort();
@@ -94,8 +92,7 @@ namespace SaveParser.Parser.StateFile {
 		
 		public ParsedDataMap PhysHeader;
 		
-		public PhysicsInfoHeader(SourceSave? saveRef, ParsedDataMap dataHeader, string category)
-			: base(saveRef, dataHeader, category) {}
+		public PhysicsInfoHeader(SourceSave? saveRef, ParsedDataMap dataHeader) : base(saveRef, dataHeader) {}
 		
 		
 		protected override void Parse(ref BitStreamReader bsr) {

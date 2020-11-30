@@ -296,6 +296,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("worldAxisDirection", VECTOR);
 			DefineEmbeddedField("constraint", "vphysics_save_constraintbreakable_t");
 			DefineEmbeddedField("hingeAxis", "vphysics_save_constraintaxislimit_t");
+			
+			BeginDataMap("vphysics_save_constraintballsocket_t");
+			DefineField("constraintPosition", VECTOR, 2);
+			DefineEmbeddedField("constraint", "vphysics_save_constraintbreakable_t");
 		}
 	}
 }

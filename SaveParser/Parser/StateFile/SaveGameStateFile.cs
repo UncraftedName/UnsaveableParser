@@ -35,15 +35,17 @@ namespace SaveParser.Parser.StateFile {
 			int sizeHeaders = bsr.ReadSInt();
 			int sizeBodies = bsr.ReadSInt();
 
+			// info about the header block
 			BlockHeadersInfo = UtilVector<ParsedDataMap>.RestoreEmbedded("BlockHeadersInfo", "SaveRestoreBlockHeader_t", SaveInfo, ref bsr);
 
 			SaveGameHeaders = new List<SaveGameHeader>(BlockHeadersInfo.Count);
+			// read the headers one by one
 			foreach (ParsedDataMap headerInfo in BlockHeadersInfo) {
 				int loc = headerInfo.GetField<int>("locHeader");
 				if (loc == -1)
 					continue;
 				bsr.CurrentByteIndex = @base + loc;
-				SaveGameHeader? sgh = SaveGameHeader.CreateForCategory(SaveRef, headerInfo);
+				SaveGameHeader? sgh = SaveGameHeader.CreateFromHeaderInfo(SaveRef, headerInfo);
 				if (sgh == null)
 					continue;
 				sgh.ParseStream(ref bsr);
@@ -51,12 +53,14 @@ namespace SaveParser.Parser.StateFile {
 			}
 
 			//@base = bsr.CurrentByteIndex = @base + sizeHeaders;
-			BitStreamReader entBaseBsr = bsr.Split(); // entity data is offset from this location
+			BitStreamReader bodyBase = bsr.Split(); // block data is offset from this location
 
 			SaveHeader = bsr.ReadDataMap("Save Header", SaveInfo);
 			
 			SaveInfo.BaseTime = SaveHeader.GetFieldOrDefault<Time>("time__USE_VCR_MODE");
 			//SaveInfo.LandmarkPos // todo gotten from adjacency list?
+
+			@base = bsr.CurrentByteIndex;
 			
 			int connections = SaveHeader.GetFieldOrDefault<int>("connectionCount"); // to other maps?
 			int lightStyles = SaveHeader.GetFieldOrDefault<int>("lightStyleCount");
@@ -76,19 +80,22 @@ namespace SaveParser.Parser.StateFile {
 			
 			Blocks = new List<SaveStateBlock>(SaveGameHeaders.Count);
 
+			// now read the actual blocks of data based off of information from the headers
 			foreach (SaveGameHeader header in SaveGameHeaders) {
-				if (header.DataHeader.GetFieldOrDefault<int>("locBody") == -1)
+				int loc = header.DataHeader.GetFieldOrDefault<int>("locBody");
+				if (loc == -1)
 					continue;
-				bsr.CurrentByteIndex = @base;
+				//bodyBase.CurrentByteIndex = loc;
+				//bsr.CurrentByteIndex = @base;
 				if (!SaveStateBlock.CreateFromHeader(SaveRef!, header, out SaveStateBlock blockHandler)) {
-					SaveInfo.AddError($"{nameof(SaveStateBlock)} not created from header: \"{header.Category}\"");
+					SaveInfo.AddError($"{nameof(SaveStateBlock)} not created from header: \"{header.Name}\"");
 					continue;
 				}
-				blockHandler.ParseStream(ref entBaseBsr);
+				blockHandler.ParseStream(ref bodyBase);
 				Blocks.Add(blockHandler);
 			}
 			
-			bsr.CurrentByteIndex = @base + sizeBodies;
+			//bsr.CurrentByteIndex = @base + sizeBodies;
 		}
 
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using SaveParser.Parser.SaveFieldInfo;
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
@@ -19,26 +20,31 @@ namespace SaveParser.Parser.StateFile.SaveStateData {
 			var queue = SaveInfo.ParseContext.VPhysicsRestoreInfo;
 			PhysObjects = new List<(ParsedDataMap header, ParsedSaveField[]? objects)>(queue.Count);
 #if DEBUG_WITH_PHYS
-			while (queue.TryDequeue(out var physRestoreInfo)) {
-				var header = bsr.ReadDataMap("PhysObjectHeader_t", SaveInfo);
-				ParsedSaveField[]? objects = null;
-				bsr.StartBlock(SaveInfo);
-				if (header.GetFieldOrDefault<Ehandle>("hEntity") != (Ehandle)(-1)) { // not sure if -1
-					int count = header.GetFieldOrDefault<int>("nObjects");
-					objects = new ParsedSaveField[count];
-					for (int i = 0; i < count; i++) {
-						bsr.StartBlock(SaveInfo);
-						var physObj = CPhysicsEnvironment.Restore(SaveInfo, header, physRestoreInfo, ref bsr);
-						if (physObj == null) {
-							bsr.SkipCurrentBlock(SaveInfo);
-						} else {
-							objects[i] = physObj;
-							bsr.EndBlock(SaveInfo);
+			try {
+				while (queue.TryDequeue(out var physRestoreInfo)) {
+					var header = bsr.ReadDataMap("PhysObjectHeader_t", SaveInfo);
+					ParsedSaveField[]? objects = null;
+					bsr.StartBlock(SaveInfo);
+					if (header.GetFieldOrDefault<Ehandle>("hEntity") != (Ehandle)(-1)) { // not sure if -1
+						int count = header.GetFieldOrDefault<int>("nObjects");
+						objects = new ParsedSaveField[count];
+						for (int i = 0; i < count; i++) {
+							bsr.StartBlock(SaveInfo);
+							var physObj = CPhysicsEnvironment.Restore(SaveInfo, header, physRestoreInfo, ref bsr);
+							if (physObj == null) {
+								bsr.SkipCurrentBlock(SaveInfo);
+							} else {
+								objects[i] = physObj;
+								bsr.EndBlock(SaveInfo);
+							}
 						}
 					}
+					PhysObjects.Add((header, objects));
+					bsr.EndBlock(SaveInfo);
 				}
-				PhysObjects.Add((header, objects));
-				bsr.EndBlock(SaveInfo);
+			} catch (Exception e) {
+				SaveInfo.AddError($"phys parsing failed, aborting. msg: {e.Message}");
+				queue.Clear();
 			}
 #else
 			SaveInfo.AddError($"parsing skipped for {queue.Count} phys objects");

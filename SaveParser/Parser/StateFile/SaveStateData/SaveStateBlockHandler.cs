@@ -37,7 +37,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData {
 
 
 		public override void AppendToWriter(IIndentedWriter iw) {
-			iw.Append($"category: {DataHeader.Category}");
+			iw.Append($"category: {DataHeader.Name}");
 		}
 	}
 }

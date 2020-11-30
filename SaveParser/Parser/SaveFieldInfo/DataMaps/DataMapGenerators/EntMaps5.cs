@@ -6,8 +6,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 	public class EntMaps5 : DataMapGenerator {
 
 		public const int RAGDOLL_MAX_ELEMENTS = 24;
-
-
+		public const int VPHYSICS_MAX_OBJECT_LIST_COUNT = 1024;
+		
+		
 		private void DefineRagdollElement(int i) {
 			DefineField($"m_ragdoll.list[{i}].originParentSpace", VECTOR);
 			DefinePhysPtr($"m_ragdoll.list[{i}].pObject");
@@ -119,49 +120,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			BeginDataMap("CFilterClass", "CBaseFilter");
 			LinkNamesToMap("filter_activator_class");
 			DefineKeyField("m_iFilterClass", "filterclass", STRING);
-			
-			// compares a single string input to up to 16 case values, firing the corresponding output or default
-			BeginDataMap("CLogicCase", "CLogicalEntity");
-			LinkNamesToMap("logic_case");
-			DefineKeyField("m_nCase[0]", "Case01", STRING);
-			DefineKeyField("m_nCase[1]", "Case02", STRING);
-			DefineKeyField("m_nCase[2]", "Case03", STRING);
-			DefineKeyField("m_nCase[3]", "Case04", STRING);
-			DefineKeyField("m_nCase[4]", "Case05", STRING);
-			DefineKeyField("m_nCase[5]", "Case06", STRING);
-			DefineKeyField("m_nCase[6]", "Case07", STRING);
-			DefineKeyField("m_nCase[7]", "Case08", STRING);
-			DefineKeyField("m_nCase[8]", "Case09", STRING);
-			DefineKeyField("m_nCase[9]", "Case10", STRING);
-			DefineKeyField("m_nCase[10]", "Case11", STRING);
-			DefineKeyField("m_nCase[11]", "Case12", STRING);
-			DefineKeyField("m_nCase[12]", "Case13", STRING);
-			DefineKeyField("m_nCase[13]", "Case14", STRING);
-			DefineKeyField("m_nCase[14]", "Case15", STRING);
-			DefineKeyField("m_nCase[15]", "Case16", STRING);
-			DefineField("m_nShuffleCases", INTEGER);
-			DefineField("m_nLastShuffleCase", INTEGER);
-			DefineField("m_uchShuffleCaseMap", CHARACTER, Constants.MAX_LOGIC_CASES);
-			DefineInputFunc("InValue", "InputValue", INPUT);
-			DefineInputFunc("PickRandom", "InputPickRandom", VOID);
-			DefineInputFunc("PickRandomShuffle", "InputPickRandomShuffle", VOID);
-			DefineOutput("m_OnCase[0]", "OnCase01");
-			DefineOutput("m_OnCase[1]", "OnCase02");
-			DefineOutput("m_OnCase[2]", "OnCase03");
-			DefineOutput("m_OnCase[3]", "OnCase04");
-			DefineOutput("m_OnCase[4]", "OnCase05");
-			DefineOutput("m_OnCase[5]", "OnCase06");
-			DefineOutput("m_OnCase[6]", "OnCase07");
-			DefineOutput("m_OnCase[7]", "OnCase08");
-			DefineOutput("m_OnCase[8]", "OnCase09");
-			DefineOutput("m_OnCase[9]", "OnCase10");
-			DefineOutput("m_OnCase[10]", "OnCase11");
-			DefineOutput("m_OnCase[11]", "OnCase12");
-			DefineOutput("m_OnCase[12]", "OnCase13");
-			DefineOutput("m_OnCase[13]", "OnCase14");
-			DefineOutput("m_OnCase[14]", "OnCase15");
-			DefineOutput("m_OnCase[15]", "OnCase16");
-			DefineOutput("m_OnDefault", "OnDefault");
 			
 			BeginDataMap("locksound_t");
 			DefineField("sLockedSound", STRING);
@@ -311,6 +269,52 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			
 			DataMapProxy("CFuncIllusionary", "CBaseEntity"); // A simple entity that looks solid but lets you walk through it.
 			LinkNamesToMap("func_illusionary");
+			
+			DataMapProxy("CEntityBlocker", "CBaseEntity");
+			LinkNamesToMap("entity_blocker");
+			
+			BeginDataMap("FilterDamageType", "CBaseFilter");
+			LinkNamesToMap("filter_damage_type");
+			DefineKeyField("m_iDamageType", "damagetype", INTEGER); // enum?
+			
+			DataMapProxy("CSimplePhysicsProp", "CBaseProp");
+			LinkNamesToMap("simple_physics_prop");
+			
+			BeginDataMap("game_shadowcontrol_params_t");
+			DefineField("targetPosition", POSITION_VECTOR);
+			DefineField("targetRotation", VECTOR);
+			DefineField("maxAngular", FLOAT);
+			DefineField("maxDampAngular", FLOAT);
+			DefineField("maxSpeed", FLOAT);
+			DefineField("maxDampSpeed", FLOAT);
+			DefineField("dampFactor", FLOAT);
+			DefineField("teleportDistance", FLOAT);
+			
+			BeginDataMap("CGrabController");
+			DefineEmbeddedField("m_shadow", "game_shadowcontrol_params_t");
+			DefineField("m_timeToArrive", FLOAT);
+			DefineField("m_errorTime", FLOAT);
+			DefineField("m_error", FLOAT);
+			DefineField("m_contactAmount", FLOAT);
+			DefineField("m_savedRotDamping", FLOAT, VPHYSICS_MAX_OBJECT_LIST_COUNT);
+			DefineField("m_savedMass", FLOAT, VPHYSICS_MAX_OBJECT_LIST_COUNT);
+			DefineField("m_flLoadWeight", FLOAT);
+			DefineField("m_bCarriedEntityBlocksLOS", BOOLEAN);
+			DefineField("m_bIgnoreRelativePitch", BOOLEAN);
+			DefineField("m_attachedEntity", EHANDLE);
+			DefineField("m_angleAlignment", FLOAT);
+			DefineField("m_vecPreferredCarryAngles", VECTOR);
+			DefineField("m_bHasPreferredCarryAngles", BOOLEAN);
+			DefineField("m_flDistanceOffset", FLOAT);
+			DefineField("m_attachedAnglesPlayerSpace", VECTOR);
+			DefineField("m_attachedPositionObjectSpace", VECTOR);
+			DefineField("m_bAllowObjectOverhead", BOOLEAN);
+			
+			BeginDataMap("CPlayerPickupController", "CBaseEntity");
+			LinkNamesToMap("player_pickup");
+			DefineEmbeddedField("m_grabController", "CGrabController");
+			DefinePhysPtr("m_grabController.m_controller");
+			DefineField("m_pPlayer", CLASSPTR);
 		}
 	}
 }

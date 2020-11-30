@@ -10,7 +10,7 @@ namespace SaveParser.Parser.SaveFieldInfo {
 	
 	public delegate ParsedSaveField? CustomReadFunc(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr);
 	
-	public class TypeDesc {
+	public class TypeDesc : IEquatable<TypeDesc> {
 		
 		public readonly FieldType FieldType;
 		public readonly string Name;
@@ -156,6 +156,42 @@ namespace SaveParser.Parser.SaveFieldInfo {
 				VECTOR2D => 8,
 				_ => throw new ArgumentOutOfRangeException(nameof(fieldType), fieldType, null)
 			};
+		}
+
+
+		public bool Equals(TypeDesc? other) {
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return FieldType == other.FieldType
+				   && Name == other.Name
+				   && InputName == other.InputName
+				   && OutputName == other.OutputName
+				   && MapName == other.MapName
+				   && NumElements == other.NumElements
+				   && Flags == other.Flags
+				   && Equals(EmbeddedMap, other.EmbeddedMap);
+		}
+
+
+		public override bool Equals(object? obj) {
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			return obj.GetType() == GetType() && Equals((TypeDesc)obj);
+		}
+
+
+		public override int GetHashCode() {
+			return HashCode.Combine((int)FieldType, Name, InputName, OutputName, MapName, NumElements, (int)Flags, EmbeddedMap);
+		}
+
+
+		public static bool operator ==(TypeDesc? left, TypeDesc? right) {
+			return Equals(left, right);
+		}
+
+
+		public static bool operator !=(TypeDesc? left, TypeDesc? right) {
+			return !Equals(left, right);
 		}
 	}
 	

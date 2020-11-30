@@ -167,7 +167,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			LinkNamesToMap("prop_combine_ball");
 			DefineField("m_flLastBounceTime", TIME);
 			DefineField("m_flRadius", FLOAT);
-			DefineField("m_nState", CHARACTER);
+			DefineField("m_nState", BYTE);
 			DefineField("m_pGlowTrail", CLASSPTR);
 			DefineSoundPatch("m_pHoldingSound");
 			DefineField("m_bFiredGrabbedOutput", BOOLEAN);
@@ -207,7 +207,16 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_bIsInfiniteLife", BOOLEAN);
 			DefineField("m_fTimeTillDeath", FLOAT);
 			DefineSoundPatch("m_pAmbientSound");
-			//DEFINE_THINKFUNC( Think ),
+			DefineThinkFunc("Think");
+			
+			BeginDataMap("CFuncPortalOrientation", "CBaseEntity");
+			LinkNamesToMap("func_portal_orientation");
+			DefineField("m_iListIndex", INTEGER);
+			DefineKeyField("m_bDisabled", "StartDisabled", BOOLEAN);
+			DefineKeyField("m_bMatchLinkedAngles", "MatchLinkedAngles", BOOLEAN);
+			DefineKeyField("m_vecAnglesToFace", "AnglesToFace", VECTOR);
+			DefineInputFunc("Enable", "InputEnable", VOID);
+			DefineInputFunc("Disable", "InputDisable", VOID);
 		}
 		
 		
