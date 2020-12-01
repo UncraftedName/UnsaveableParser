@@ -18,9 +18,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineEmbeddedVector("m_list", "globalentity_t");
 			
 			BeginDataMap("globalentity_t");
-			//DefineCustomField("name", GlobalEntNameReadFunc); // todo also adds to a special symbol table?
-			//DefineCustomField("levelName", GlobalEntNameReadFunc);
-			DefineField("name", STRING);
+			DefineField("name", STRING); // todo also adds to a special symbol table?
 			DefineField("levelName", STRING);
 			DefineField("state", INTEGER);
 			DefineField("counter", INTEGER);

@@ -4,6 +4,9 @@ using static SaveParser.Parser.SaveFieldInfo.FieldType;
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 	
 	public sealed class EnvMaps : DataMapGenerator {
+
+		public const int MAX_WAKE_POINTS = 16;
+		
 		
 		protected override void CreateDataMaps() {
 			BeginDataMap("CSteamJet", "CBaseParticleEntity");
@@ -63,13 +66,14 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_bPostSpawnUseAngles", "PostSpawnInheritAngles", BOOLEAN);
 			DefineOutput("m_pOutputOnSpawned", "OnEntitySpawned");
 			DefineOutput("m_pOutputOnFailedSpawn", "OnEntityFailedSpawn");
-			//DefineINPUTFUNC("ForceSpawn", VOID);
-			//DefineINPUTFUNC("ForceSpawnAtEntityOrigin", STRING);
+			DefineInputFunc("ForceSpawn", "InputForceSpawn", VOID);
+			DefineInputFunc("ForceSpawnAtEntityOrigin", "InputForceSpawnAtEntityOrigin", STRING);
+			DefineThinkFunc("CheckSpawnThink");
 			
 			DataMapProxy("CTextureToggle", "CPointEntity");
 			LinkNamesToMap("env_texturetoggle");
-			//DEFINE_INPUTFUNC( FIELD_VOID, "IncrementTextureIndex", InputIncrementBrushTexIndex ),
-			//DEFINE_INPUTFUNC( FIELD_INTEGER, "SetTextureIndex", InputSetBrushTexIndex ),
+			DefineInputFunc("IncrementTextureIndex", "InputIncrementBrushTexIndex", VOID);
+			DefineInputFunc("SetTextureIndex", "InputSetBrushTexIndex", INTEGER);
 			
 			BeginDataMap("CEnvSoundscape", "CPointEntity");
 			LinkNamesToMap("env_soundscape");
@@ -87,9 +91,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineVector("m_hPlayersInPVS", EHANDLE);
 			DefineField("m_flNextUpdatePlayersInPVS", TIME);
 			DefineKeyField("m_bDisabled", "StartDisabled", BOOLEAN);
-			//DefineINPUTFUNC("Enable", VOID);
-			//DefineINPUTFUNC("Disable", VOID);
-			//DefineINPUTFUNC("ToggleEnabled", VOID);
+			DefineInputFunc("Enable", "InputEnable", VOID);
+			DefineInputFunc("Disable", "InputDisable", VOID);
+			DefineInputFunc("ToggleEnabled", "InputToggleEnabled", VOID);
 			DefineOutput("m_OnPlay", "OnPlay");
 			
 			BeginDataMap("CEnvShake", "CPointEntity");
@@ -104,10 +108,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_maxForce", VECTOR);
 			DefinePhysPtr("m_pShakeController");
 			DefineEmbeddedField("m_shakeCallback", "CPhysicsShake");
-			//DefineINPUTFUNC("StartShake", VOID);
-			//DefineINPUTFUNC("StopShake", VOID);
-			//DefineINPUTFUNC("Amplitude", FLOAT);
-			//DefineINPUTFUNC("Frequency", FLOAT);
+			DefineInputFunc("StartShake", "InputStartShake", VOID);
+			DefineInputFunc("StopShake", "InputStopShake", VOID);
+			DefineInputFunc("Amplitude", "InputAmplitude", FLOAT);
+			DefineInputFunc("Frequency", "InputFrequency", FLOAT);
 			
 			BeginDataMap("CSpeaker", "CPointEntity");
 			LinkNamesToMap("env_speaker");
@@ -116,9 +120,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_iszRuleScriptFile", "rulescript", STRING);
 			DefineKeyField("m_iszConcept", "concept", STRING);
 			DefineFunction("SpeakerThink");
-			//DefineINPUTFUNC("TurnOn", VOID);
-			//DefineINPUTFUNC("TurnOff", VOID);
-			//DefineINPUTFUNC("Toggle", VOID);
+			DefineInputFunc("TurnOn", "InputTurnOn", VOID);
+			DefineInputFunc("TurnOff", "InputTurnOff", VOID);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
 			
 			BeginDataMap("CEnvMicrophone", "CPointEntity");
 			LinkNamesToMap("env_microphone");
@@ -134,9 +138,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_iSpeakerDSPPreset", "speaker_dsp_preset", INTEGER);
 			DefineKeyField("m_flMaxRange", "MaxRange", FLOAT);
 			DefineField("m_szLastSound", CHARACTER, 256);
-			//DefineINPUTFUNC("Enable", VOID);
-			//DefineINPUTFUNC("Disable", VOID);
-			//DefineINPUTFUNC("SetSpeakerName", STRING);
+			DefineInputFunc("Enable", "InputEnable", VOID);
+			DefineInputFunc("Disable", "InputDisable", VOID);
+			DefineInputFunc("SetSpeakerName", "InputSetSpeakerName", STRING);
 			DefineOutput("m_SoundLevel", "SoundLevel");
 			DefineOutput("m_OnRoutedSound", "OnRoutedSound");
 			DefineOutput("m_OnHeardSound", "OnHeardSound");
@@ -154,16 +158,16 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_flCustomBloomScale", FLOAT);
 			DefineField("m_flCustomBloomScaleMinimum", FLOAT);
 			DefineField("m_bUseCustomBloomScale", BOOLEAN);
-			//DEFINE_THINKFUNC( UpdateTonemapScaleBlend ),
-			//DefineINPUTFUNC("SetTonemapScale", FLOAT);
-			//DefineINPUTFUNC("BlendTonemapScale", STRING);
-			//DefineINPUTFUNC("SetTonemapRate", FLOAT);
-			//DefineINPUTFUNC("SetAutoExposureMin", FLOAT);
-			//DefineINPUTFUNC("SetAutoExposureMax", FLOAT);
-			//DefineINPUTFUNC("UseDefaultAutoExposure", VOID);
-			//DefineINPUTFUNC("UseDefaultBloomScale", VOID);
-			//DefineINPUTFUNC("SetBloomScale", FLOAT);
-			//DefineINPUTFUNC("SetBloomScaleRange", FLOAT);
+			DefineThinkFunc("UpdateTonemapScaleBlend");
+			DefineInputFunc("SetTonemapScale", "InputSetTonemapScale", FLOAT);
+			DefineInputFunc("BlendTonemapScale", "InputBlendTonemapScale", STRING);
+			DefineInputFunc("SetTonemapRate", "InputSetTonemapRate", FLOAT);
+			DefineInputFunc("SetAutoExposureMin", "InputSetAutoExposureMin", FLOAT);
+			DefineInputFunc("SetAutoExposureMax", "InputSetAutoExposureMax", FLOAT);
+			DefineInputFunc("UseDefaultAutoExposure", "InputUseDefaultAutoExposure", VOID);
+			DefineInputFunc("UseDefaultBloomScale", "InputUseDefaultBloomScale", VOID);
+			DefineInputFunc("SetBloomScale", "InputSetBloomScale", FLOAT);
+			DefineInputFunc("SetBloomScaleRange", "InputSetBloomScaleRange", FLOAT);
 			
 			BeginDataMap("CCitadelEnergyCore", "CBaseEntity"); // charges up and then releases energy from its position
 			LinkNamesToMap("env_citadel_energy_core");
@@ -171,9 +175,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_nState", INTEGER);
 			DefineField("m_flDuration", FLOAT);
 			DefineField("m_flStartTime", TIME);
-			//DefineINPUTFUNC("StartCharge", FLOAT);
-			//DefineINPUTFUNC("StartDischarge", VOID);
-			//DefineINPUTFUNC("Stop", FLOAT);
+			DefineInputFunc("StartCharge", "InputStartCharge", FLOAT);
+			DefineInputFunc("StartDischarge", "InputStartDischarge", VOID);
+			DefineInputFunc("Stop", "InputStop", FLOAT);
 			
 			BeginDataMap("CSprite", "CBaseEntity");
 			LinkNamesToMap("env_sprite");
@@ -187,8 +191,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInputAndKeyField("m_flSpriteScale", "scale", "SetScale", FLOAT);
 			DefineKeyField("m_flSpriteFramerate", "framerate", FLOAT);
 			DefineKeyField("m_flFrame", "frame", FLOAT);
-			DefineField("m_bDrawInMainRender", BOOLEAN);
-			DefineField("m_bDrawInPortalRender", BOOLEAN);
+			if (GenInfo.IsDefPortal) {
+				DefineField("m_bDrawInMainRender", BOOLEAN);
+				DefineField("m_bDrawInPortalRender", BOOLEAN);
+			}
 			DefineKeyField("m_flHDRColorScale", "HDRColorScale", FLOAT);
 			DefineKeyField("m_flGlowProxySize", "GlowProxySize", FLOAT);
 			DefineField("m_flScaleTime", FLOAT);
@@ -203,12 +209,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineFunction("ExpandThink");
 			DefineFunction("AnimateUntilDead");
 			DefineFunction("BeginFadeOutThink");
-			//DefineINPUTFUNC("HideSprite", VOID);
-			//DefineINPUTFUNC("ShowSprite", VOID);
-			//DefineINPUTFUNC("ToggleSprite", VOID);
-			//DefineINPUTFUNC("ColorRedValue", FLOAT);
-			//DefineINPUTFUNC("ColorGreenValue", FLOAT);
-			//DefineINPUTFUNC("ColorBlueValue", FLOAT);
+			DefineInputFunc("HideSprite", "InputHideSprite", VOID);
+			DefineInputFunc("ShowSprite", "InputShowSprite", VOID);
+			DefineInputFunc("ToggleSprite", "InputToggleSprite", VOID);
+			DefineInputFunc("ColorRedValue", "InputColorRedValue", FLOAT);
+			DefineInputFunc("ColorGreenValue", "InputColorGreenValue", FLOAT);
+			DefineInputFunc("ColorBlueValue", "InputColorBlueValue", FLOAT);
 			
 			BeginDataMap("CEnvBeam", "CBeam");
 			LinkNamesToMap("env_beam");
@@ -230,18 +236,24 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_hFilter", EHANDLE);
 			DefineFunction("StrikeThink");
 			DefineFunction("UpdateThink");
-			//DefineINPUTFUNC("TurnOn", VOID);
-			//DefineINPUTFUNC("TurnOff", VOID);
-			//DefineINPUTFUNC("Toggle", VOID);
-			//DefineINPUTFUNC("StrikeOnce", VOID);
+			DefineInputFunc("TurnOn", "InputTurnOn", VOID);
+			DefineInputFunc("TurnOff", "InputTurnOff", VOID);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
+			DefineInputFunc("StrikeOnce", "InputStrikeOnce", VOID);
 			DefineOutput("m_OnTouchedByEntity", "OnTouchedByEntity");
 			
 			BeginDataMap("CEnvFade", "CLogicalEntity");
 			LinkNamesToMap("env_fade");
 			DefineKeyField("m_Duration", "duration", FLOAT);
 			DefineKeyField("m_HoldTime", "holdtime", FLOAT);
-			//DefineINPUTFUNC("Fade", VOID);
+			DefineInputFunc("Fade", "InputFade", VOID);
 			DefineOutput("m_OnBeginFade", "OnBeginFade");
+			
+			BeginDataMap("TrailPoint_t");
+			DefineField("m_vecScreenPos", POSITION_VECTOR); // if screen space trails, then just a vector
+			DefineField("m_flDieTime", TIME);
+			DefineField("m_flTexCoord", FLOAT);
+			DefineField("m_flWidthVariance", FLOAT);
 			
 			BeginDataMap("CSpriteTrail", "CSprite");
 			LinkNamesToMap("env_spritetrail");
@@ -255,7 +267,16 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_flMinFadeLength", FLOAT);
 			DefineField("m_vecSkyboxOrigin", POSITION_VECTOR);
 			DefineField("m_flSkyboxScale", FLOAT);
-			// there's also a bunch of client-side fields here
+			if (GenInfo.IsDefClientDll) {
+				DefineEmbeddedField("m_vecSteps", "TrailPoint_t", MAX_WAKE_POINTS);
+				DefineField("m_nFirstStep", INTEGER);
+				DefineField("m_nStepCount", INTEGER);
+				DefineField("m_flUpdateTime", TIME);
+				DefineField("m_vecPrevSkyboxOrigin", POSITION_VECTOR);
+				DefineField("m_flPrevSkyboxScale", FLOAT);
+				DefineField("m_vecRenderMins", VECTOR);
+				DefineField("m_vecRenderMaxs", VECTOR);
+			}
 			
 			BeginDataMap("CPortalCredits", "CPointEntity");
 			LinkNamesToMap("env_portal_credits");

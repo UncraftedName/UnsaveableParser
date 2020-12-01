@@ -48,7 +48,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 			
 			object[] @params = vecDesc.CustomParams!;
 			
-			DataMap? embMap = @params[2] is string s ? info.DataMapLookup[s] : null;
+			DataMap? embMap = @params[2] is string s ? info.SDataMapLookup[s] : null;
 
 			int count = bsr.ReadSInt();
 			

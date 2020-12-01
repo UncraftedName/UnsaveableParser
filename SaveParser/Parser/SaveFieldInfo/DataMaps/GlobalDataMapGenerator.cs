@@ -25,22 +25,22 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			new VPhysicsMaps()
 		};
 
-		private static readonly Dictionary<Game, Dictionary<string, DataMap>> GeneratedGlobalMaps
-			= new Dictionary<Game, Dictionary<string, DataMap>>();
+		private static readonly Dictionary<(Game, bool), Dictionary<string, DataMap>> GeneratedGlobalMaps
+			= new Dictionary<(Game, bool), Dictionary<string, DataMap>>();
 
 
 		[MethodImpl(MethodImplOptions.Synchronized)]
-		public static IReadOnlyDictionary<string, DataMap> GetDataMapList(SaveInfo info) {
+		public static IReadOnlyDictionary<string, DataMap> GetDataMapList(SaveInfo info, bool isClient) {
 			// check if the datamaps have already been generated for a previous save file
-			if (!GeneratedGlobalMaps.TryGetValue(info.Game, out var res)) {
-				res = GenerateMaps(info);
-				GeneratedGlobalMaps.Add(info.Game, res);
+			if (!GeneratedGlobalMaps.TryGetValue((info.Game, isClient), out var res)) {
+				res = GenerateMaps(info, isClient);
+				GeneratedGlobalMaps.Add((info.Game, isClient), res);
 			}
 			return res;
 		}
 
 
-		private static Dictionary<string, DataMap> GenerateMaps(SaveInfo info) {
+		private static Dictionary<string, DataMap> GenerateMaps(SaveInfo info, bool isClient) {
 			
 			Dictionary<string, DataMap> globalMaps = new Dictionary<string, DataMap>();
 			
@@ -50,7 +50,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			HashSet<string> emptyRoots = new HashSet<string>();
 			
 			foreach (DataMapGenerator gen in GeneratorInstances) {
-				gen.SaveInfo = info;
+				gen.GenInfo = info.CreateGenInfo(isClient);
 				gen.Generate();
 					
 				emptyRoots.UnionWith(gen.EmptyRoots);

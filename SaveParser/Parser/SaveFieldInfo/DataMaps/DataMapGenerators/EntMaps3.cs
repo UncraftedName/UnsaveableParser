@@ -28,29 +28,29 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_hPlacedBy", EHANDLE);
 			DefineField("m_bSharedEnvironmentConfiguration", BOOLEAN);
 			DefineField("m_vPortalCorners", POSITION_VECTOR, 4);
-			//DEFINE_THINKFUNC( DelayedPlacementThink ),
-			//DEFINE_THINKFUNC( TestRestingSurfaceThink ),
-			//DEFINE_THINKFUNC( FizzleThink ),
-			//DefineINPUTFUNC("SetActivatedState", BOOLEAN);
-			//DefineINPUTFUNC("Fizzle", VOID);
-			//DefineINPUTFUNC("NewLocation", STRING);
+			DefineThinkFunc("DelayedPlacementThink");
+			DefineThinkFunc("TestRestingSurfaceThink");
+			DefineThinkFunc("FizzleThink");
+			DefineInputFunc("SetActivatedState", "InputSetActivatedState", BOOLEAN);
+			DefineInputFunc("Fizzle", "InputFizzle", VOID);
+			DefineInputFunc("NewLocation", "InputNewLocation", STRING);
 			DefineOutput("m_OnPlacedSuccessfully", "OnPlacedSuccessfully");
 			
 			BeginDataMap("CFuncPortalBumper", "CBaseEntity");
 			LinkNamesToMap("func_portal_bumper");
 			DefineField("m_bActive", BOOLEAN);
-			//DefineINPUTFUNC("Deactivate", VOID);
-			//DefineINPUTFUNC("Activate", VOID);
-			//DefineINPUTFUNC("Toggle", VOID);
+			DefineInputFunc("Deactivate", "InputDeactivate", VOID);
+			DefineInputFunc("Activate", "InputActivate", VOID);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
 			DefineFunction("IsActive");
 			
 			BeginDataMap("CFuncNoPortalVolume", "CBaseEntity");
 			LinkNamesToMap("func_noportal_volume");
 			DefineField("m_bActive", BOOLEAN);
 			DefineField("m_iListIndex", INTEGER);
-			//DefineINPUTFUNC("Deactivate", VOID);
-			//DefineINPUTFUNC("Activate", VOID);
-			//DefineINPUTFUNC("Toggle", VOID);
+			DefineInputFunc("Deactivate", "InputDeactivate", VOID);
+			DefineInputFunc("Activate", "InputActivate", VOID);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
 			DefineFunction("GetIndex");
 			DefineFunction("IsActive");
 			
@@ -107,17 +107,17 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineVector("m_hNotifySceneCompletion", EHANDLE);
 			DefineVector("m_hListManagers", EHANDLE);
 			DefineField("m_bMultiplayer", BOOLEAN);
-			//DefineINPUTFUNC("Start", VOID);
-			//DefineINPUTFUNC("Pause", VOID);
-			//DefineINPUTFUNC("Resume", VOID);
-			//DefineINPUTFUNC("Cancel", VOID);
-			//DefineINPUTFUNC("CancelAtNextInterrupt", VOID);
-			//DefineINPUTFUNC("PitchShift", FLOAT);
-			//DefineINPUTFUNC("InterjectResponse", STRING);
-			//DefineINPUTFUNC("StopWaitingForActor", VOID);
-			//DefineINPUTFUNC("Trigger", INTEGER);
+			DefineInputFunc("Start", "InputStartPlayback", VOID);
+			DefineInputFunc("Pause", "InputPausePlayback", VOID);
+			DefineInputFunc("Resume", "InputResumePlayback", VOID);
+			DefineInputFunc("Cancel", "InputCancelPlayback", VOID);
+			DefineInputFunc("CancelAtNextInterrupt", "InputCancelAtNextInterrupt", VOID);
+			DefineInputFunc("PitchShift", "InputPitchShiftPlayback", FLOAT);
+			DefineInputFunc("InterjectResponse", "InputInterjectResponse", STRING);
+			DefineInputFunc("StopWaitingForActor", "InputStopWaitingForActor", VOID);
+			DefineInputFunc("Trigger", "InputTriggerEvent", INTEGER);
 			DefineKeyField("m_iPlayerDeathBehavior", "onplayerdeath", INTEGER);
-			//DefineINPUTFUNC("ScriptPlayerDeath", VOID);
+			DefineInputFunc("ScriptPlayerDeath", "InputScriptPlayerDeath", VOID);
 			DefineOutput("m_OnStart", "OnStart");
 			DefineOutput("m_OnCompletion", "OnCompletion");
 			DefineOutput("m_OnCanceled", "OnCanceled");
@@ -191,7 +191,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineFunction("DestroyItem");
 			DefineFunction("SetPickupTouch");
 			DefineFunction("HideThink");
-			//DefineINPUTFUNC("HideWeapon", VOID);
+			DefineInputFunc("HideWeapon", "InputHideWeapon", VOID);
 			DefineOutput("m_OnPlayerUse", "OnPlayerUse");
 			DefineOutput("m_OnPlayerPickup", "OnPlayerPickup");
 			DefineOutput("m_OnNPCPickup", "OnNPCPickup");
@@ -216,12 +216,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_fEffectsMaxSize2", FLOAT);
 			DefineField("m_EffectState", INTEGER);
 			DefineField("m_iPortalLinkageGroupID", CHARACTER);
-			//DefineINPUTFUNC("ChargePortal1", VOID);
-			//DefineINPUTFUNC("ChargePortal2", VOID);
-			//DefineINPUTFUNC("FirePortal1", VOID);
-			//DefineINPUTFUNC("FirePortal2", VOID);
-			//DefineINPUTFUNC("FirePortalDirection1", VECTOR);
-			//DefineINPUTFUNC("FirePortalDirection2", VECTOR);
+			DefineInputFunc("ChargePortal1", "InputChargePortal1", VOID);
+			DefineInputFunc("ChargePortal2", "InputChargePortal2", VOID);
+			DefineInputFunc("FirePortal1", "FirePortal1", VOID);
+			DefineInputFunc("FirePortal2", "FirePortal2", VOID);
+			DefineInputFunc("FirePortalDirection1", "FirePortalDirection1", VECTOR);
+			DefineInputFunc("FirePortalDirection2", "FirePortalDirection2", VECTOR);
 			DefineSoundPatch("m_pMiniGravHoldSound");
 			DefineOutput("m_OnFiredPortal1", "OnFiredPortal1");
 			DefineOutput("m_OnFiredPortal2", "OnFiredPortal2");
@@ -246,8 +246,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			
 			BeginDataMap("CColorCorrection", "CBaseEntity"); // shadow control entity
 			LinkNamesToMap("color_correction");
-			//DEFINE_THINKFUNC( FadeInThink ),
-			//DEFINE_THINKFUNC( FadeOutThink ),
+			DefineThinkFunc("FadeInThink");
+			DefineThinkFunc("FadeOutThink");
 			DefineField("m_flCurWeight", FLOAT);
 			DefineField("m_flTimeStartFadeIn", FLOAT);
 			DefineField("m_flTimeStartFadeOut", FLOAT);
@@ -261,10 +261,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_lookupFilename", "filename", STRING);
 			DefineKeyField("m_bEnabled", "enabled", BOOLEAN);
 			DefineKeyField("m_bStartDisabled", "StartDisabled", BOOLEAN);
-			//DefineINPUTFUNC("Enable", VOID);
-			//DefineINPUTFUNC("Disable", VOID);
-			//DefineINPUTFUNC("SetFadeInDuration", FLOAT);
-			//DefineINPUTFUNC("SetFadeOutDuration", FLOAT);
+			DefineInputFunc("Enable", "InputEnable", VOID);
+			DefineInputFunc("Disable", "InputDisable", VOID);
+			DefineInputFunc("SetFadeInDuration", "InputSetFadeInDuration", FLOAT);
+			DefineInputFunc("SetFadeOutDuration", "InputSetFadeOutDuration", FLOAT);
 			
 			BeginDataMap("CParticleSystem", "CBaseEntity");
 			LinkNamesToMap("info_particle_system");
@@ -343,9 +343,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_iControlPointParents[5]", "cpoint6_parent", CHARACTER);
 			DefineKeyField("m_iControlPointParents[6]", "cpoint7_parent", CHARACTER);
 			DefineField("m_hControlPointEnts", EHANDLE, kMAXCONTROLPOINTS);
-			//DefineINPUTFUNC("Start", VOID);
-			//DefineINPUTFUNC("Stop", VOID);
-			//DEFINE_THINKFUNC( StartParticleSystemThink ),
+			DefineInputFunc("Start", "InputStart", VOID);
+			DefineInputFunc("Stop", "InputStop", VOID);
+			DefineThinkFunc("StartParticleSystemThink");
 			
 			BeginDataMap("CPathTrack", "CPointEntity");
 			LinkNamesToMap("path_track");
@@ -356,13 +356,13 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_length", FLOAT);
 			DefineKeyField("m_altName", "altpath", STRING);
 			DefineKeyField("m_eOrientationType", "orientationtype", INTEGER);
-			//DefineINPUTFUNC("InPass", VOID);
-			//DefineINPUTFUNC("EnableAlternatePath", VOID);
-			//DefineINPUTFUNC("DisableAlternatePath", VOID);
-			//DefineINPUTFUNC("ToggleAlternatePath", VOID);
-			//DefineINPUTFUNC("EnablePath", VOID);
-			//DefineINPUTFUNC("DisablePath", VOID);
-			//DefineINPUTFUNC("TogglePath", VOID);
+			DefineInputFunc("InPass", "InputPass", VOID);
+			DefineInputFunc("EnableAlternatePath", "InputEnableAlternatePath", VOID);
+			DefineInputFunc("DisableAlternatePath", "InputDisableAlternatePath", VOID);
+			DefineInputFunc("ToggleAlternatePath", "InputToggleAlternatePath", VOID);
+			DefineInputFunc("EnablePath", "InputEnablePath", VOID);
+			DefineInputFunc("DisablePath", "InputDisablePath", VOID);
+			DefineInputFunc("TogglePath", "InputTogglePath", VOID);
 			DefineOutput("m_OnPass", "OnPass");
 			
 			BeginDataMap("CShadowControl", "CBaseEntity");
@@ -372,7 +372,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInput("m_shadowColor", "color", COLOR32);
 			DefineInput("m_shadowDirection", "direction", VECTOR);
 			DefineInput("m_flShadowMaxDisat", "SetDistance", FLOAT);
-			//DefineINPUTFUNC("SetAngles", STRING);
+			DefineInputFunc("SetAngles", "InputSetAngles", STRING);
 			
 			BeginDataMap("CInfoLightingRelative", "CBaseEntity");
 			LinkNamesToMap("info_lighting_relative");
@@ -404,16 +404,22 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_flVolume", FLOAT);
 			DefineField("m_oldSpeed", FLOAT);
 			DefineField("m_bSoundPlaying", BOOLEAN);
-			DefineField("m_bOnTrackChange", BOOLEAN);
-			//DefineINPUTFUNC("Stop", VOID);
-			//DefineINPUTFUNC("StartForward", VOID);
-			//DefineINPUTFUNC("StartBackward", VOID);
-			//DefineINPUTFUNC("Toggle", VOID);
-			//DefineINPUTFUNC("Resume", VOID);
-			//DefineINPUTFUNC("Reverse", VOID);
-			//DefineINPUTFUNC("SetSpeed", FLOAT);
-			//DefineINPUTFUNC("SetSpeedDir", FLOAT);
-			//DefineINPUTFUNC("SetSpeedReal", FLOAT);
+			if (GenInfo.IsDefHl1Dll)
+				DefineField("m_bOnTrackChange", BOOLEAN);
+			if (Game == Game.PORTAL2) {
+				DefineKeyField("m_bManualSpeedChanges", "ManualSpeedChanges", BOOLEAN);
+				DefineKeyField("m_flAccelSpeed", "ManualAccelSpeed", FLOAT);
+				DefineKeyField("m_flDecelSpeed", "ManualDecelSpeed", FLOAT);
+			}
+			DefineInputFunc("Stop", "InputStop", VOID);
+			DefineInputFunc("StartForward", "InputStartForward", VOID);
+			DefineInputFunc("StartBackward", "InputStartBackward", VOID);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
+			DefineInputFunc("Resume", "InputResume", VOID);
+			DefineInputFunc("Reverse", "InputReverse", VOID);
+			DefineInputFunc("SetSpeed", "InputSetSpeed", FLOAT);
+			DefineInputFunc("SetSpeedDir", "InputSetSpeedDir", FLOAT);
+			DefineInputFunc("SetSpeedReal", "InputSetSpeedReal", FLOAT);
 			DefineOutput("m_OnStart", "OnStart");
 			DefineOutput("m_OnNext", "OnNextPoint");
 			DefineFunction("Next");
@@ -427,8 +433,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			
 			BeginDataMap("CBaseFilter", "CLogicalEntity");
 			LinkNamesToMap("filter_base");
-			DefineKeyField("m_bNegated", "TestActivator", BOOLEAN);
-			//DefineINPUTFUNC("TestActivator", INPUT);
+			DefineKeyField("m_bNegated", "Negated", BOOLEAN);
+			DefineInputFunc("TestActivator", "InputTestActivator", INPUT);
 			DefineOutput("m_OnPass", "OnPass");
 			DefineOutput("m_OnFail", "OnFail");
 			

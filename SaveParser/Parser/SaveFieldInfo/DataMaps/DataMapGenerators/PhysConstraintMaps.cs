@@ -170,11 +170,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			
 			BeginDataMap("CPhysicsProp", "CBreakableProp");
 			LinkNamesToMap("physics_prop", "prop_physics", "prop_physics_override");
-			//DefineINPUTFUNC("EnableMotion", VOID);
-			//DefineINPUTFUNC("DisableMotion", VOID);
-			//DefineINPUTFUNC("Wake", VOID);
-			//DefineINPUTFUNC("Sleep", VOID);
-			//DefineINPUTFUNC("DisableFloating", VOID);
+			DefineInputFunc("EnableMotion", "InputEnableMotion", VOID);
+			DefineInputFunc("DisableMotion", "InputDisableMotion", VOID);
+			DefineInputFunc("Wake", "InputWake", VOID);
+			DefineInputFunc("Sleep", "InputSleep", VOID);
+			DefineInputFunc("DisableFloating", "InputDisableFloating", VOID);
 			DefineField("m_bAwake", BOOLEAN);
 			DefineKeyField("m_massScale", "massscale", FLOAT);
 			DefineKeyField("m_inertiaScale", "inertiascale", FLOAT);
@@ -228,15 +228,15 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_preferredCarryAngles", VECTOR);
 			DefineField("m_flDefaultFadeScale", FLOAT);
 			DefineField("m_bUsePuntSound", BOOLEAN);
-			//DefineINPUTFUNC("Break", VOID);
-			//DefineINPUTFUNC("SetHealth", INTEGER);
-			//DefineINPUTFUNC("AddHealth", INTEGER);
-			//DefineINPUTFUNC("RemoveHealth", INTEGER);
+			DefineInputFunc("Break", "InputBreak", VOID);
+			DefineInputFunc("SetHealth", "InputSetHealth", INTEGER);
+			DefineInputFunc("AddHealth", "InputAddHealth", INTEGER);
+			DefineInputFunc("RemoveHealth", "InputRemoveHealth", INTEGER);
 			DefineInput("m_impactEnergyScale", "physdamagescale", FLOAT);
-			//DefineINPUTFUNC("EnablePhyscannonPickup", VOID);
-			//DefineINPUTFUNC("DisablePhyscannonPickup", VOID);
-			//DefineINPUTFUNC("EnablePuntSound", VOID);
-			//DefineINPUTFUNC("DisablePuntSound", VOID);
+			DefineInputFunc("EnablePhyscannonPickup", "InputEnablePhyscannonPickup", VOID);
+			DefineInputFunc("DisablePhyscannonPickup", "InputDisablePhyscannonPickup", VOID);
+			DefineInputFunc("EnablePuntSound", "InputEnablePuntSound", VOID);
+			DefineInputFunc("DisablePuntSound", "InputDisablePuntSound", VOID);
 			DefineOutput("m_OnBreak", "OnBreak");
 			DefineOutput("m_OnHealthChanged", "OnHealthChanged");
 			DefineOutput("m_OnTakeDamage", "OnTakeDamage");
@@ -245,10 +245,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineOutput("m_OnPhysCannonAnimatePullStarted", "OnPhysCannonAnimatePullStarted");
 			DefineOutput("m_OnPhysCannonAnimatePostStarted", "OnPhysCannonAnimatePostStarted");
 			DefineOutput("m_OnPhysCannonPullAnimFinished", "OnPhysCannonPullAnimFinished");
-			//DEFINE_THINKFUNC( BreakThink ),
-			//DEFINE_THINKFUNC( AnimateThink ),
-			//DEFINE_THINKFUNC( RampToDefaultFadeScale ),
-			//DEFINE_ENTITYFUNC( BreakablePropTouch ),
+			DefineThinkFunc("BreakThink");
+			DefineThinkFunc("AnimateThink");
+			DefineThinkFunc("RampToDefaultFadeScale");
+			DefineEntityFunc("BreakablePropTouch");
 			DefineField("m_hPhysicsAttacker", EHANDLE);
 			DefineField("m_flLastPhysicsInfluenceTime", TIME);
 			DefineField("m_bOriginalBlockLOS", BOOLEAN);

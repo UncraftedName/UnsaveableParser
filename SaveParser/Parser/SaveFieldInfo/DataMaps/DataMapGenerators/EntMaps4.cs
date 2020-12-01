@@ -24,22 +24,22 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_bEnabled", BOOLEAN);
 			DefineVector("m_BallRespawnTime", TIME);
 			DefineField("m_flDisableTime", TIME);
-			//DefineINPUTFUNC("Enable", VOID);
-			//DefineINPUTFUNC("Disable", VOID);
+			DefineInputFunc("Enable", "InputEnable", VOID);
+			DefineInputFunc("Disable", "InputDisable", VOID);
 			DefineOutput("m_OnBallGrabbed", "OnBallGrabbed");
 			DefineOutput("m_OnBallReinserted", "OnBallReinserted");
 			DefineOutput("m_OnBallHitTopSide", "OnBallHitTopSide");
 			DefineOutput("m_OnBallHitBottomSide", "OnBallHitBottomSide");
 			DefineOutput("m_OnLastBallGrabbed", "OnLastBallGrabbed");
 			DefineOutput("m_OnFirstBallReinserted", "OnFirstBallReinserted");
-			//DEFINE_THINKFUNC( BallThink ),
-			//DEFINE_ENTITYFUNC( GrabBallTouch ),
+			DefineThinkFunc("BallThink");
+			DefineEntityFunc("GrabBallTouch");
 			
 			BeginDataMap("CPointCombineBallLauncher", "CFuncCombineBallSpawner");
 			DefineKeyField("m_flConeDegrees", "launchconenoise", FLOAT);
 			DefineKeyField("m_iszBullseyeName", "bullseyename", STRING);
 			DefineKeyField("m_iBounces", "maxballbounces", INTEGER);
-			//DefineINPUTFUNC("LaunchBall", VOID);
+			DefineInputFunc("LaunchBall", "InputLaunchBall", VOID);
 			
 			BeginDataMap("CEnergyBallLauncher", "CPointCombineBallLauncher");
 			LinkNamesToMap("point_energy_ball_launcher");
@@ -60,19 +60,19 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_flSpotlightGoalWidth", "SpotlightWidth", FLOAT);
 			DefineKeyField("m_flHDRColorScale", "HDRColorScale", FLOAT);
 			DefineKeyField("m_nMinDXLevel", "mindxlevel", INTEGER);
-			//DefineINPUTFUNC("LightOn", VOID);
-			//DefineINPUTFUNC("LightOff", VOID);
+			DefineInputFunc("LightOn", "InputLightOn", VOID);
+			DefineInputFunc("LightOff", "InputLightOff", VOID);
 			DefineOutput("m_OnOn", "OnLightOn");
 			DefineOutput("m_OnOff", "OnLightOff");
-			//DEFINE_THINKFUNC( SpotlightThink ),
+			DefineThinkFunc("SpotlightThink");
 
 			BeginDataMap("CFuncPortalDetector", "CBaseEntity");
 			LinkNamesToMap("func_portal_detector");
 			DefineField("m_bActive", BOOLEAN);
 			DefineKeyField("m_iLinkageGroupID", "LinkageGroupID", INTEGER);
-			//DefineINPUTFUNC("Disable", VOID);
-			//DefineINPUTFUNC("Enable", VOID);
-			//DefineINPUTFUNC("Toggle", VOID);
+			DefineInputFunc("Disable", "InputDisable", VOID);
+			DefineInputFunc("Enable", "InputEnable", VOID);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
 			DefineOutput("m_OnStartTouchPortal1", "OnStartTouchPortal1");
 			DefineOutput("m_OnStartTouchPortal2", "OnStartTouchPortal2");
 			DefineOutput("m_OnStartTouchLinkedPortal", "OnStartTouchLinkedPortal");
@@ -101,13 +101,15 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_vecEndPos", POSITION_VECTOR);
 			DefineField("m_hEndEntity", EHANDLE);
 			DefineKeyField("m_nDissolveType", "dissolvetype", INTEGER);
-			DefineField("m_bDrawInMainRender", BOOLEAN);
-			DefineField("m_bDrawInPortalRender", BOOLEAN);
-			//DefineINPUTFUNC("Width", FLOAT);
-			//DefineINPUTFUNC("Noise", FLOAT);
-			//DefineINPUTFUNC("ColorRedValue", FLOAT);
-			//DefineINPUTFUNC("ColorGreenValue", FLOAT);
-			//DefineINPUTFUNC("ColorBlueValue", FLOAT);
+			if (GenInfo.IsDefPortal) {
+				DefineField("m_bDrawInMainRender", BOOLEAN);
+				DefineField("m_bDrawInPortalRender", BOOLEAN);
+			}
+			DefineInputFunc("Width", "InputWidth", FLOAT);
+			DefineInputFunc("Noise", "InputNoise", FLOAT);
+			DefineInputFunc("ColorRedValue", "InputColorRedValue", FLOAT);
+			DefineInputFunc("ColorGreenValue", "InputColorGreenValue", FLOAT);
+			DefineInputFunc("ColorBlueValue", "InputColorBlueValue", FLOAT);
 			DefineInput("m_fSpeed", "ScrollSpeed", FLOAT);
 			
 			BeginDataMap("CFilterCombineBall", "CBaseFilter");
@@ -127,10 +129,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("szChallengeMapName", CHARACTER, 32);
 			DefineField("szChallengeName", CHARACTER, 32);
 			DefineField("m_iDisplayObjective", INTEGER);
-			//DefineINPUTFUNC("Disable", VOID);
-			//DefineINPUTFUNC("Enable", VOID);
-			//DefineINPUTFUNC("UpdateStats", VOID);
-			//DefineINPUTFUNC("ResetPlayerStats", VOID);
+			DefineInputFunc("Disable", "InputDisable", VOID);
+			DefineInputFunc("Enable", "InputEnable", VOID);
+			DefineInputFunc("UpdateStats", "InputUpdateStats", VOID);
+			DefineInputFunc("ResetPlayerStats", "InputResetPlayerStats", VOID);
 			DefineOutput("m_OnMetBronzeObjective", "OnMetBronzeObjective");
 			DefineOutput("m_OnMetSilverObjective", "OnMetSilverObjective");
 			DefineOutput("m_OnMetGoldObjective", "OnMetGoldObjective");
@@ -144,15 +146,15 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			
 			BeginDataMap("CPointClientCommand", "CPointEntity");
 			LinkNamesToMap("point_clientcommand");
-			//DEFINE_INPUTFUNC( FIELD_STRING, "Command", InputCommand ),
+			DefineInputFunc("Command", "InputCommand", STRING);
 			
 			BeginDataMap("CPointBonusMapsAccessor", "CPointEntity");
 			LinkNamesToMap("point_bonusmaps_accessor");
 			DefineKeyField("m_String_tFileName", "filename", STRING);
 			DefineKeyField("m_String_tMapName", "mapname", STRING);
-			//DefineINPUTFUNC("Unlock", VOID);
-			//DefineINPUTFUNC("Complete", VOID);
-			//DefineINPUTFUNC("Save", VOID);
+			DefineInputFunc("Unlock", "InputUnlock", VOID);
+			DefineInputFunc("Complete", "InputComplete", VOID);
+			DefineInputFunc("Save", "InputSave", VOID);
 			
 			BeginDataMap("CVguiScreen", "CBaseEntity");
 			LinkNamesToMap("vgui_screen", "vgui_screen_team", "CVGuiScreen"); // not sure if the last one is a typo
@@ -163,8 +165,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_flHeight", "height", FLOAT);
 			DefineKeyField("m_strOverlayMaterial", "overlaymaterial", STRING);
 			DefineField("m_hPlayerOwner", EHANDLE);
-			//DefineINPUTFUNC("SetActive", VOID);
-			//DefineINPUTFUNC("SetInactive", VOID);
+			DefineInputFunc("SetActive", "InputSetActive", VOID);
+			DefineInputFunc("SetInactive", "InputSetInactive", VOID);
 			
 			BeginDataMap("CPropCombineBall", "CBaseAnimating");
 			LinkNamesToMap("prop_combine_ball");
@@ -188,17 +190,17 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_nMaxBounces", INTEGER);
 			DefineField("m_bBounceDie", BOOLEAN);
 			DefineField("m_hSpawner", EHANDLE);
-			//DEFINE_THINKFUNC( ExplodeThink ),
-			//DEFINE_THINKFUNC( WhizSoundThink ),
-			//DEFINE_THINKFUNC( DieThink ),
-			//DEFINE_THINKFUNC( DissolveThink ),
-			//DEFINE_THINKFUNC( DissolveRampSoundThink ),
-			//DEFINE_THINKFUNC( AnimThink ),
-			//DEFINE_THINKFUNC( CaptureBySpawner ),
-			//DefineINPUTFUNC("Explode", VOID);
-			//DefineINPUTFUNC("FadeAndRespawn", VOID);
-			//DefineINPUTFUNC("Kill", VOID);
-			//DefineINPUTFUNC("Socketed", VOID);
+			DefineThinkFunc("ExplodeThink");
+			DefineThinkFunc("WhizSoundThink");
+			DefineThinkFunc("DieThink");
+			DefineThinkFunc("DissolveThink");
+			DefineThinkFunc("DissolveRampSoundThink");
+			DefineThinkFunc("AnimThink");
+			DefineThinkFunc("CaptureBySpawner");
+			DefineInputFunc("Explode", "InputExplode", VOID);
+			DefineInputFunc("FadeAndRespawn", "InputFadeAndRespawn", VOID);
+			DefineInputFunc("Kill", "InputKill", VOID);
+			DefineInputFunc("Socketed", "InputSocketed", VOID);
 			
 			BeginDataMap("CPropEnergyBall", "CPropCombineBall");
 			LinkNamesToMap("prop_energy_ball");

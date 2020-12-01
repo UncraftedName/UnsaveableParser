@@ -12,7 +12,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 		
 		
 		public CAI_NavigatorEntData(SourceSave saveRef)
-			: base(saveRef, null!, saveRef.SaveInfo.DataMapLookup["CAI_Navigator"]) {}
+			: base(saveRef, null!, saveRef.SaveInfo.SDataMapLookup["CAI_Navigator"]) {}
 
 
 		protected override void Parse(ref BitStreamReader bsr) {

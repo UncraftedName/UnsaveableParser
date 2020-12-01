@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using SaveParser.Parser.SaveFieldInfo;
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
@@ -16,21 +17,24 @@ namespace SaveParser.Parser {
 		public Vector3 LandmarkPos;
 		public Time BaseTime;
 		public readonly float TickInterval;
-		public Game Game;
+		public readonly Game Game;
 		public string? SaveDir;
-		public readonly IReadOnlyDictionary<string, DataMap> DataMapLookup;
+		// todo two separate map lookups makes me :(( (maybe use special generators for shared classes)
+		public readonly IReadOnlyDictionary<string, DataMap> SDataMapLookup; // server
+		public readonly IReadOnlyDictionary<string, DataMap> CDataMapLookup; // client
 
-		
+
 		public SaveInfo(Game game) {
 			ParseContext = new ParseContext(0);
 			Game = game;
 			TickInterval = game switch {
-				Game.Portal13420 => 0.015f,
-				Game.Portal2 => 1.0f / 60,
+				Game.PORTAL1_3420 => 0.015f,
+				Game.PORTAL2 => 1.0f / 60,
 				_ => throw new ArgumentOutOfRangeException(nameof(game), game, "invalid game type")
 			};
 			// should be last
-			DataMapLookup = GlobalDataMapGenerator.GetDataMapList(this);
+			SDataMapLookup = GlobalDataMapGenerator.GetDataMapList(this, false);
+			CDataMapLookup = GlobalDataMapGenerator.GetDataMapList(this, true);
 		}
 
 
@@ -46,6 +50,11 @@ namespace SaveParser.Parser {
 		
 		
 		public int TimeToTicks(float time) => (int)((0.5f + time) / TickInterval);
+
+
+		internal DataMapGeneratorInfo CreateGenInfo(bool client) {
+			return new DataMapGeneratorInfo(Game, client);
+		}
 	}
 
 
@@ -66,9 +75,30 @@ namespace SaveParser.Parser {
 	}
 
 
-	// if your game doesn't exist here, the save should™ still parse
+	internal class DataMapGeneratorInfo {
+		
+		public readonly Game Game;
+		// these are here for consistency to game code, or because I'm not sure of their values
+		public readonly bool IsDefHl1Dll = false;
+		public readonly bool IsDefHl2Dll = false;
+		public readonly bool IsDefInvasionDll = false;
+		public readonly bool IsDefHl2Episodic = false;
+		public bool IsDefPortal => Game == Game.PORTAL1_3420 || Game == Game.PORTAL2;
+		public readonly bool IsXBox = false;
+		public readonly bool IsDefClientDll;
+		
+		
+		public DataMapGeneratorInfo(Game game, bool isDefClientDll) {
+			Game = game;
+			IsDefClientDll = isDefClientDll;
+		}
+	}
+
+
+	// if your game doesn't exist here, the save should™ still parse (at least without vphys parsing)
+	[SuppressMessage("ReSharper", "InconsistentNaming")]
 	public enum Game {
-		Portal13420,
-		Portal2
+		PORTAL1_3420,
+		PORTAL2
 	}
 }

@@ -117,15 +117,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_bIgnoreTransientEntities", BOOLEAN);
 			DefineField("m_hLastBlockingEnt", EHANDLE);
 			
-			BeginDataMap("CAI_InterestTarget");
-			DefineField("m_eType", INTEGER); // CAI_InterestTarget_e
-			DefineField("m_hTarget", EHANDLE);
-			DefineField("m_vecPosition", VECTOR);
-			DefineField("m_flStartTime", FLOAT);
-			DefineField("m_flEndTime", FLOAT);
-			DefineField("m_flRamp", FLOAT);
-			DefineField("m_flInterest", FLOAT);
-			
 			BeginDataMap("CAI_Motor");
 			DefineField("m_IdealYaw", FLOAT);
 			DefineField("m_YawSpeed", FLOAT);
@@ -142,7 +133,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			BeginDataMap("UnreachableEnt_t");
 			DefineField("h_UnreachableEnt", EHANDLE);
 			DefineField("fExpireTime", FLOAT);
-			DefineField("vLocationWhenUnreachable", VECTOR);
+			DefineField("vLocationWhenUnreachable", POSITION_VECTOR);
 			
 			BeginDataMap("ScriptedNPCInteraction_Phases_t");
 			DefineField("iszSequence", STRING);
@@ -323,34 +314,34 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineOutput("m_OnForcedInteractionStarted", "OnForcedInteractionStarted");
 			DefineOutput("m_OnForcedInteractionAborted", "OnForcedInteractionAborted");
 			DefineOutput("m_OnForcedInteractionFinished", "OnForcedInteractionFinished");
-			//DefineINPUTFUNC("SetRelationship", STRING);
-			//DefineINPUTFUNC("SetEnemyFilter", STRING);
-			//DefineINPUTFUNC("SetHealth", INTEGER);
-			//DefineINPUTFUNC("BeginRappel", VOID);
-			//DefineINPUTFUNC("SetSquad", STRING);
-			//DefineINPUTFUNC("Wake", VOID);
-			//DefineINPUTFUNC("ForgetEntity", STRING);
-			//DefineINPUTFUNC("IgnoreDangerSounds", FLOAT);
-			//DefineINPUTFUNC("Break", VOID);
-			//DefineINPUTFUNC("StartScripting", VOID);
-			//DefineINPUTFUNC("StopScripting", VOID);
-			//DefineINPUTFUNC("GagEnable", VOID);
-			//DefineINPUTFUNC("GagDisable", VOID);
-			//DefineINPUTFUNC("InsideTransition", VOID);
-			//DefineINPUTFUNC("OutsideTransition", VOID);
-			//DefineINPUTFUNC("ActivateSpeedModifier", VOID);
-			//DefineINPUTFUNC("DisableSpeedModifier", VOID);
-			//DefineINPUTFUNC("SetSpeedModRadius", INTEGER);
-			//DefineINPUTFUNC("SetSpeedModSpeed", INTEGER);
-			//DefineINPUTFUNC("HolsterWeapon", VOID);
-			//DefineINPUTFUNC("HolsterAndDestroyWeapon", VOID);
-			//DefineINPUTFUNC("UnholsterWeapon", VOID);
-			//DefineINPUTFUNC("ForceInteractionWithNPC", STRING);
-			//DefineINPUTFUNC("UpdateEnemyMemory", STRING);
-			//DEFINE_USEFUNC( NPCUse ),
-			//DEFINE_THINKFUNC( CallNPCThink ),
-			//DEFINE_THINKFUNC( CorpseFallThink ),
-			//DEFINE_THINKFUNC( NPCInitThink ),
+			DefineInputFunc("SetRelationship", "InputSetRelationship", STRING);
+			DefineInputFunc("SetEnemyFilter", "InputSetEnemyFilter", STRING);
+			DefineInputFunc("SetHealth", "InputSetHealth", INTEGER);
+			DefineInputFunc("BeginRappel", "InputBeginRappel", VOID);
+			DefineInputFunc("SetSquad", "InputSetSquad", STRING);
+			DefineInputFunc("Wake", "InputWake", VOID);
+			DefineInputFunc("ForgetEntity", "InputForgetEntity", STRING);
+			DefineInputFunc("IgnoreDangerSounds", "InputIgnoreDangerSounds", FLOAT);
+			DefineInputFunc("Break", "InputBreak", VOID);
+			DefineInputFunc("StartScripting", "InputStartScripting", VOID);
+			DefineInputFunc("StopScripting", "InputStopScripting", VOID);
+			DefineInputFunc("GagEnable", "InputGagEnable", VOID);
+			DefineInputFunc("GagDisable", "InputGagDisable", VOID);
+			DefineInputFunc("InsideTransition", "InputInsideTransition", VOID);
+			DefineInputFunc("OutsideTransition", "InputOutsideTransition", VOID);
+			DefineInputFunc("ActivateSpeedModifier", "InputActivateSpeedModifier", VOID);
+			DefineInputFunc("DisableSpeedModifier", "InputDisableSpeedModifier", VOID);
+			DefineInputFunc("SetSpeedModRadius", "InputSetSpeedModifierRadius", INTEGER);
+			DefineInputFunc("SetSpeedModSpeed", "InputSetSpeedModifierSpeed", INTEGER);
+			DefineInputFunc("HolsterWeapon", "InputHolsterWeapon", VOID);
+			DefineInputFunc("HolsterAndDestroyWeapon", "InputHolsterAndDestroyWeapon", VOID);
+			DefineInputFunc("UnholsterWeapon", "InputUnholsterWeapon", VOID);
+			DefineInputFunc("ForceInteractionWithNPC", "InputForceInteractionWithNPC", STRING);
+			DefineInputFunc("UpdateEnemyMemory", "InputUpdateEnemyMemory", STRING);
+			DefineUseFunc("NPCUse");
+			DefineThinkFunc("CallNPCThink");
+			DefineThinkFunc("CorpseFallThink");
+			DefineThinkFunc("NPCInitThink");
 
 			DataMapProxy("CAI_BehaviorHost<CAI_BaseNPC>", "CAI_BaseNPC");
 
@@ -407,7 +398,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_bDontUseSemaphore", "DontUseSpeechSemaphore",  BOOLEAN);
 			DefineKeyField("m_iszExpressionOverride", "ExpressionOverride", STRING);
 			DefineEmbeddedField("m_pExpresser", "CAI_Expresser");
-			//DefineINPUTFUNC("SetExpressionOverride", STRING);
+			DefineInputFunc("SetExpressionOverride", "InputSetExpressionOverride", STRING);
 
 			BeginDataMap("CGenericActor", "CAI_BaseActor");
 			LinkNamesToMap("generic_actor");
@@ -443,10 +434,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineThinkFunc("ActiveThink");
 			DefineThinkFunc("SearchThink");
 			DefineThinkFunc("DeathThink");
-			//DefineINPUTFUNC("Toggle", VOID);
-			//DefineINPUTFUNC("Enable", VOID);
-			//DefineINPUTFUNC("Disable", VOID);
-			//DefineINPUTFUNC("Ragdoll", VOID);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
+			DefineInputFunc("Enable", "InputEnable", VOID);
+			DefineInputFunc("Disable", "InputDisable", VOID);
+			DefineInputFunc("Ragdoll", "InputRagdoll", VOID);
 			DefineOutput("m_OnDeploy", "OnDeploy");
 			DefineOutput("m_OnRetire", "OnRetire");
 			

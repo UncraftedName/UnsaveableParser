@@ -51,18 +51,22 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineOutput("m_OnDissolve", "OnDissolve");
 			DefineOutput("m_OnFizzle", "OnFizzle");
 			DefineOutput("m_OnDissolveBox", "OnDissolveBox");
+			if (Game == Game.PORTAL2) {
+				DefineField("m_bVisible", BOOLEAN);
+				DefineField("m_bUseScanline", BOOLEAN);
+			}
 			
 			BeginDataMap("CBaseTrigger", "CBaseToggle");
 			DefineKeyField("m_iFilterName", "filtername", STRING);
 			DefineField("m_hFilter", EHANDLE);
 			DefineKeyField("m_bDisabled", "StartDisabled", BOOLEAN);
 			DefineVector("m_hTouchingEntities", EHANDLE);
-			//DefineINPUTFUNC("Enable", VOID);
-			//DefineINPUTFUNC("Disable", VOID);
-			//DefineINPUTFUNC("Toggle", VOID);
-			//DefineINPUTFUNC("TouchTest", VOID);
-			//DefineINPUTFUNC("StartTouch", VOID);
-			//DefineINPUTFUNC("EndTouch", VOID);
+			DefineInputFunc("Enable", "InputEnable", VOID);
+			DefineInputFunc("Disable", "InputDisable", VOID);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
+			DefineInputFunc("TouchTest", "InputTouchTest", VOID);
+			DefineInputFunc("StartTouch", "InputStartTouch", VOID);
+			DefineInputFunc("EndTouch", "InputEndTouch", VOID);
 			DefineOutput("m_OnStartTouch", "OnStartTouch");
 			DefineOutput("m_OnStartTouchAll", "OnStartTouchAll");
 			DefineOutput("m_OnEndTouch", "OnEndTouch");
@@ -74,14 +78,15 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_bDisabled", "StartDisabled", BOOLEAN);
 			DefineKeyField("m_iFilterName", "filtername", STRING);
 			DefineField("m_hFilter", EHANDLE);
-			//DefineINPUTFUNC("Enable", VOID);
-			//DefineINPUTFUNC("Disable", VOID);
-			//DefineINPUTFUNC("Toggle", VOID);
+			DefineInputFunc("Enable", "InputEnable", VOID);
+			DefineInputFunc("Disable", "InputDisable", VOID);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
 			
 			BeginDataMap("CTriggerVPhysicsMotion", "CBaseVPhysicsTrigger");
 			LinkNamesToMap("trigger_vphysics_motion");
 			DefinePhysPtr("m_pController");
-			DefineEmbeddedField("m_ParticleTrail", "EntityParticleTrailInfo_t");
+			if (!GenInfo.IsXBox)
+				DefineEmbeddedField("m_ParticleTrail", "EntityParticleTrailInfo_t");
 			DefineInput("m_gravityScale", "SetGravityScale", FLOAT);
 			DefineInput("m_addAirDensity", "SetAdditionalAirDensity", FLOAT);
 			DefineInput("m_linearLimit", "SetVelocityLimit", FLOAT);
@@ -94,7 +99,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInput("m_angularScale", "SetAngVelocityScale", FLOAT);
 			DefineInput("m_linearForce", "SetLinearForce", FLOAT);
 			DefineInput("m_linearForceAngles", "SetLinearForceAngles", VECTOR);
-			//DefineINPUTFUNC("SetVelocityLimitTime", STRING);
+			DefineInputFunc("SetVelocityLimitTime", "InputSetVelocityLimitTime", STRING);
 			
 			BeginDataMap("CTriggerHurt", "CBaseTrigger");
 			LinkNamesToMap("trigger_hurt");
@@ -146,12 +151,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_iszTargetAttachment", "targetattachment", STRING);
 			DefineField("m_iAttachmentIndex", INTEGER);
 			DefineField("m_bSnapToGoal", BOOLEAN);
-			//#if HL2_EPISODIC
-			//DefineKeyField("m_bInterpolatePosition", "interpolatepositiontoplayer", BOOLEAN);
-			//DefineField("m_vStartPos", VECTOR);
-			//DefineField("m_vEndPos", VECTOR);
-			//DefineField("m_flInterpStartTime", TIME);
-			//#endif
+			if (GenInfo.IsDefHl2Episodic) {
+				DefineKeyField("m_bInterpolatePosition", "interpolatepositiontoplayer", BOOLEAN);
+				DefineField("m_vStartPos", VECTOR);
+				DefineField("m_vEndPos", VECTOR);
+				DefineField("m_flInterpStartTime", TIME);
+			}
 			DefineField("m_nPlayerButtons", INTEGER);
 			DefineField("m_nOldTakeDamage", INTEGER);
 			DefineInputFunc("Enable", "InputEnable", VOID);

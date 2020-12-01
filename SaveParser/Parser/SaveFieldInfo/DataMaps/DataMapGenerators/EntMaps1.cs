@@ -1,5 +1,6 @@
 // ReSharper disable All
 using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
+using SaveParser.Utils.BitStreams;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
@@ -22,6 +23,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 		public const int MAX_AMMO_SLOTS = 32;
 		public const int MAX_WEAPONS = 48;
 		public const int MAXSTUDIOFLEXCTRL = 96;
+		public const int MAX_POWERUPS = 4;
 		
 		
 		protected override void CreateDataMaps() {
@@ -44,6 +46,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("touchStamp", INTEGER);
 			DefineCustomField("m_aThinkFunctions", ThinkContexts.Restore);
 			DefineEmbeddedVector("m_ResponseContexts", "ResponseContext_t");
+			DefineKeyField("m_iszResponseContext", "ResponseContext", STRING);
 			DefineField("m_pfnThink", FUNCTION);
 			DefineField("m_pfnTouch", FUNCTION);
 			DefineField("m_pfnUse", FUNCTION);
@@ -84,7 +87,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_vecAngVelocity", "avelocity", VECTOR);
 			DefineField("m_rgflCoordinateFrame", MATRIX3X4_WORLDSPACE);
 			DefineKeyField("m_nWaterLevel", "waterlevel", CHARACTER);
-			DefineField("m_nWaterType", CHARACTER);
+			DefineField("m_nWaterType", BYTE);
 			DefineField("m_pBlocker", EHANDLE);
 			DefineKeyField("m_flGravity", "gravity", FLOAT);
 			DefineKeyField("m_flFriction", "friction", FLOAT);
@@ -106,32 +109,32 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_fFlags", INTEGER);
 			DefineField("m_nSimulationTick", TICK);
 			DefineField("m_flNavIgnoreUntilTime", TIME);
-			//DefineINPUTFUNC("SetTeam", INTEGER);
-			//DefineINPUTFUNC("Kill", VOID);
-			//DefineINPUTFUNC("KillHierarchy", VOID);
-			//DefineINPUTFUNC("Use", VOID);
-			//DefineINPUTFUNC("Alpha", INTEGER);
-			//DefineINPUTFUNC("AlternativeSorting", BOOLEAN);
-			//DefineINPUTFUNC("Color", COLOR32);
-			//DefineINPUTFUNC("SetParent", STRING);
-			//DefineINPUTFUNC("SetParentAttachment", STRING);
-			//DefineINPUTFUNC("SetParentAttachmentMaintainOffset", STRING);
-			//DefineINPUTFUNC("ClearParent", VOID);
-			//DefineINPUTFUNC("SetDamageFilter", STRING);
-			//DefineINPUTFUNC("EnableDamageForces", VOID);
-			//DefineINPUTFUNC("DisableDamageForces", VOID);
-			//DefineINPUTFUNC("DispatchEffect", STRING);
-			//DefineINPUTFUNC("DispatchResponse", STRING);
-			//DefineINPUTFUNC("AddContext", STRING);
-			//DefineINPUTFUNC("RemoveContext", STRING);
-			//DefineINPUTFUNC("ClearContext", STRING);
-			//DefineINPUTFUNC("DisableShadow", VOID);
-			//DefineINPUTFUNC("EnableShadow", VOID);
-			//DefineINPUTFUNC("AddOutput", STRING);
-			//DefineINPUTFUNC("FireUser1", STRING);
-			//DefineINPUTFUNC("FireUser2", STRING);
-			//DefineINPUTFUNC("FireUser3", STRING);
-			//DefineINPUTFUNC("FireUser4", STRING);
+			DefineInputFunc("SetTeam", "InputSetTeam", INTEGER);
+			DefineInputFunc("Kill", "InputKill", VOID);
+			DefineInputFunc("KillHierarchy", "InputKillHierarchy", VOID);
+			DefineInputFunc("Use", "InputUse", VOID);
+			DefineInputFunc("Alpha", "InputAlpha", INTEGER);
+			DefineInputFunc("AlternativeSorting", "InputAlternativeSorting", BOOLEAN);
+			DefineInputFunc("Color", "InputColor", COLOR32);
+			DefineInputFunc("SetParent", "InputSetParent", STRING);
+			DefineInputFunc("SetParentAttachment", "InputSetParentAttachment", STRING);
+			DefineInputFunc("SetParentAttachmentMaintainOffset", "InputSetParentAttachmentMaintainOffset", STRING);
+			DefineInputFunc("ClearParent", "InputClearParent", VOID);
+			DefineInputFunc("SetDamageFilter", "InputSetDamageFilter", STRING);
+			DefineInputFunc("EnableDamageForces", "InputEnableDamageForces", VOID);
+			DefineInputFunc("DisableDamageForces", "InputDisableDamageForces", VOID);
+			DefineInputFunc("DispatchEffect", "InputDispatchEffect", STRING);
+			DefineInputFunc("DispatchResponse", "InputDispatchResponse", STRING);
+			DefineInputFunc("AddContext", "InputAddContext", STRING);
+			DefineInputFunc("RemoveContext", "InputRemoveContext", STRING);
+			DefineInputFunc("ClearContext", "InputClearContext", STRING);
+			DefineInputFunc("DisableShadow", "InputDisableShadow", VOID);
+			DefineInputFunc("EnableShadow", "InputEnableShadow", VOID);
+			DefineInputFunc("AddOutput", "InputAddOutput", STRING);
+			DefineInputFunc("FireUser1", "InputFireUser1", STRING);
+			DefineInputFunc("FireUser2", "InputFireUser2", STRING);
+			DefineInputFunc("FireUser3", "InputFireUser3", STRING);
+			DefineInputFunc("FireUser4", "InputFireUser4", STRING);
 			DefineOutput("m_OnUser1", "OnUser1");
 			DefineOutput("m_OnUser2", "OnUser2");
 			DefineOutput("m_OnUser3", "OnUser3");
@@ -143,23 +146,33 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineFunction("SUB_FadeOut");
 			DefineFunction("SUB_Vanish");
 			DefineFunction("SUB_CallUseToggle");
-			//DEFINE_THINKFUNC( ShadowCastDistThink ),
+			DefineThinkFunc("ShadowCastDistThink");
 			DefineField("m_hEffectEntity", EHANDLE);
+			if (Game == Game.PORTAL2) {
+				DefineField("m_iSignifierName", STRING);
+				DefineField("m_iszScriptId", STRING);
+				DefineField("m_iszVScripts", STRING);
+			}
 
 			BeginDataMap("CWorld", "CBaseEntity");
 			LinkNamesToMap("worldspawn");
 			DefineField("m_flWaveHeight", FLOAT);
-			DefineField("m_iszChapterTitle", STRING);
-			DefineField("m_bStartDark", BOOLEAN);
-			DefineField("m_bDisplayTitle", BOOLEAN);
+			DefineKeyField("m_iszChapterTitle", "chaptertitle", STRING);
+			DefineKeyField("m_bStartDark", "startdark", BOOLEAN);
+			DefineKeyField("m_bDisplayTitle", "gametitle", BOOLEAN);
 			DefineField("m_WorldMins", VECTOR);
 			DefineField("m_WorldMaxs", VECTOR);
-			DefineField("m_flMaxOccludeeArea", FLOAT);
-			DefineField("m_flMinOccluderArea", FLOAT);
-			DefineField("m_flMaxPropScreenSpaceWidth", FLOAT);
-			DefineField("m_flMinPropScreenSpaceWidth", FLOAT);
-			DefineField("m_iszDetailSpriteMaterial", STRING);
-			DefineField("m_bColdWorld", BOOLEAN);
+			if (GenInfo.IsXBox) {
+				DefineKeyField("m_flMaxOccludeeArea", "maxoccludeearea_x360", FLOAT);
+				DefineKeyField("m_flMinOccluderArea", "minoccluderarea_x360", FLOAT);
+			} else {
+				DefineKeyField("m_flMaxOccludeeArea", "maxoccludeearea", FLOAT);
+				DefineKeyField("m_flMinOccluderArea", "minoccluderarea", FLOAT);
+			}
+			DefineKeyField("m_flMaxPropScreenSpaceWidth", "maxpropscreenwidth", FLOAT);
+			DefineKeyField("m_flMinPropScreenSpaceWidth", "minpropscreenwidth", FLOAT);
+			DefineKeyField("m_iszDetailSpriteMaterial", "detailmaterial", STRING);
+			DefineKeyField("m_bColdWorld", "coldworld", BOOLEAN);
 			
 			BeginDataMap("CAnimationLayer");
 			DefineField("m_fFlags", INTEGER);
@@ -195,7 +208,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_flEncodedController", FLOAT, NUM_BONECTRLS);
 			DefineKeyField("m_flPlaybackRate", "playbackrate", FLOAT);
 			DefineKeyField("m_flCycle", "cycle", FLOAT);
-			//DEFINE_CUSTOM_FIELD( m_pIk, &s_IKSaveRestoreOp ), // just read bool?
+			DefineField("m_pIk", BOOLEAN); // custom field name "bHasIK", but that's too much effort
 			DefineField("m_iIKCounter", INTEGER);
 			DefineField("m_bClientSideAnimation", BOOLEAN);
 			DefineField("m_bClientSideFrameReset", BOOLEAN);
@@ -208,13 +221,13 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_hLightingOriginRelative", EHANDLE);
 			DefineField("m_flModelWidthScale", FLOAT);
 			DefineField("m_flDissolveStartTime", TIME);
-			//DefineINPUTFUNC("Ignite", VOID);
-			//DefineINPUTFUNC("IgniteLifetime", FLOAT);
-			//DefineINPUTFUNC("IgniteNumHitboxFires", INTEGER);
-			//DefineINPUTFUNC("IgniteHitboxFireScale", FLOAT);
-			//DefineINPUTFUNC("BecomeRagdoll", VOID);
-			//DefineINPUTFUNC("SetLightingOriginHack", STRING);
-			//DefineINPUTFUNC("SetLightingOrigin", STRING);
+			DefineInputFunc("Ignite", "InputIgnite", VOID);
+			DefineInputFunc("IgniteLifetime", "InputIgniteLifetime", FLOAT);
+			DefineInputFunc("IgniteNumHitboxFires", "InputIgniteNumHitboxFires", INTEGER);
+			DefineInputFunc("IgniteHitboxFireScale", "InputIgniteHitboxFireScale", FLOAT);
+			DefineInputFunc("BecomeRagdoll", "InputBecomeRagdoll", VOID);
+			DefineInputFunc("SetLightingOriginHack", "InputSetLightingOriginRelative", STRING);
+			DefineInputFunc("SetLightingOrigin", "InputSetLightingOrigin", STRING);
 			DefineOutput("m_OnIgnite", "OnIgnite");
 			DefineInput("m_fadeMinDist", "fademindist", FLOAT);
 			DefineInput("m_fadeMaxDist", "fademaxdist", FLOAT);
@@ -229,6 +242,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_viewtarget", POSITION_VECTOR);
 			DefineField("m_flAllowResponsesEndTime", TIME);
 			DefineField("m_flLastFlexAnimationTime", TIME);
+			if (GenInfo.IsDefHl2Dll) {
+				DefineField("m_vecLean", VECTOR);
+				DefineField("m_vecShift", VECTOR);
+			}
 			
 			BeginDataMap("Relationship_t");
 			DefineField("entity", EHANDLE);
@@ -237,6 +254,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("priority", INTEGER);
 			
 			BeginDataMap("CBaseCombatCharacter", "CBaseFlex");
+			if (GenInfo.IsDefInvasionDll) {
+				DefineField("m_iPowerups", INTEGER);
+				DefineField("m_flPowerupAttemptTimes", TIME, MAX_POWERUPS);
+				DefineField("m_flPowerupEndTimes", TIME, MAX_POWERUPS);
+				DefineField("m_flFractionalBoost", FLOAT);
+			}
 			DefineField("m_flNextAttack", TIME);
 			DefineField("m_eHull", INTEGER);
 			DefineField("m_bloodColor", INTEGER);
@@ -254,7 +277,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_hActiveWeapon", EHANDLE);
 			DefineField("m_bForceServerRagdoll", BOOLEAN);
 			DefineField("m_bPreventWeaponPickup", BOOLEAN);
-			//DefineINPUTFUNC("KilledNPC", VOID);
+			DefineInputFunc("KilledNPC", "InputKilledNPC", VOID);
 			
 			BeginDataMap("CPlayerState");
 			DefineField("v_angle", VECTOR);
@@ -362,9 +385,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_szLastPlaceName", CHARACTER, MAX_PLACE_NAME_LENGTH);
 			DefineField("m_autoKickDisabled", BOOLEAN);
 			DefineFunction("PlayerDeathThink");
-			//DefineINPUTFUNC("SetHealth", INTEGER);
-			//DefineINPUTFUNC("SetHUDVisibility", BOOLEAN);
-			//DefineINPUTFUNC("SetFogController", STRING);
+			DefineInputFunc("SetHealth", "InputSetHealth", INTEGER);
+			DefineInputFunc("SetHUDVisibility", "InputSetHUDVisibility", BOOLEAN);
+			DefineInputFunc("SetFogController", "InputSetFogController", STRING);
 			DefineField("m_nNumCrouches", INTEGER);
 			DefineField("m_bDuckToggled", BOOLEAN);
 			DefineField("m_flForwardMove", FLOAT);
@@ -382,6 +405,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_bWeaponLowered", BOOLEAN);
 			DefineField("m_bDisplayReticle", BOOLEAN);
 			DefineField("m_bStickyAutoAim", BOOLEAN);
+			if (GenInfo.IsDefHl2Episodic) {
+				DefineField("m_flFlashBattery", FLOAT);
+				DefineField("m_vecLocatorOrigin", POSITION_VECTOR);
+			}
 			DefineField("m_flFlashBattery", FLOAT);             // hl2 episodic
 			DefineField("m_vecLocatorOrigin", POSITION_VECTOR); // hl2 episodic
 			DefineField("m_hLadder", EHANDLE);
@@ -413,12 +440,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_hLockedAutoAimEntity", EHANDLE);
 			DefineEmbeddedField("m_LowerWeaponTimer", "CSimpleSimTimer");
 			DefineEmbeddedField("m_AutoaimTimer", "CSimpleSimTimer");
-			//DefineINPUTFUNC("IgnoreFallDamage", FLOAT);
-			//DefineINPUTFUNC("IgnoreFallDamageWithoutReset", FLOAT);
-			//DefineINPUTFUNC("OnSquadMemberKilled", VOID);
-			//DefineINPUTFUNC("DisableFlashlight", VOID);
-			//DefineINPUTFUNC("EnableFlashlight", VOID);
-			//DefineINPUTFUNC("ForceDropPhysObjects", VOID);
+			DefineInputFunc("IgnoreFallDamage", "InputIgnoreFallDamage", FLOAT);
+			DefineInputFunc("IgnoreFallDamageWithoutReset", "InputIgnoreFallDamageWithoutReset", FLOAT);
+			DefineInputFunc("OnSquadMemberKilled", "OnSquadMemberKilled", VOID);
+			DefineInputFunc("DisableFlashlight", "InputDisableFlashlight", VOID);
+			DefineInputFunc("EnableFlashlight", "InputEnableFlashlight", VOID);
+			DefineInputFunc("ForceDropPhysObjects", "InputForceDropPhysObjects", VOID);
 			DefineSoundPatch("m_sndLeeches");
 			DefineSoundPatch("m_sndWaterSplashes");
 			DefineField("m_flArmorReductionTime", TIME);
@@ -501,7 +528,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineEmbeddedField("m_PlayerFog", "fogplayerparams_t");
 			DefineEmbeddedField("m_fog", "fogparams_t");
 			DefineEmbeddedField("m_audio", "audioparams_t");
-			
+
 			BeginDataMap("CPortal_Player", "CHL2_Player");
 			LinkNamesToMap("player");
 			DefineSoundPatch("m_pWooshSound");

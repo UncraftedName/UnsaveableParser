@@ -60,7 +60,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_iszTemplateEntityNames[15]", "Template16", STRING);
 			DefineVector("m_hTemplateEntities", CLASSPTR);
 			DefineEmbeddedVector("m_hTemplates", "template_t");
-			//DefineINPUTFUNC("ForceSpawn", VOID);
+			DefineInputFunc("ForceSpawn", "InputForceSpawn", VOID);
 			DefineOutput("m_pOutputOnSpawned", "OnEntitySpawned");
 			
 			DataMapProxy("CPointEntity", "CBaseEntity");
@@ -88,22 +88,22 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_hEndPoint", EHANDLE);
 			DefineField("m_iStartAttachment", SHORT);
 			DefineField("m_iEndAttachment", SHORT);
-			//DefineINPUTFUNC("SetScrollSpeed", FLOAT);
-			//DefineINPUTFUNC("SetForce", VECTOR);
-			//DefineINPUTFUNC("Break", VOID);
+			DefineInputFunc("SetScrollSpeed", "InputSetScrollSpeed", FLOAT);
+			DefineInputFunc("SetForce", "InputSetForce", VECTOR);
+			DefineInputFunc("Break", "InputBreak", VOID);
 			
 			BeginDataMap("CFuncBrush", "CBaseEntity");
 			LinkNamesToMap("func_brush");
-			//DefineINPUTFUNC("Enable", VOID);
-			//DefineINPUTFUNC("Disable", VOID);
-			//DefineINPUTFUNC("Toggle", VOID);
+			DefineInputFunc("Enable", "InputTurnOn", VOID);
+			DefineInputFunc("Disable", "InputTurnOff", VOID);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
 			DefineKeyField("m_iDisabled", "StartDisabled", INTEGER);
 			DefineKeyField("m_iSolidity", "Solidity", INTEGER);
 			DefineKeyField("m_bSolidBsp", "solidbsp", BOOLEAN);
 			DefineKeyField("m_iszExcludedClass", "excludednpc", STRING);
 			DefineKeyField("m_bInvertExclusion", "invert_exclusion", BOOLEAN);
-			//DefineINPUTFUNC("SetExcluded", STRING);
-			//DefineINPUTFUNC("SetInvert", BOOLEAN);
+			DefineInputFunc("SetExcluded", "InputSetExcluded", STRING);
+			DefineInputFunc("SetInvert", "InputSetInvert", BOOLEAN);
 			
 			DataMapProxy("CBaseProp", "CBaseAnimating");
 			
@@ -127,18 +127,18 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_bStartDisabled", "StartDisabled", BOOLEAN);
 			DefineField("m_bUseHitboxesForRenderBox", BOOLEAN);
 			DefineField("m_nPendingSequence", SHORT);
-			//DefineINPUTFUNC("SetAnimation", STRING);
-			//DefineINPUTFUNC("SetDefaultAnimation", STRING);
-			//DefineINPUTFUNC("TurnOn", VOID);
-			//DefineINPUTFUNC("TurnOff", VOID);
-			//DefineINPUTFUNC("Enable", VOID);
-			//DefineINPUTFUNC("Disable", VOID);
-			//DefineINPUTFUNC("EnableCollision", VOID);
-			//DefineINPUTFUNC("DisableCollision", VOID);
-			//DefineINPUTFUNC("SetPlaybackRate", FLOAT);
+			DefineInputFunc("SetAnimation", "InputSetAnimation", STRING);
+			DefineInputFunc("SetDefaultAnimation", "InputSetDefaultAnimation", STRING);
+			DefineInputFunc("TurnOn", "InputTurnOn", VOID);
+			DefineInputFunc("TurnOff", "InputTurnOff", VOID);
+			DefineInputFunc("Enable", "InputTurnOn", VOID);
+			DefineInputFunc("Disable", "InputTurnOff", VOID);
+			DefineInputFunc("EnableCollision", "InputEnableCollision", VOID);
+			DefineInputFunc("DisableCollision", "InputDisableCollision", VOID);
+			DefineInputFunc("SetPlaybackRate", "InputSetPlaybackRate", FLOAT);
 			DefineOutput("m_pOutputAnimBegun", "OnAnimationBegun");
 			DefineOutput("m_pOutputAnimOver", "OnAnimationDone");
-			//DEFINE_THINKFUNC( AnimThink ),
+			DefineThinkFunc("AnimThink");
 			DefineEmbeddedField("m_BoneFollowerManager", "CBoneFollowerManager");
 			
 			BeginDataMap("CBaseToggle", "CBaseEntity");
@@ -176,15 +176,19 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_eSpawnPosition", "spawnpos", INTEGER);
 			DefineKeyField("m_bForceClosed", "forceclosed", BOOLEAN);
 			DefineField("m_bDoorGroup", BOOLEAN);
+			if (GenInfo.IsDefHl1Dll) {
+				DefineKeyField("m_iBlockFilterName", "filtername", STRING);
+				DefineField("m_hBlockFilter", EHANDLE);
+			}
 			DefineKeyField("m_bLoopMoveSound", "loopmovesound", BOOLEAN);
 			DefineKeyField("m_bIgnoreDebris", "ignoredebris", BOOLEAN);
-			//DefineINPUTFUNC("Open", VOID);
-			//DefineINPUTFUNC("Close", VOID);
-			//DefineINPUTFUNC("Toggle", VOID);
-			//DefineINPUTFUNC("Lock", VOID);
-			//DefineINPUTFUNC("Unlock", VOID);
-			//DefineINPUTFUNC("SetSpeed", FLOAT);
-			//DefineINPUTFUNC("SetToggleState", FLOAT);
+			DefineInputFunc("Open", "InputOpen", VOID);
+			DefineInputFunc("Close", "InputClose", VOID);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
+			DefineInputFunc("Lock", "InputLock", VOID);
+			DefineInputFunc("Unlock", "InputUnlock", VOID);
+			DefineInputFunc("SetSpeed", "InputSetSpeed", FLOAT);
+			DefineInputFunc("SetToggleState", "InputSetToggleState", FLOAT);
 			DefineOutput("m_OnBlockedOpening", "OnBlockedOpening");
 			DefineOutput("m_OnBlockedClosing", "OnBlockedClosing");
 			DefineOutput("m_OnUnblockedOpening", "OnUnblockedOpening");
@@ -199,8 +203,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineFunction("DoorGoDown");
 			DefineFunction("DoorHitTop");
 			DefineFunction("DoorHitBottom");
-			//DEFINE_THINKFUNC( MovingSoundThink ),
-			//DEFINE_THINKFUNC( CloseAreaPortalsThink ),
+			DefineThinkFunc("MovingSoundThink");
+			DefineThinkFunc("CloseAreaPortalsThink");
 			
 			BeginDataMap("CLight", "CPointEntity");
 			LinkNamesToMap("light");
@@ -210,11 +214,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_iDefaultStyle", "defaultstyle", INTEGER);
 			DefineKeyField("m_iszPattern", "pattern", STRING);
 			DefineFunction("FadeThink");
-			//DefineINPUTFUNC("SetPattern", STRING);
-			//DefineINPUTFUNC("FadeToPattern", STRING);
-			//DefineINPUTFUNC("Toggle", VOID);
-			//DefineINPUTFUNC("TurnOn", VOID);
-			//DefineINPUTFUNC("TurnOff", VOID);
+			DefineInputFunc("SetPattern", "InputSetPattern", STRING);
+			DefineInputFunc("FadeToPattern", "InputFadeToPattern", STRING);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
+			DefineInputFunc("TurnOn", "InputTurnOn", VOID);
+			DefineInputFunc("TurnOff", "InputTurnOff", VOID);
 			
 			BeginDataMap("CMaterialModifyControl", "CBaseEntity");
 			LinkNamesToMap("material_modify_control");
@@ -230,31 +234,29 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_flFloatLerpEndValue", FLOAT);
 			DefineField("m_flFloatLerpTransitionTime", FLOAT);
 			DefineField("m_nModifyMode", INTEGER);
-			//DefineINPUTFUNC("SetMaterialVar", STRING);
-			//DefineINPUTFUNC("SetMaterialVarToCurrentTime", VOID);
-			//DefineINPUTFUNC("StartAnimSequence", STRING);
-			//DefineINPUTFUNC("StartFloatLerp", STRING);
+			DefineInputFunc("SetMaterialVar", "SetMaterialVar", STRING);
+			DefineInputFunc("SetMaterialVarToCurrentTime", "SetMaterialVarToCurrentTime", VOID);
+			DefineInputFunc("StartAnimSequence", "InputStartAnimSequence", STRING);
+			DefineInputFunc("StartFloatLerp", "InputStartFloatLerp", STRING);
 			
 			BeginDataMap("CAmbientGeneric", "CPointEntity"); // a sound emitter used for one-shot and looping sounds.
 			LinkNamesToMap("ambient_generic");
 			DefineKeyField("m_iszSound", "message", SOUNDNAME);
 			DefineKeyField("m_radius", "radius", FLOAT);
 			DefineKeyField("m_sSourceEntName", "SourceEntityName", STRING);
-			// DEFINE_FIELD( m_hSoundSource, EHANDLE ),
-			// DEFINE_FIELD( m_nSoundSourceEntIndex, FIELD_INTERGER ),
 			DefineField("m_flMaxRadius", FLOAT);
 			DefineField("m_fActive", BOOLEAN);
 			DefineField("m_fLooping", BOOLEAN);
 			DefineField("m_iSoundLevel", INTEGER);
-			DefineField("m_dpv", BYTE, 100); // this is actually a struct of dynpitchvol_t?
+			DefineField("m_dpv", BYTE, 100); // todo this is actually a struct of dynpitchvol_t?
 			DefineFunction("RampThink");
-			//DefineINPUTFUNC("PlaySound", VOID);
-			//DefineINPUTFUNC("StopSound", VOID);
-			//DefineINPUTFUNC("ToggleSound", VOID);
-			//DefineINPUTFUNC("Pitch", FLOAT);
-			//DefineINPUTFUNC("Volume", FLOAT);
-			//DefineINPUTFUNC("FadeIn", FLOAT);
-			//DefineINPUTFUNC("FadeOut", FLOAT);
+			DefineInputFunc("PlaySound", "InputPlaySound", VOID);
+			DefineInputFunc("StopSound", "InputStopSound", VOID);
+			DefineInputFunc("ToggleSound", "InputToggleSound", VOID);
+			DefineInputFunc("Pitch", "InputPitch", FLOAT);
+			DefineInputFunc("Volume", "InputVolume", FLOAT);
+			DefineInputFunc("FadeIn", "InputFadeIn", FLOAT);
+			DefineInputFunc("FadeOut", "InputFadeOut", FLOAT);
 			
 			BeginDataMap("CFuncAreaPortalBase", "CBaseEntity");
 			DefineField("m_portalNumber", INTEGER);
@@ -264,11 +266,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			LinkNamesToMap("func_areaportal");
 			DefineKeyField("m_portalNumber", "portalnumber", INTEGER);
 			DefineField("m_state", INTEGER);
-			//DefineINPUTFUNC("Open", VOID);
-			//DefineINPUTFUNC("Close", VOID);
-			//DefineINPUTFUNC("Toggle", VOID);
-			//DefineINPUTFUNC("TurnOn", VOID);
-			//DefineINPUTFUNC("TurnOff", VOID);
+			DefineInputFunc("Open", "InputOpen", VOID);
+			DefineInputFunc("Close", "InputClose", VOID);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
+			DefineInputFunc("TurnOn", "InputClose", VOID);
+			DefineInputFunc("TurnOff", "InputOpen", VOID);
 			
 			BeginDataMap("CPhysicsShake");
 			DefineField("m_force", VECTOR);

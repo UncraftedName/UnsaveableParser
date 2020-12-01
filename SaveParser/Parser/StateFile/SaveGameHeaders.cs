@@ -33,6 +33,7 @@ namespace SaveParser.Parser.StateFile {
 				default:
 					saveRef!.SaveInfo.AddError($"unknown header name: {name}");
 					return null;
+				// todo VScriptServer and maybe PaintDatabase (will have to ree)
 			}
 		}
 
