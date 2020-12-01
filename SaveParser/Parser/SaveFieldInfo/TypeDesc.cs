@@ -30,7 +30,7 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		public TypeDesc(
 			string name,
 			DescFlags flags,
-			CustomReadFunc? customReadFunc,
+			CustomReadFunc customReadFunc,
 			object?[]? customParams = null,
 			string? outputName = null)
 		{

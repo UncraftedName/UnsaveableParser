@@ -240,17 +240,6 @@ namespace SaveParser.Utils.BitStreams {
 				return false;
 			}
 
-			/*if ((desc.Flags & DescFlags.FTYPEDESC_GLOBAL) != 0) { //  todo m_global ????
-				reason = "something to do with globals idk";
-				return false;
-			}*/
-
-			// for me
-			if (desc.FieldType == CUSTOM && desc.CustomReadFunc == null) {
-				reason = "this field requires a custom read function but it is not present";
-				return false;
-			}
-
 			// i think this is equivalent to what the game does
 			if (desc.FieldType == EMBEDDED && (desc.Flags & DescFlags.FTYPEDESC_PTR) != 0) {
 				reason = "this field is embedded but is also a pointer?";

@@ -132,10 +132,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			=> AddFieldPrivate(new TypeDesc(name, FUNCTION));
 
 
-		// custom field requires a custom read function (I allow null as a placeholder)
 		protected void DefineCustomField(
 			string name,
-			CustomReadFunc? customReadFunc,
+			CustomReadFunc customReadFunc,
 			object?[]? customParams = null,
 			DescFlags flags = FTYPEDESC_SAVE)
 		{
