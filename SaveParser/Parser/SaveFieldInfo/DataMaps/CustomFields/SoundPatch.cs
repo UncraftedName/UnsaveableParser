@@ -1,5 +1,5 @@
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 	
@@ -39,7 +39,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 		
 
-		public static SoundPatch Restore(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr) {
+		public static SoundPatch Restore(TypeDesc typeDesc, SaveInfo info, ref ByteStreamReader bsr) {
 			bsr.StartBlock(info);
 			var patches = new (ParsedDataMap patch, ParsedDataMap?[]? commands)[1]; // always 1?
 			for (int i = 0; i < patches.Length; i++) {

@@ -1,6 +1,6 @@
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.StateFile {
 
@@ -51,7 +51,7 @@ namespace SaveParser.Parser.StateFile {
 		public ETableHeader(SourceSave? saveRef, ParsedDataMap dataHeader) : base(saveRef, dataHeader) {}
 
 
-		protected override void Parse(ref BitStreamReader bsr) {
+		protected override void Parse(ref ByteStreamReader bsr) {
 			int nEntities = bsr.ReadSInt();
 			EntHeaders = new ParsedDataMap[nEntities];
 			for (int i = 0; i < nEntities; i++)
@@ -78,7 +78,7 @@ namespace SaveParser.Parser.StateFile {
 		
 		public VersionableSaveGameHeader(SourceSave? saveRef, ParsedDataMap dataHeader) : base(saveRef, dataHeader) {}
 		
-		protected override void Parse(ref BitStreamReader bsr) {
+		protected override void Parse(ref ByteStreamReader bsr) {
 			Version = bsr.ReadSShort();
 		}
 		
@@ -96,7 +96,7 @@ namespace SaveParser.Parser.StateFile {
 		public PhysicsInfoHeader(SourceSave? saveRef, ParsedDataMap dataHeader) : base(saveRef, dataHeader) {}
 		
 		
-		protected override void Parse(ref BitStreamReader bsr) {
+		protected override void Parse(ref ByteStreamReader bsr) {
 			base.Parse(ref bsr);
 			PhysHeader = bsr.ReadDataMap("PhysBlockHeader_t", SaveInfo);
 		}

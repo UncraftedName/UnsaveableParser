@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 	
@@ -44,7 +44,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		 * [1] - the custom read function of each element (if applicable)
 		 * [2] - the embedded map of each element (if applicable)
 		 * */
-		public static UtilVector<T> Restore(TypeDesc vecDesc, SaveInfo info, ref BitStreamReader bsr) {
+		public static UtilVector<T> Restore(TypeDesc vecDesc, SaveInfo info, ref ByteStreamReader bsr) {
 			
 			object[] @params = vecDesc.CustomParams!;
 			
@@ -75,7 +75,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 
 
 		// called like "UtilVector<ParsedDataMap>.RestoreEmbedded", vecName is just for debugging purposes
-		public static UtilVector<ParsedDataMap> RestoreEmbedded(string vecName, string elemMapName, SaveInfo info, ref BitStreamReader bsr) {
+		public static UtilVector<ParsedDataMap> RestoreEmbedded(string vecName, string elemMapName, SaveInfo info, ref ByteStreamReader bsr) {
 			object?[] customParams = {FieldType.EMBEDDED, null, elemMapName};
 			TypeDesc vecDesc = new TypeDesc(vecName, DescFlags.FTYPEDESC_SAVE, Restore, customParams);
 			return UtilVector<ParsedDataMap>.Restore(vecDesc, info, ref bsr);

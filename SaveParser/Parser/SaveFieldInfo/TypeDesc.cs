@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Numerics;
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
 namespace SaveParser.Parser.SaveFieldInfo {
 	
-	public delegate ParsedSaveField? CustomReadFunc(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr);
+	public delegate ParsedSaveField? CustomReadFunc(TypeDesc typeDesc, SaveInfo info, ref ByteStreamReader bsr);
 	
 	public class TypeDesc : IEquatable<TypeDesc> {
 		
@@ -68,7 +68,7 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		}
 
 
-		internal ParsedSaveField? InvokeCustomReadFunc(ref BitStreamReader bsr, SaveInfo info)
+		internal ParsedSaveField? InvokeCustomReadFunc(ref ByteStreamReader bsr, SaveInfo info)
 			=> CustomReadFunc!(this, info, ref bsr);
 		
 		

@@ -1,6 +1,5 @@
 // ReSharper disable All
 using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
-using SaveParser.Utils.BitStreams;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {

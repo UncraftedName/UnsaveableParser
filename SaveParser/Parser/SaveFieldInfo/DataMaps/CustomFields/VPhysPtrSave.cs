@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using SaveParser.Parser.StateFile.SaveStateData.EntData;
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 using static SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields.PhysicsConstraint;
 using static SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields.PhysicsConstraint.ConstraintType;
 using static SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields.PhysInterfaceId_t;
@@ -156,7 +156,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 	public static class CPhysicsEnvironment {
 
 		// return type needs to exist to match with the CustomReadFunc delegate, but I'll always return null
-		public static ParsedSaveField? QueueRestore(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr) {
+		public static ParsedSaveField? QueueRestore(TypeDesc typeDesc, SaveInfo info, ref ByteStreamReader bsr) {
 			info.ParseContext.VPhysicsRestoreInfo!.Enqueue((info.ParseContext.CurrentEntity!, typeDesc));
 			return null;
 		}
@@ -167,7 +167,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 			SaveInfo saveInfo,
 			ParsedDataMap physHeader,
 			(ParsedEntData ent, TypeDesc typeDesc) physRestoreInfo,
-			ref BitStreamReader bsr)
+			ref ByteStreamReader bsr)
 		{
 			var oldObj = bsr.ReadSInt();
 			PhysInterfaceId_t physType = (PhysInterfaceId_t)physHeader.GetFieldOrDefault<int>("type").Field;

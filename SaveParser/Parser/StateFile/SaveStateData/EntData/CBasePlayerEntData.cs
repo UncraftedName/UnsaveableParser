@@ -1,5 +1,5 @@
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 	
@@ -9,7 +9,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 			: base(saveRef, headerInfo, classMap) {}
 
 
-		protected override void Parse(ref BitStreamReader bsr) {
+		protected override void Parse(ref ByteStreamReader bsr) {
 			base.Parse(ref bsr);
 			// todo if not landmark, set local origin to spawn
 			//m_angRotation = p1.vangle;

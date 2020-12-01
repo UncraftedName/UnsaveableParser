@@ -4,7 +4,7 @@ using SaveParser.Parser.SaveFieldInfo.DataMaps;
 using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
 using SaveParser.Parser.StateFile.SaveStateData;
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.StateFile {
 	
@@ -21,7 +21,7 @@ namespace SaveParser.Parser.StateFile {
 		public SaveGameStateFile(SourceSave saveRef, CharArray name) : base(saveRef, name) {}
 
 
-		protected override void Parse(ref BitStreamReader bsr) {
+		protected override void Parse(ref ByteStreamReader bsr) {
 			base.Parse(ref bsr);
 			Version = bsr.ReadSInt();
 			int nBytesSymbols = bsr.ReadSInt();
@@ -53,7 +53,7 @@ namespace SaveParser.Parser.StateFile {
 			}
 
 			//@base = bsr.CurrentByteIndex = @base + sizeHeaders;
-			BitStreamReader bodyBase = bsr.Split(); // block data is offset from this location
+			ByteStreamReader bodyBase = bsr.Split(); // block data is offset from this location
 
 			SaveHeader = bsr.ReadDataMap("Save Header", SaveInfo);
 			

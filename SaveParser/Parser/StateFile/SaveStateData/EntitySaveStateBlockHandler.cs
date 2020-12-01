@@ -1,7 +1,7 @@
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
 using SaveParser.Parser.StateFile.SaveStateData.EntData;
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.StateFile.SaveStateData {
 	
@@ -12,7 +12,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData {
 		public EntitySaveStateBlock(SourceSave? saveRef, ETableHeader dataHeader) : base(saveRef, dataHeader) {}
 		
 		
-		protected override void Parse(ref BitStreamReader bsr) {
+		protected override void Parse(ref ByteStreamReader bsr) {
 			EntData = new ParsedEntData[DataHeader.EntHeaders.Length];
 			for (int i = 0; i < DataHeader.EntHeaders.Length; i++) {
 				ParsedDataMap entHeader = DataHeader.EntHeaders[i];

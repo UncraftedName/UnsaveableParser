@@ -11,13 +11,13 @@ using SaveParser.Parser;
 using SaveParser.Parser.SaveFieldInfo;
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
-using static SaveParser.Utils.BitStreams.BitStreamReader.EncodeConstants;
+using static SaveParser.Utils.ByteStreams.ByteStreamReader.EncodeConstants;
 
 // ReSharper disable CompareOfFloatsByEqualityOperator
 
-namespace SaveParser.Utils.BitStreams {
+namespace SaveParser.Utils.ByteStreams {
 	
-	public partial struct BitStreamReader {
+	public partial struct ByteStreamReader {
 
 		[SuppressMessage("ReSharper", "InconsistentNaming")]
 		public static class EncodeConstants {
@@ -257,7 +257,7 @@ namespace SaveParser.Utils.BitStreams {
 			} else {
 				int actualCount = 0;
 				for (int i = 0; i < bytesAvail; i++)
-					if (Data[AbsoluteByteIndex + i] == 0)
+					if (_data[AbsoluteByteIndex + i] == 0)
 						actualCount++;
 				string[] arr = new string[actualCount];
 				for (int i = 0; i < actualCount; i++)
@@ -273,7 +273,7 @@ namespace SaveParser.Utils.BitStreams {
 			} else {
 				int actualCount = 0;
 				for (int i = 0; i < bytesAvail; i++)
-					if (Data[AbsoluteByteIndex + i] == 0)
+					if (_data[AbsoluteByteIndex + i] == 0)
 						actualCount++;
 				T[] arr = new T[actualCount];
 				for (int i = 0; i < actualCount; i++)
@@ -334,7 +334,7 @@ namespace SaveParser.Utils.BitStreams {
 
 		private struct OneOrMany<T> : IEnumerable<T> {
 			
-			public delegate T ReadFunc(ref BitStreamReader bsr);
+			public delegate T ReadFunc(ref ByteStreamReader bsr);
 			
 			public static readonly int SizeOfType;
 			public static readonly ReadFunc SimpleReadFunc;
@@ -386,7 +386,7 @@ namespace SaveParser.Utils.BitStreams {
 
 			private static void SetReadFunc(string name) {
 				var field = typeof(OneOrMany<T>).GetField(nameof(SimpleReadFunc), BindingFlags.Static | BindingFlags.Public);
-				field!.SetValue(null, Delegate.CreateDelegate(typeof(ReadFunc), typeof(BitStreamReader), name));
+				field!.SetValue(null, Delegate.CreateDelegate(typeof(ReadFunc), typeof(ByteStreamReader), name));
 			}
 			
 
@@ -420,18 +420,18 @@ namespace SaveParser.Utils.BitStreams {
 		}
 
 
-		private static int ReadIntWrap(ref BitStreamReader bsr) => bsr.ReadSInt();
-		private static short ReadShortWrap(ref BitStreamReader bsr) => bsr.ReadSShort();
-		private static byte ReadByteWrap(ref BitStreamReader bsr) => bsr.ReadByte();
-		private static Vector3 ReadVec3Wrap(ref BitStreamReader bsr) {
+		private static int ReadIntWrap(ref ByteStreamReader bsr) => bsr.ReadSInt();
+		private static short ReadShortWrap(ref ByteStreamReader bsr) => bsr.ReadSShort();
+		private static byte ReadByteWrap(ref ByteStreamReader bsr) => bsr.ReadByte();
+		private static Vector3 ReadVec3Wrap(ref ByteStreamReader bsr) {
 			bsr.ReadVector3(out Vector3 tmp);
 			return tmp;
 		}
-		private static Vector4 ReadVec4Wrap(ref BitStreamReader bsr) => new Vector4(bsr.ReadFloat(), bsr.ReadFloat(), bsr.ReadFloat(), bsr.ReadFloat());
-		private static float ReadFloatWrap(ref BitStreamReader bsr) => bsr.ReadFloat();
-		private static Matrix3X4 ReadMatrix3X4Wrap(ref BitStreamReader bsr) => (Matrix3X4)bsr.ReadFloatMat(3, 4);
-		private static VMatrix ReadMatrix4X4Wrap(ref BitStreamReader bsr) => (VMatrix)bsr.ReadFloatMat(4, 4);
-		private static Interval ReadIntervalWrap(ref BitStreamReader bsr) => new Interval(bsr.ReadFloat(), bsr.ReadFloat());
-		private static Vector2 ReadVec2Wrap(ref BitStreamReader bsr) => new Vector2(bsr.ReadFloat(), bsr.ReadFloat());
+		private static Vector4 ReadVec4Wrap(ref ByteStreamReader bsr) => new Vector4(bsr.ReadFloat(), bsr.ReadFloat(), bsr.ReadFloat(), bsr.ReadFloat());
+		private static float ReadFloatWrap(ref ByteStreamReader bsr) => bsr.ReadFloat();
+		private static Matrix3X4 ReadMatrix3X4Wrap(ref ByteStreamReader bsr) => (Matrix3X4)bsr.ReadFloatMat(3, 4);
+		private static VMatrix ReadMatrix4X4Wrap(ref ByteStreamReader bsr) => (VMatrix)bsr.ReadFloatMat(4, 4);
+		private static Interval ReadIntervalWrap(ref ByteStreamReader bsr) => new Interval(bsr.ReadFloat(), bsr.ReadFloat());
+		private static Vector2 ReadVec2Wrap(ref ByteStreamReader bsr) => new Vector2(bsr.ReadFloat(), bsr.ReadFloat());
 	}
 }

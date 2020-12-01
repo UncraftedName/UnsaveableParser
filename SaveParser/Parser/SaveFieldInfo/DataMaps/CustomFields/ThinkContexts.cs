@@ -1,5 +1,5 @@
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 	
@@ -24,7 +24,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 
 
-		public static ThinkContexts Restore(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr) {
+		public static ThinkContexts Restore(TypeDesc typeDesc, SaveInfo info, ref ByteStreamReader bsr) {
 			var pUtlVector = UtilVector<ParsedDataMap>.RestoreEmbedded("pUtlVector", "thinkfunc_t", info, ref bsr);
 			
 			(ParsedDataMap map, Func? func)[] contexts = new (ParsedDataMap, Func?)[pUtlVector.Count];

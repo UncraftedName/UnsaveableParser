@@ -1,4 +1,4 @@
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser {
 	
@@ -13,7 +13,7 @@ namespace SaveParser.Parser {
 		public SourceFileHeader(SourceSave saveRef) : base(saveRef) {}
 
 
-		protected override void Parse(ref BitStreamReader bsr) {
+		protected override void Parse(ref ByteStreamReader bsr) {
 			IdString = bsr.ReadStringOfLength(4);
 			SaveVersion = bsr.ReadSInt();
 			TokenTableFileTableOffset = bsr.ReadSInt();

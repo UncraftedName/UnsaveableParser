@@ -1,7 +1,7 @@
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
 using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 	
@@ -15,7 +15,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 			: base(saveRef, null!, saveRef.SaveInfo.SDataMapLookup["CAI_Navigator"]) {}
 
 
-		protected override void Parse(ref BitStreamReader bsr) {
+		protected override void Parse(ref ByteStreamReader bsr) {
 			Version = bsr.ReadSShort();
 			MinPathArray = UtilVector<ParsedDataMap>.RestoreEmbedded("minPathName", "AI_WayPoint_t", SaveInfo, ref bsr);
 		}

@@ -1,5 +1,5 @@
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 	
@@ -30,7 +30,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 
 
-		public static ConceptHistories Restore(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr) {
+		public static ConceptHistories Restore(TypeDesc typeDesc, SaveInfo info, ref ByteStreamReader bsr) {
 			int count = bsr.ReadSInt();
 			var histories = new (string conceptName, ParsedDataMap history, ParsedDataMap? response)[count];
 			for (int i = 0; i < count; i++) {

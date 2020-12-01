@@ -1,5 +1,6 @@
 // ReSharper disable All
-using SaveParser.Utils.BitStreams;
+
+using SaveParser.Utils.ByteStreams;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
@@ -225,7 +226,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 		}
 		
 		
-		private static ParsedSaveField VGuiScreenStringOps(TypeDesc desc, SaveInfo info, ref BitStreamReader bsr)
+		private static ParsedSaveField VGuiScreenStringOps(TypeDesc desc, SaveInfo info, ref ByteStreamReader bsr)
 			=> new ParsedSaveField<string>(bsr.ReadStringOfLength(bsr.ReadSInt()), desc);
 	}
 }

@@ -1,5 +1,5 @@
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 using static SaveParser.Parser.Structs;
 
 namespace SaveParser.Parser.StateFile {
@@ -11,7 +11,7 @@ namespace SaveParser.Parser.StateFile {
 
 		// CSaveRestore::RestoreClientState
 		// id = 'V' 'A' 'L' 'V', version = 0x73 = 115, section header = 2
-		protected override unsafe void Parse(ref BitStreamReader bsr) {
+		protected override unsafe void Parse(ref ByteStreamReader bsr) {
 			base.Parse(ref bsr);
 			var version = bsr.ReadSInt();
 			var magic = bsr.ReadSInt();

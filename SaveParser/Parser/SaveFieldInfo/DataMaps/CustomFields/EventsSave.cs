@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
@@ -35,7 +35,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 
 
-		public static EventsSave Restore(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr) {
+		public static EventsSave Restore(TypeDesc typeDesc, SaveInfo info, ref ByteStreamReader bsr) {
 			
 			int count = bsr.ReadSInt();
 			

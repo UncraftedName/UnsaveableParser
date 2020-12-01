@@ -1,5 +1,5 @@
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.StateFile {
 	
@@ -8,7 +8,7 @@ namespace SaveParser.Parser.StateFile {
 		public EntityPatchFile(SourceSave saveRef, CharArray name) : base(saveRef, name) {}
 
 
-		protected override void Parse(ref BitStreamReader bsr) {
+		protected override void Parse(ref ByteStreamReader bsr) {
 			base.Parse(ref bsr);
 			/*
 			 * for ( i = 0; i < size; i++ )

@@ -4,14 +4,14 @@ using System.IO;
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
 using SaveParser.Parser.StateFile;
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser {
 	
 	public class SourceSave : SaveComponent {
 		
-		private BitStreamReader _privateReader;
-		public override BitStreamReader Reader => _privateReader.FromBeginning();
+		private ByteStreamReader _privateReader;
+		public override ByteStreamReader Reader => _privateReader.FromBeginning();
 
 		public new readonly SaveInfo SaveInfo;
 		public SourceFileHeader SourceFileHeader;
@@ -21,7 +21,7 @@ namespace SaveParser.Parser {
 
 		// i don't have a good way of getting the game from the file itself, so that will have to be passed in manually
 		public SourceSave(byte[] bytes, Game game) : base(null) {
-			_privateReader = new BitStreamReader(bytes);
+			_privateReader = new ByteStreamReader(bytes);
 			SaveInfo = new SaveInfo(game);
 		}
 
@@ -31,12 +31,12 @@ namespace SaveParser.Parser {
 		}
 
 
-		internal BitStreamReader ReaderFromOffset(int offset, int bitLength) {
-			return new BitStreamReader(_privateReader.Data, bitLength, offset);
+		internal ByteStreamReader ReaderFromOffset(int offset, int size) {
+			return new ByteStreamReader((byte[])_privateReader.Data, size, offset);
 		}
 
 
-		protected override void Parse(ref BitStreamReader bsr) {
+		protected override void Parse(ref ByteStreamReader bsr) {
 			SourceFileHeader = new SourceFileHeader(this);
 			SourceFileHeader.ParseStream(ref bsr);
 			SaveInfo.ParseContext.CurrentSymbolTable = bsr.ReadSymbolTable(SourceFileHeader.TokenCount, SourceFileHeader.TokenTableSize)!;
@@ -47,16 +47,16 @@ namespace SaveParser.Parser {
 			for (int i = 0; i < StateFiles.Length; i++) {
 				StateFiles[i] = EmbeddedStateFile.CreateFromName(this, bsr.ReadCharArray(260));
 				int fileLength = bsr.ReadSInt();
-				StateFiles[i].ParseStream(bsr.SplitAndSkip(fileLength << 3));
+				StateFiles[i].ParseStream(bsr.SplitAndSkip(fileLength));
 			}
 
 			SaveInfo.Cleanup();
-			Debug.Assert(bsr.BitsRemaining == 0);
+			Debug.Assert(bsr.BytesRemaining == 0);
 		}
 		
 		
 		public void Parse() {
-			_privateReader.CurrentBitIndex = 0;
+			_privateReader.CurrentByteIndex = 0;
 			Parse(ref _privateReader);
 		}
 

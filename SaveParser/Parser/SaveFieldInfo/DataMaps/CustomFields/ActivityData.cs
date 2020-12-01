@@ -1,5 +1,5 @@
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		
@@ -21,7 +21,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 
 
-		internal static ActivityData Restore(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr) {
+		internal static ActivityData Restore(TypeDesc typeDesc, SaveInfo info, ref ByteStreamReader bsr) {
 			uint len = bsr.ReadUInt();
 			return (len & 0xFFFF0000) != ActivityFileTag
 				? new ActivityData(typeDesc) {Index = (int)len}

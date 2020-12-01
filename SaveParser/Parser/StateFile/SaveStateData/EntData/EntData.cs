@@ -1,7 +1,7 @@
 using System;
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 
@@ -19,7 +19,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 		}
 		
 		
-		protected override void Parse(ref BitStreamReader bsr) {
+		protected override void Parse(ref ByteStreamReader bsr) {
 			try {
 				ParsedFields = bsr.ReadDataMapRecursive(ClassMap, SaveInfo);
 			} catch (Exception e) {

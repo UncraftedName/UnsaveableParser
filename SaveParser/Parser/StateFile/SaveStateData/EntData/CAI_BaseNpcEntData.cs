@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 	
@@ -21,7 +21,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 			: base(saveRef, headerInfo, classMap) {}
 
 
-		protected override void Parse(ref BitStreamReader bsr) {
+		protected override void Parse(ref ByteStreamReader bsr) {
 			ExtendedHeader = bsr.ReadDataMap("AIExtendedSaveHeader_t", SaveInfo);
 			
 			if (ExtendedHeader.GetFieldOrDefault<short>("version")
@@ -76,7 +76,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 			public ConditionStrings(SourceSave? saveRef) : base(saveRef) {}
 			
 			
-			protected override void Parse(ref BitStreamReader bsr) {
+			protected override void Parse(ref ByteStreamReader bsr) {
 				Conditions = new List<string>();
 				CustomInterruptConditions = new List<string>();
 				ConditionsPreIgnore = new List<string>();
@@ -84,7 +84,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 				foreach (List<string> condList in new[] {Conditions, CustomInterruptConditions, ConditionsPreIgnore, IgnoreConditions}) {
 					for (;;) {
 						if (bsr.ReadByte() != 0) {
-							bsr.CurrentBitIndex -= 8;
+							bsr.CurrentByteIndex--;
 							condList.Add(bsr.ReadNullTerminatedString());
 						} else {
 							break;

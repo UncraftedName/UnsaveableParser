@@ -1,7 +1,7 @@
 // ReSharper disable All
 
 using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
@@ -15,7 +15,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 
 		// todo this returns fields that don't format the ToString with spaces - "custom materialIndex: metal"
 		protected void DefineMaterialIndexDataOps(string name) {
-			static ParsedSaveField MatReadFunc(TypeDesc desc, SaveInfo info, ref BitStreamReader bsr)
+			static ParsedSaveField MatReadFunc(TypeDesc desc, SaveInfo info, ref ByteStreamReader bsr)
 				=> new ParsedSaveField<MaterialIndexStr>((MaterialIndexStr)bsr.ReadStringOfLength(bsr.ReadSInt()), desc);
 			DefineCustomField(name, MatReadFunc);
 		}
@@ -24,7 +24,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 		// this is different from PhysPtr, here the datamap is read right away (since we're in the vphys section)
 		// todo, the custom read func will just return a ref to another vphys object (i think)
 		private void DefineVPhysPtr(string name) {
-			static ParsedSaveField ReadFunc(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr)
+			static ParsedSaveField ReadFunc(TypeDesc typeDesc, SaveInfo info, ref ByteStreamReader bsr)
 				=> new ParsedSaveField<int>(bsr.ReadSInt(), typeDesc);
 			DefineCustomField(name, ReadFunc);
 		}
@@ -32,7 +32,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 		
 		// todo link like above
 		private void DefineVPhysPtrArray(string name, int count) {
-			static ParsedSaveField ReadFunc(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr) {
+			static ParsedSaveField ReadFunc(TypeDesc typeDesc, SaveInfo info, ref ByteStreamReader bsr) {
 				int[] arr = new int[(int)typeDesc.CustomParams![0]!];
 				for (int i = 0; i < arr.Length; i++)
 					arr[i] = bsr.ReadSInt();
@@ -44,7 +44,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 
 		// todo link like above
 		private void DefineVPhysPtrVector(string name) {
-			static ParsedSaveField ReadFunc(TypeDesc typeDesc, SaveInfo info, ref BitStreamReader bsr) {
+			static ParsedSaveField ReadFunc(TypeDesc typeDesc, SaveInfo info, ref ByteStreamReader bsr) {
 				int count = bsr.ReadSInt();
 				int[] arr = new int[count];
 				for (int i = 0; i < arr.Length; i++)

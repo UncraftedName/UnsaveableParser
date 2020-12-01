@@ -4,7 +4,7 @@ using SaveParser.Parser.SaveFieldInfo;
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
 using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.StateFile.SaveStateData {
 	
@@ -16,7 +16,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData {
 		public PhysSaveStateRestoreHandler(SourceSave? saveRef, PhysicsInfoHeader dataHeader) : base(saveRef, dataHeader) {}
 		
 		
-		protected override void Parse(ref BitStreamReader bsr) {
+		protected override void Parse(ref ByteStreamReader bsr) {
 			var queue = SaveInfo.ParseContext.VPhysicsRestoreInfo;
 			PhysObjects = new List<(ParsedDataMap header, ParsedSaveField[]? objects)>(queue.Count);
 #if DEBUG_WITH_PHYS

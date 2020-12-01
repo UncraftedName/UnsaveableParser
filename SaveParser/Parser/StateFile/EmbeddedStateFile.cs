@@ -1,5 +1,5 @@
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser.StateFile {
 	
@@ -14,7 +14,7 @@ namespace SaveParser.Parser.StateFile {
 		}
 
 
-		protected override void Parse(ref BitStreamReader bsr) {
+		protected override void Parse(ref ByteStreamReader bsr) {
 			Id = bsr.ReadCharArray(4);
 		}
 
@@ -35,7 +35,7 @@ namespace SaveParser.Parser.StateFile {
 		public UnknownStateFile(SourceSave saveRef, CharArray name) : base(saveRef, name) {}
 
 		public override void AppendToWriter(IIndentedWriter iw) {
-			iw.Append($"{Name}, {Reader.BitLength} bits");
+			iw.Append($"{Name}, {Reader.Size} bytes");
 		}
 	}
 }

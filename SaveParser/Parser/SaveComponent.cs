@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using SaveParser.Utils;
-using SaveParser.Utils.BitStreams;
+using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser {
 	
@@ -10,7 +10,7 @@ namespace SaveParser.Parser {
 		protected SaveInfo SaveInfo => SaveRef!.SaveInfo;
 		private int _absoluteOffsetStart;
 		private int _absoluteOffsetEnd;
-		public virtual BitStreamReader Reader =>
+		public virtual ByteStreamReader Reader =>
 			SaveRef!.ReaderFromOffset(_absoluteOffsetStart, _absoluteOffsetEnd - _absoluteOffsetStart);
 
 
@@ -19,21 +19,21 @@ namespace SaveParser.Parser {
 		}
 
 
-		protected abstract void Parse(ref BitStreamReader bsr);
+		protected abstract void Parse(ref ByteStreamReader bsr);
 		
 
-		public void ParseStream(ref BitStreamReader bsr) {
-			_absoluteOffsetStart = bsr.AbsoluteBitIndex;
-			_absoluteOffsetEnd = bsr.AbsoluteBitIndex + bsr.BitLength;
+		public void ParseStream(ref ByteStreamReader bsr) {
+			_absoluteOffsetStart = bsr.AbsoluteByteIndex;
+			_absoluteOffsetEnd = bsr.AbsoluteByteIndex + bsr.Size;
 			Parse(ref bsr);
-			_absoluteOffsetEnd = bsr.AbsoluteBitIndex;
+			_absoluteOffsetEnd = bsr.AbsoluteByteIndex;
 		}
 
 
-		public void ParseStream(BitStreamReader bsr) {
+		public void ParseStream(ByteStreamReader bsr) {
 			ParseStream(ref bsr);
-			if (bsr.BitsRemaining > 0)
-				Debug.WriteLine($"{GetType().Name} didn't finish reading all bits! {bsr.BitsRemaining} left.");
+			if (bsr.BytesRemaining > 0)
+				Debug.WriteLine($"{GetType().Name} didn't finish reading all bytes! {bsr.BytesRemaining} left.");
 		}
 
 
