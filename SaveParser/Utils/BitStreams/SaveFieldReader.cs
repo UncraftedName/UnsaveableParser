@@ -155,25 +155,15 @@ namespace SaveParser.Utils.BitStreams {
 				case CUSTOM:
 					return desc.InvokeCustomReadFunc(ref this, info); // this can return null
 				case MODELNAME:
-					if (desc.NumElements == 1)
-						return new ParsedSaveField<ModelName>((ModelName)ReadStringOfLength(bytesAvail), desc);
-					throw new NotImplementedException("reading multiple strings is not implemented");
+					return ReadSimpleString(desc, bytesAvail, s => (ModelName)s);
 				case SOUNDNAME:
-					if (desc.NumElements == 1)
-						return new ParsedSaveField<SoundName>((SoundName)ReadStringOfLength(bytesAvail), desc);
-					throw new NotImplementedException("reading multiple strings is not implemented");
+					return ReadSimpleString(desc, bytesAvail, s => (SoundName)s);
 				case FUNCTION:
-					if (desc.NumElements == 1)
-						return new ParsedSaveField<Func>((Func)ReadStringOfLength(bytesAvail), desc);
-					throw new NotImplementedException("reading multiple strings is not implemented");
+					return ReadSimpleString(desc, bytesAvail, s => (Func)s);
 				case STRING:
-					if (desc.NumElements == 1)
-						return new ParsedSaveField<string>(ReadStringOfLength(bytesAvail), desc);
-					throw new NotImplementedException("reading multiple strings is not implemented");
+					return ReadSimpleString(desc, bytesAvail);
 				case MODELINDEX:
-					if (desc.NumElements == 1)
-						return new ParsedSaveField<ModelIndex>((ModelIndex)ReadStringOfLength(bytesAvail), desc);
-					throw new NotImplementedException("reading multiple strings is not implemented");
+					return ReadSimpleString(desc, bytesAvail, s => (ModelIndex)s);
 				case MATERIALINDEX:
 					return ReadSimple<int, MaterialIndex>(desc, bytesAvail, i => (MaterialIndex)i);
 				case FLOAT:
@@ -266,6 +256,38 @@ namespace SaveParser.Utils.BitStreams {
 
 			reason = null;
 			return true;
+		}
+
+		
+		private ParsedSaveField ReadSimpleString(TypeDesc desc, int bytesAvail) {
+			if (desc.NumElements == 1) {
+				return new ParsedSaveField<string>(ReadNullTerminatedString(), desc);
+			} else {
+				int actualCount = 0;
+				for (int i = 0; i < bytesAvail; i++)
+					if (Data[AbsoluteByteIndex + i] == 0)
+						actualCount++;
+				string[] arr = new string[actualCount];
+				for (int i = 0; i < actualCount; i++)
+					arr[i] = ReadNullTerminatedString();
+				return new ParsedSaveField<string[]>(arr, desc, actualCount);
+			}
+		}
+		
+		
+		private ParsedSaveField ReadSimpleString<T>(TypeDesc desc, int bytesAvail, Func<string, T> mapFunc) {
+			if (desc.NumElements == 1) {
+				return new ParsedSaveField<T>(mapFunc(ReadNullTerminatedString()), desc);
+			} else {
+				int actualCount = 0;
+				for (int i = 0; i < bytesAvail; i++)
+					if (Data[AbsoluteByteIndex + i] == 0)
+						actualCount++;
+				T[] arr = new T[actualCount];
+				for (int i = 0; i < actualCount; i++)
+					arr[i] = mapFunc(ReadNullTerminatedString());
+				return new ParsedSaveField<T[]>(arr, desc, actualCount);
+			}
 		}
 
 
