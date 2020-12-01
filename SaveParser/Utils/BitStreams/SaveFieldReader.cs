@@ -141,7 +141,7 @@ namespace SaveParser.Utils.BitStreams {
 
 
 		// all of these generic types must* stay consistent with TypeDesc.GetNetTypeFromFieldType
-		public ParsedSaveField? ReadSaveField(TypeDesc desc, SaveInfo info, int bytesAvail) {
+		private ParsedSaveField? ReadSaveField(TypeDesc desc, SaveInfo info, int bytesAvail) {
 			switch (desc.FieldType) {
 				case EMBEDDED:
 					if (desc.NumElements == 1) {
@@ -168,6 +168,8 @@ namespace SaveParser.Utils.BitStreams {
 					return ReadSimple<int, MaterialIndex>(desc, bytesAvail, i => (MaterialIndex)i);
 				case FLOAT:
 					return ReadSimple<float>(desc, bytesAvail);
+				case VECTOR2D:
+					return ReadSimple<Vector2>(desc, bytesAvail);
 				case VECTOR:
 					return ReadSimple<Vector3>(desc, bytesAvail);
 				case POSITION_VECTOR:
@@ -221,8 +223,9 @@ namespace SaveParser.Utils.BitStreams {
 						mat.SetColumn(3, in vec);
 						return mat;
 					});
+				default:
+					throw new NotImplementedException($"reading for {desc.FieldType} is not implemented");
 			}
-			throw new NotImplementedException($"reading for {desc.FieldType} is not implemented");
 		}
 
 
@@ -381,6 +384,9 @@ namespace SaveParser.Utils.BitStreams {
 				} else if (typeof(T) == typeof(Interval)) {
 					SetReadFunc(nameof(ReadIntervalWrap));
 					SizeOfType = 8;
+				} else if (typeof(T) == typeof(Vector2)) {
+					SetReadFunc(nameof(ReadVec2Wrap));
+					SizeOfType = 8;
 				} else {
 					SizeOfType = -1;
 					SimpleReadFunc = null!;
@@ -437,5 +443,6 @@ namespace SaveParser.Utils.BitStreams {
 		private static Matrix3X4 ReadMatrix3X4Wrap(ref BitStreamReader bsr) => (Matrix3X4)bsr.ReadFloatMat(3, 4);
 		private static VMatrix ReadMatrix4X4Wrap(ref BitStreamReader bsr) => (VMatrix)bsr.ReadFloatMat(4, 4);
 		private static Interval ReadIntervalWrap(ref BitStreamReader bsr) => new Interval(bsr.ReadFloat(), bsr.ReadFloat());
+		private static Vector2 ReadVec2Wrap(ref BitStreamReader bsr) => new Vector2(bsr.ReadFloat(), bsr.ReadFloat());
 	}
 }
