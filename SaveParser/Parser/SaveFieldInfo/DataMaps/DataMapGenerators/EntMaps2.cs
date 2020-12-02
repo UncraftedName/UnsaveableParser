@@ -127,6 +127,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_bStartDisabled", "StartDisabled", BOOLEAN);
 			DefineField("m_bUseHitboxesForRenderBox", BOOLEAN);
 			DefineField("m_nPendingSequence", SHORT);
+			if (Game == Game.PORTAL2) {
+				DefineKeyField("m_bUpdateAttachedChildren", "updatechildren", BOOLEAN);
+				DefineKeyField("m_bDisableBoneFollowers", "DisableBoneFollowers", BOOLEAN);
+				DefineKeyField("m_bHoldAnimation", "HoldAnimation", BOOLEAN);
+				DefineInputFunc("SetAnimationNoReset", "InputSetAnimationNoReset", STRING);
+			}
 			DefineInputFunc("SetAnimation", "InputSetAnimation", STRING);
 			DefineInputFunc("SetDefaultAnimation", "InputSetDefaultAnimation", STRING);
 			DefineInputFunc("TurnOn", "InputTurnOn", VOID);
@@ -140,7 +146,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineOutput("m_pOutputAnimOver", "OnAnimationDone");
 			DefineThinkFunc("AnimThink");
 			DefineEmbeddedField("m_BoneFollowerManager", "CBoneFollowerManager");
-			
+			if (Game == Game.PORTAL2)
+				DefineField("m_bAnimationDone", BOOLEAN);
+
 			BeginDataMap("CBaseToggle", "CBaseEntity");
 			DefineField("m_toggle_state", INTEGER);
 			DefineField("m_flMoveDistance", FLOAT);
@@ -207,7 +215,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineThinkFunc("CloseAreaPortalsThink");
 			
 			BeginDataMap("CLight", "CPointEntity");
-			LinkNamesToMap("light");
+			LinkNamesToMap("light", "light_spot", "light_glspot");
 			DefineField("m_iCurrentFade", CHARACTER);
 			DefineField("m_iTargetFade", CHARACTER);
 			DefineKeyField("m_iStyle", "style", INTEGER);

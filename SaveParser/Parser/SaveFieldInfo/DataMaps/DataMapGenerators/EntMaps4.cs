@@ -79,7 +79,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineOutput("m_OnStartTouchLinkedPortal", "OnStartTouchLinkedPortal");
 			DefineOutput("m_OnStartTouchBothLinkedPortals", "OnStartTouchBothLinkedPortals");
 			DefineFunction("IsActive");
-			
+			if (Game == Game.PORTAL2) {
+				DefineOutput("m_OnStartTouchPortal", "OnStartTouchPortal");
+				DefineOutput("m_OnEndTouchPortal", "OnEndTouchPortal");
+			}
+
 			BeginDataMap("CBeam", "CBaseEntity");
 			DefineField("m_nHaloIndex", MODELINDEX);
 			DefineField("m_nBeamType", INTEGER);
@@ -157,18 +161,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInputFunc("Complete", "InputComplete", VOID);
 			DefineInputFunc("Save", "InputSave", VOID);
 			
-			BeginDataMap("CVguiScreen", "CBaseEntity");
-			LinkNamesToMap("vgui_screen", "vgui_screen_team", "CVGuiScreen"); // not sure if the last one is a typo
-			DefineCustomField("m_nPanelName", VGuiScreenStringOps);
-			DefineField("m_nAttachmentIndex", INTEGER);
-			DefineField("m_fScreenFlags", INTEGER);
-			DefineKeyField("m_flWidth", "width", FLOAT);
-			DefineKeyField("m_flHeight", "height", FLOAT);
-			DefineKeyField("m_strOverlayMaterial", "overlaymaterial", STRING);
-			DefineField("m_hPlayerOwner", EHANDLE);
-			DefineInputFunc("SetActive", "InputSetActive", VOID);
-			DefineInputFunc("SetInactive", "InputSetInactive", VOID);
-			
 			BeginDataMap("CPropCombineBall", "CBaseAnimating");
 			LinkNamesToMap("prop_combine_ball");
 			DefineField("m_flLastBounceTime", TIME);
@@ -224,9 +216,5 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInputFunc("Enable", "InputEnable", VOID);
 			DefineInputFunc("Disable", "InputDisable", VOID);
 		}
-		
-		
-		private static ParsedSaveField VGuiScreenStringOps(TypeDesc desc, SaveInfo info, ref ByteStreamReader bsr)
-			=> new ParsedSaveField<string>(bsr.ReadStringOfLength(bsr.ReadSInt()), desc);
 	}
 }

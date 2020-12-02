@@ -16,12 +16,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		protected Game Game => GenInfo.Game;
 
 		// not meant to be accessed in inheriting classes
-		internal List<(string, DataMap)> UnlinkedBaseClasses;
-		internal List<(string, TypeDesc)> UnlinkedEmbeddedMaps;
-		internal Dictionary<string, string> Proxies;
-		internal List<DataMap> DataMaps;
-		internal List<(string, string)> Links;
-		internal List<string> EmptyRoots;
+		internal readonly List<(string, DataMap)> UnlinkedBaseClasses = new List<(string, DataMap)>();
+		internal readonly List<(string, TypeDesc)> UnlinkedEmbeddedMaps = new List<(string, TypeDesc)>();
+		internal readonly Dictionary<string, string> Proxies = new Dictionary<string, string>();
+		internal readonly List<DataMap> DataMaps = new List<DataMap>();
+		internal readonly List<(string, string)> Links = new List<(string, string)>();
+		internal readonly List<string> EmptyRoots = new List<string>();
 		
 		// temporary info for the datamap that is currently being constructed
 		private string? _tmpName; // name of last class (might just be a proxy)
@@ -30,15 +30,19 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		private DataMap CurMap => DataMaps[^1];
 
 
-		public void Generate() {
-			UnlinkedBaseClasses = new List<(string, DataMap)>();
-			UnlinkedEmbeddedMaps = new List<(string, TypeDesc)>();
-			Proxies = new Dictionary<string, string>();
-			DataMaps = new List<DataMap>();
-			Links = new List<(string, string)>();
-			EmptyRoots = new List<string>();
+		public void Clear() {
+			UnlinkedBaseClasses.Clear();
+			UnlinkedEmbeddedMaps.Clear();
+			Proxies.Clear();
+			DataMaps.Clear();
+			Links.Clear();
+			EmptyRoots.Clear();
 			_mapReady = false;
 			_tmpName = _tmpBaseClass = null;
+		}
+		
+		
+		public void Generate() { // clear before calling
 			CreateDataMaps();
 			FinishDataMap();
 		}

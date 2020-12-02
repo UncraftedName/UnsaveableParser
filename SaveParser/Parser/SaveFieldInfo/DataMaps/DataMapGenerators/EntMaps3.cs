@@ -6,7 +6,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 	public class EntMaps3 : DataMapGenerator {
 		
 		public const int kMAXCONTROLPOINTS = 63;
+		public const int kSERVERCONTROLLEDPOINTS = 4;
 		public const int MAX_SCENE_FILENAME = 128;
+		public const int MAX_PATH = 260;
 		
 		
 		protected override void CreateDataMaps() {
@@ -226,6 +228,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineOutput("m_OnFiredPortal1", "OnFiredPortal1");
 			DefineOutput("m_OnFiredPortal2", "OnFiredPortal2");
 			DefineFunction("Think");
+			if (Game == Game.PORTAL2) {
+				DefineField("m_vecBluePortalPos", VECTOR);
+				DefineField("m_vecOrangePortalPos", VECTOR);
+			}
 			
 			BeginDataMap("CBoneFollower", "CBaseEntity");
 			LinkNamesToMap("phys_bone_follower");
@@ -271,6 +277,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_bStartActive", "start_active", BOOLEAN);
 			DefineField("m_bActive", BOOLEAN);
 			DefineField("m_flStartTime", TIME);
+			if (Game == Game.PORTAL2) {
+				DefineField("m_vServerControlPoints", VECTOR, kSERVERCONTROLLEDPOINTS);
+				DefineField("m_iServerControlPointAssignments", BYTE, kSERVERCONTROLLEDPOINTS);
+				DefineKeyField("m_szSnapshotFileName", "snapshot_file", CHARACTER, MAX_PATH);
+			}
 			DefineKeyField("m_iszEffectName", "effect_name", STRING);
 			DefineKeyField("m_iszControlPointNames[0]", "cpoint1", STRING);
 			DefineKeyField("m_iszControlPointNames[1]", "cpoint2", STRING);
@@ -345,6 +356,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_hControlPointEnts", EHANDLE, kMAXCONTROLPOINTS);
 			DefineInputFunc("Start", "InputStart", VOID);
 			DefineInputFunc("Stop", "InputStop", VOID);
+			if (Game == Game.PORTAL2) {
+				DefineInputFunc("StopPlayEndCap", "InputStopEndCap", VOID);
+				DefineInputFunc("DestroyImmediately", "InputDestroy", VOID);
+			}
 			DefineThinkFunc("StartParticleSystemThink");
 			
 			BeginDataMap("CPathTrack", "CPointEntity");
@@ -367,11 +382,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			
 			BeginDataMap("CShadowControl", "CBaseEntity");
 			LinkNamesToMap("shadow_control");
-			DefineKeyField("m_flShadowMaxDist", "distance", FLOAT);
+			DefineInputAndKeyField("m_flShadowMaxDist", "distance", "SetDistance", FLOAT);
 			DefineInputAndKeyField("m_bDisableShadows", "disableallshadows", "SetShadowsDisabled", BOOLEAN);
 			DefineInput("m_shadowColor", "color", COLOR32);
 			DefineInput("m_shadowDirection", "direction", VECTOR);
-			DefineInput("m_flShadowMaxDisat", "SetDistance", FLOAT);
+			if (Game == Game.PORTAL2)
+				DefineInput("m_bEnableLocalLightShadows", "SetShadowsFromLocalLightsEnabled", BOOLEAN);
 			DefineInputFunc("SetAngles", "InputSetAngles", STRING);
 			
 			BeginDataMap("CInfoLightingRelative", "CBaseEntity");
@@ -420,6 +436,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInputFunc("SetSpeed", "InputSetSpeed", FLOAT);
 			DefineInputFunc("SetSpeedDir", "InputSetSpeedDir", FLOAT);
 			DefineInputFunc("SetSpeedReal", "InputSetSpeedReal", FLOAT);
+			if (Game == Game.PORTAL2) {
+				DefineInputFunc("SetSpeedDirAccel", "InputSetSpeedDirAccel", FLOAT);
+				DefineOutput("m_OnArrivedAtDestinationNode", "OnArrivedAtDestinationNode");
+			}
 			DefineOutput("m_OnStart", "OnStart");
 			DefineOutput("m_OnNext", "OnNextPoint");
 			DefineFunction("Next");

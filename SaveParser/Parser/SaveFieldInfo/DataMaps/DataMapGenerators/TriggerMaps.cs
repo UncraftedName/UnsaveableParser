@@ -54,6 +54,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			if (Game == Game.PORTAL2) {
 				DefineField("m_bVisible", BOOLEAN);
 				DefineField("m_bUseScanline", BOOLEAN);
+				DefineField("m_bPlayersPassTriggerFilters", BOOLEAN);
 			}
 			
 			BeginDataMap("CBaseTrigger", "CBaseToggle");
@@ -167,6 +168,16 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			BeginDataMap("CTriggerTeleport", "CBaseTrigger");
 			LinkNamesToMap("trigger_teleport");
 			DefineKeyField("m_iLandmark", "landmark", STRING);
+			
+			BeginDataMap("CPointTeleport", "CBaseEntity");
+			LinkNamesToMap("point_teleport");
+			DefineField("m_vSaveOrigin", VECTOR);
+			DefineField("m_vSaveAngles", VECTOR);
+			DefineInputFunc("Teleport", "InputTeleport", VOID);
+			if (Game == Game.PORTAL2) {
+				DefineInputFunc("TeleportEntity", "InputTeleportEntity", STRING);
+				DefineInputFunc("TeleportToCurrentPos", "InputTeleportToCurrentPos", VOID);
+			}
 		}
 	}
 }

@@ -82,37 +82,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			
 			DataMapProxy("CBaseParticleEntity", "CBaseEntity");
 			
-			BeginDataMap("CSlideshowDisplay", "CBaseEntity");
-			LinkNamesToMap("vgui_slideshow_display");
-			DefineField("m_bEnabled", BOOLEAN);
-			DefineKeyField("m_szDisplayText", "displaytext", CHARACTER, 128);
-			DefineField("m_szSlideshowDirectory", CHARACTER, 128);
-			DefineKeyField("m_String_tSlideshowDirectory", "directory", STRING);
-			DefineField("m_chCurrentSlideLists", CHARACTER, 16);
-			DefineKeyField("m_fMinSlideTime", "minslidetime", FLOAT);
-			DefineKeyField("m_fMaxSlideTime", "maxslidetime", FLOAT);
-			DefineKeyField("m_iCycleType", "cycletype", INTEGER);
-			DefineKeyField("m_bNoListRepeats", "nolistrepeats", BOOLEAN);
-			DefineKeyField("m_iScreenWidth", "width", INTEGER);
-			DefineKeyField("m_iScreenHeight", "height", INTEGER);
-			DefineInputFunc("Disable", "InputDisable", VOID);
-			DefineInputFunc("Enable", "InputEnable", VOID);
-			DefineInputFunc("SetDisplayText", "InputSetDisplayText", STRING);
-			DefineInputFunc("RemoveAllSlides", "InputRemoveAllSlides", VOID);
-			DefineInputFunc("AddSlides", "InputAddSlides", STRING);
-			DefineInputFunc("SetMinSlideTime", "InputSetMinSlideTime", FLOAT);
-			DefineInputFunc("SetMaxSlideTime", "InputSetMaxSlideTime", FLOAT);
-			DefineInputFunc("SetCycleType", "InputSetCycleType", INTEGER);
-			DefineInputFunc("SetNoListRepeats", "InputSetNoListRepeats", BOOLEAN);
-			
-			BeginDataMap("CNeurotoxinCountdown", "CBaseEntity");
-			LinkNamesToMap("vgui_neurotoxin_countdown");
-			DefineField("m_bEnabled", BOOLEAN);
-			DefineKeyField("m_iScreenWidth", "width", INTEGER);
-			DefineKeyField("m_iScreenHeight", "height", INTEGER);
-			DefineInputFunc("Disable", "InputDisable", VOID);
-			DefineInputFunc("Enable", "InputEnable", VOID);
-			
 			BeginDataMap("CRotDoor", "CBaseDoor");
 			LinkNamesToMap("func_door_rotating");
 			DefineKeyField("m_bSolidBsp", "solidbsp", BOOLEAN);
@@ -315,6 +284,120 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineEmbeddedField("m_grabController", "CGrabController");
 			DefinePhysPtr("m_grabController.m_controller");
 			DefineField("m_pPlayer", CLASSPTR);
+			
+			BeginDataMap("CFuncTank", "CBaseEntity");
+			DefineKeyField("m_yawRate", "yawrate", FLOAT);
+			DefineKeyField("m_yawRange", "yawrange", FLOAT);
+			DefineKeyField("m_yawTolerance", "yawtolerance", FLOAT);
+			DefineKeyField("m_pitchRate", "pitchrate", FLOAT);
+			DefineKeyField("m_pitchRange", "pitchrange", FLOAT);
+			DefineKeyField("m_pitchTolerance", "pitchtolerance", FLOAT);
+			DefineKeyField("m_fireRate", "firerate", FLOAT);
+			DefineField("m_fireTime", TIME);
+			DefineKeyField("m_persist", "persistence", FLOAT);
+			DefineKeyField("m_persist2", "persistence2", FLOAT);
+			DefineKeyField("m_minRange", "minRange", FLOAT);
+			DefineKeyField("m_maxRange", "maxRange", FLOAT);
+			DefineField("m_flMinRange2", FLOAT);
+			DefineField("m_flMaxRange2", FLOAT);
+			DefineKeyField("m_iAmmoCount", "ammo_count", INTEGER);
+			DefineKeyField("m_spriteScale", "spritescale", FLOAT);
+			DefineKeyField("m_iszSpriteSmoke", "spritesmoke", STRING);
+			DefineKeyField("m_iszSpriteFlash", "spriteflash", STRING);
+			DefineKeyField("m_bulletType", "bullet", INTEGER);
+			DefineField("m_nBulletCount", INTEGER);
+			DefineKeyField("m_spread", "firespread", INTEGER);
+			DefineKeyField("m_iBulletDamage", "bullet_damage", INTEGER);
+			DefineKeyField("m_iBulletDamageVsPlayer", "bullet_damage_vs_player", INTEGER);
+			DefineKeyField("m_iszMaster", "master", STRING);
+			if (GenInfo.IsDefHl2Episodic) {
+				DefineKeyField("m_iszAmmoType", "ammotype", STRING);
+				DefineField("m_iAmmoType", INTEGER);
+			} else {
+				DefineField("m_iSmallAmmoType", INTEGER);
+				DefineField("m_iMediumAmmoType", INTEGER);
+				DefineField("m_iLargeAmmoType", INTEGER);
+			}
+			DefineKeyField("m_soundStartRotate", "rotatestartsound", SOUNDNAME);
+			DefineKeyField("m_soundStopRotate", "rotatestopsound", SOUNDNAME);
+			DefineKeyField("m_soundLoopRotate", "rotatesound", SOUNDNAME);
+			DefineKeyField("m_flPlayerGracePeriod", "playergraceperiod", FLOAT);
+			DefineKeyField("m_flIgnoreGraceUpto", "ignoregraceupto", FLOAT);
+			DefineKeyField("m_flPlayerLockTimeBeforeFire", "playerlocktimebeforefire", FLOAT);
+			DefineField("m_flLastSawNonPlayer", TIME);
+			DefineField("m_yawCenter", FLOAT);
+			DefineField("m_yawCenterWorld", FLOAT);
+			DefineField("m_pitchCenter", FLOAT);
+			DefineField("m_pitchCenterWorld", FLOAT);
+			DefineField("m_fireLast", TIME);
+			DefineField("m_lastSightTime", TIME);
+			DefineField("m_barrelPos", VECTOR);
+			DefineField("m_sightOrigin", POSITION_VECTOR);
+			DefineField("m_hFuncTankTarget", EHANDLE);
+			DefineField("m_hController", EHANDLE);
+			DefineField("m_vecControllerUsePos", VECTOR);
+			DefineField("m_flNextAttack", TIME);
+			DefineField("m_targetEntityName", STRING);
+			DefineField("m_hTarget", EHANDLE);
+			DefineField("m_vTargetPosition", POSITION_VECTOR);
+			DefineField("m_vecNPCIdleTarget", POSITION_VECTOR);
+			DefineField("m_persist2burst", FLOAT);
+			DefineField("m_hControlVolume", EHANDLE);
+			DefineKeyField("m_iszControlVolume", "control_volume", STRING);
+			DefineField("m_flNextControllerSearch", TIME);
+			DefineField("m_bShouldFindNPCs", BOOLEAN);
+			DefineField("m_bNPCInRoute", BOOLEAN);
+			DefineKeyField("m_iszNPCManPoint", "npc_man_point", STRING);
+			DefineField("m_bReadyToFire", BOOLEAN);
+			DefineKeyField("m_bPerformLeading", "LeadTarget", BOOLEAN);
+			DefineField("m_flStartLeadFactor", FLOAT);
+			DefineField("m_flStartLeadFactorTime", TIME);
+			DefineField("m_flNextLeadFactor", FLOAT);
+			DefineField("m_flNextLeadFactorTime", TIME);
+			DefineKeyField("m_iszBaseAttachment", "gun_base_attach", STRING);
+			DefineKeyField("m_iszBarrelAttachment", "gun_barrel_attach", STRING);
+			DefineKeyField("m_iszYawPoseParam", "gun_yaw_pose_param", STRING);
+			DefineKeyField("m_iszPitchPoseParam", "gun_pitch_pose_param", STRING);
+			DefineKeyField("m_flYawPoseCenter", "gun_yaw_pose_center", FLOAT);
+			DefineKeyField("m_flPitchPoseCenter", "gun_pitch_pose_center", FLOAT);
+			DefineField("m_bUsePoseParameters", BOOLEAN);
+			DefineKeyField("m_iEffectHandling", "effecthandling", INTEGER);
+			DefineInputFunc("Activate", "InputActivate", VOID);
+			DefineInputFunc("Deactivate", "InputDeactivate", VOID);
+			DefineInputFunc("SetFireRate", "InputSetFireRate", FLOAT);
+			DefineInputFunc("SetDamage", "InputSetDamage", INTEGER);
+			DefineInputFunc("SetTargetPosition", "InputSetTargetPosition", VECTOR);
+			DefineInputFunc("SetTargetDir", "InputSetTargetDir", VECTOR);
+			DefineInputFunc("SetTargetEntityName", "InputSetTargetEntityName", STRING);
+			DefineInputFunc("SetTargetEntity", "InputSetTargetEntity", EHANDLE);
+			DefineInputFunc("ClearTargetEntity", "InputClearTargetEntity", VOID);
+			DefineInputFunc("FindNPCToManTank", "InputFindNPCToManTank", STRING);
+			DefineInputFunc("StopFindingNPCs", "InputStopFindingNPCs", VOID);
+			DefineInputFunc("StartFindingNPCs", "InputStartFindingNPCs", VOID);
+			DefineInputFunc("ForceNPCOff", "InputForceNPCOff", VOID);
+			DefineInputFunc("SetMaxRange", "InputSetMaxRange", FLOAT);
+			DefineOutput("m_OnFire", "OnFire");
+			DefineOutput("m_OnLoseTarget", "OnLoseTarget");
+			DefineOutput("m_OnAquireTarget", "OnAquireTarget");
+			DefineOutput("m_OnAmmoDepleted", "OnAmmoDepleted");
+			DefineOutput("m_OnGotController", "OnGotController");
+			DefineOutput("m_OnLostController", "OnLostController");
+			DefineOutput("m_OnGotPlayerController", "OnGotPlayerController");
+			DefineOutput("m_OnLostPlayerController", "OnLostPlayerController");
+			DefineOutput("m_OnReadyToFire", "OnReadyToFire");
+			
+			DataMapProxy("CFuncDataGun", "CFuncTank");
+			LinkNamesToMap("func_tank");
+			
+			BeginDataMap("CFuncAreaPortalWindow", "CFuncAreaPortalBase");
+			LinkNamesToMap("func_areaportalwindow");
+			DefineKeyField("m_portalNumber", "portalnumber", INTEGER);
+			DefineKeyField("m_flFadeStartDist", "FadeStartDist", FLOAT);
+			DefineKeyField("m_flFadeDist", "FadeDist", FLOAT);
+			DefineKeyField("m_flTranslucencyLimit", "TranslucencyLimit", FLOAT);
+			DefineKeyField("m_iBackgroundBModelName", "BackgroundBModel", STRING);
+			DefineInputFunc("SetFadeStartDistance", "InputSetFadeStartDistance", FLOAT);
+			DefineInputFunc("SetFadeEndDistance", "InputSetFadeEndDistance", FLOAT);
 		}
 	}
 }

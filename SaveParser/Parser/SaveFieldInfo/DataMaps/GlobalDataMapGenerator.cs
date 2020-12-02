@@ -22,7 +22,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			new PhysConstraintMaps(),
 			new StateFileDataMaps(),
 			new TriggerMaps(),
-			new VPhysicsMaps()
+			new VPhysicsMaps(),
+			new VGuiMaps()
 		};
 
 		private static readonly Dictionary<(Game, bool), Dictionary<string, DataMap>> GeneratedGlobalMaps
@@ -51,6 +52,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			
 			foreach (DataMapGenerator gen in GeneratorInstances) {
 				gen.GenInfo = info.CreateGenInfo(isClient);
+				gen.Clear();
 				gen.Generate();
 					
 				emptyRoots.UnionWith(gen.EmptyRoots);
@@ -96,6 +98,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 					}
 					globalMaps.Add(key, globalMaps[value]);
 				}
+				
+				gen.Clear();
 			}
 			
 			// now that we have all the datamaps, we can resolve the references for base classes and embedded maps

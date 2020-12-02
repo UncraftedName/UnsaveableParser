@@ -42,7 +42,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("connectionCount", INTEGER);
 			DefineField("lightStyleCount", INTEGER);
 			DefineField("mapVersion", INTEGER);
-			DefineField("time__USE_VCR_MODE", TIME); // this is just called 'time', but that doesn't work
+			if (Game == Game.PORTAL2)
+				DefineField("time", TIME);
+			else
+				DefineField("time__USE_VCR_MODE", TIME); // I have no idea
 			DefineField("mapName", CHARACTER, 32);
 			DefineField("skyName", CHARACTER, 32);
 			
@@ -125,6 +128,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_flScriptVolume", FLOAT);
 			DefineEmbeddedField("m_Filter", "CCopyRecipientFilter");
 			DefineField("m_flCloseCaptionDuration", FLOAT);
+			if (Game == Game.PORTAL2) {
+				DefineField("m_hSoundScriptHash", INTEGER);
+				DefineField("m_nSoundEntryVersion", INTEGER);
+			}
 
 			BeginDataMap("SoundCommand_t");
 			DefineField("m_time", TIME);

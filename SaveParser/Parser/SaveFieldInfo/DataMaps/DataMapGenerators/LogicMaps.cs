@@ -195,6 +195,105 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineOutput("m_OnCase[14]", "OnCase15");
 			DefineOutput("m_OnCase[15]", "OnCase16");
 			DefineOutput("m_OnDefault", "OnDefault");
+			
+			BeginDataMap("CLogicBranch", "CLogicalEntity");
+			LinkNamesToMap("logic_branch");
+			DefineKeyField("m_bInValue", "InitialValue", BOOLEAN);
+			DefineVector("m_Listeners", EHANDLE);
+			DefineInputFunc("SetValue", "InputSetValue", BOOLEAN);
+			DefineInputFunc("SetValueTest", "InputSetValueTest", BOOLEAN);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
+			DefineInputFunc("ToggleTest", "InputToggleTest", VOID);
+			DefineInputFunc("Test", "InputTest", VOID);
+			DefineOutput("m_OnTrue", "OnTrue");
+			DefineOutput("m_OnFalse", "OnFalse");
+			
+			BeginDataMap("CLogicScript", "CPointEntity");
+			LinkNamesToMap("logic_script");
+			DefineKeyField("m_iszGroupMembers[0]", "Group00", STRING);
+			DefineKeyField("m_iszGroupMembers[1]", "Group01", STRING);
+			DefineKeyField("m_iszGroupMembers[2]", "Group02", STRING);
+			DefineKeyField("m_iszGroupMembers[3]", "Group03", STRING);
+			DefineKeyField("m_iszGroupMembers[4]", "Group04", STRING);
+			DefineKeyField("m_iszGroupMembers[5]", "Group05", STRING);
+			DefineKeyField("m_iszGroupMembers[6]", "Group06", STRING);
+			DefineKeyField("m_iszGroupMembers[7]", "Group07", STRING);
+			DefineKeyField("m_iszGroupMembers[8]", "Group08", STRING);
+			DefineKeyField("m_iszGroupMembers[9]", "Group09", STRING);
+			DefineKeyField("m_iszGroupMembers[10]", "Group10", STRING);
+			DefineKeyField("m_iszGroupMembers[11]", "Group11", STRING);
+			DefineKeyField("m_iszGroupMembers[12]", "Group12", STRING);
+			DefineKeyField("m_iszGroupMembers[13]", "Group13", STRING);
+			DefineKeyField("m_iszGroupMembers[14]", "Group14", STRING);
+			DefineKeyField("m_iszGroupMembers[15]", "Group16", STRING);
+			
+			BeginDataMap("CPointServerCommand", "CPointEntity");
+			LinkNamesToMap("point_servercommand");
+			DefineInputFunc("Command", "InputCommand", STRING);
+
+			{
+				void DefineProxyRelayInputFunc(int i)
+					=> DefineInputFunc($"OnProxyRelay{i}", $"InputProxyRelay{i}", STRING);
+				
+				void DefineProxyRelayOutput(int i)
+					=> DefineOutput($"m_OnProxyRelay{i}", $"OnProxyRelay{i}");
+
+				BeginDataMap("CFuncInstanceIoProxy", "CBaseEntity");
+				LinkNamesToMap("func_instance_io_proxy");
+				for (int i = 0; i < (Game == Game.PORTAL2 ? 19 : 16); i++) {
+					DefineProxyRelayInputFunc(i+1);
+					DefineProxyRelayOutput(i+1);
+				}
+			}
+			
+			BeginDataMap("CLogicBranchList", "CLogicalEntity");
+			LinkNamesToMap("logic_branch_listener");
+			DefineKeyField("m_nLogicBranchNames[0]", "Branch01", STRING);
+			DefineKeyField("m_nLogicBranchNames[1]", "Branch02", STRING);
+			DefineKeyField("m_nLogicBranchNames[2]", "Branch03", STRING);
+			DefineKeyField("m_nLogicBranchNames[3]", "Branch04", STRING);
+			DefineKeyField("m_nLogicBranchNames[4]", "Branch05", STRING);
+			DefineKeyField("m_nLogicBranchNames[5]", "Branch06", STRING);
+			DefineKeyField("m_nLogicBranchNames[6]", "Branch07", STRING);
+			DefineKeyField("m_nLogicBranchNames[7]", "Branch08", STRING);
+			DefineKeyField("m_nLogicBranchNames[8]", "Branch09", STRING);
+			DefineKeyField("m_nLogicBranchNames[9]", "Branch10", STRING);
+			DefineKeyField("m_nLogicBranchNames[10]", "Branch11", STRING);
+			DefineKeyField("m_nLogicBranchNames[11]", "Branch12", STRING);
+			DefineKeyField("m_nLogicBranchNames[12]", "Branch13", STRING);
+			DefineKeyField("m_nLogicBranchNames[13]", "Branch14", STRING);
+			DefineKeyField("m_nLogicBranchNames[14]", "Branch15", STRING);
+			DefineKeyField("m_nLogicBranchNames[15]", "Branch16", STRING);
+			DefineVector("m_LogicBranchList", EHANDLE);
+			DefineField("m_eLastState", INTEGER);
+			DefineInputFunc("Test", "InputTest", INPUT);
+			DefineInputFunc("_OnLogicBranchChanged", "Input_OnLogicBranchChanged", INPUT);
+			DefineInputFunc("_OnLogicBranchRemoved", "Input_OnLogicBranchRemoved", INPUT);
+			DefineOutput("m_OnAllTrue", "OnAllTrue");
+			DefineOutput("m_OnAllFalse", "OnAllFalse");
+			DefineOutput("m_OnMixed", "OnMixed");
+			
+			BeginDataMap("CRuleEntity", "CBaseEntity");
+			DefineKeyField("m_iszMaster", "master", STRING);
+			
+			BeginDataMap("CRulePointEntity", "CRuleEntity");
+			DefineField("m_Score", INTEGER);
+				
+			BeginDataMap("CGameText", "CRulePointEntity");
+			LinkNamesToMap("game_text");
+			DefineKeyField("m_iszMessage", "message", STRING);
+			DefineKeyField("m_textParms.channel", "channel", INTEGER);
+			DefineKeyField("m_textParms.x", "x", FLOAT);
+			DefineKeyField("m_textParms.y", "y", FLOAT);
+			DefineKeyField("m_textParms.effect", "effect", INTEGER);
+			DefineKeyField("m_textParms.fadeinTime", "fadein", FLOAT);
+			DefineKeyField("m_textParms.fadeoutTime", "fadeout", FLOAT);
+			DefineKeyField("m_textParms.holdTime", "holdtime", FLOAT);
+			DefineKeyField("m_textParms.fxTime", "fxtime", FLOAT);
+			DefineField("m_textParms", BYTE, 40); // todo this is actually a hudtextparms_t struct
+			DefineInputFunc("Display", "InputDisplay", VOID);
+			if (Game == Game.PORTAL2)
+				DefineInputFunc("SetText", "InputSetText", STRING);
 		}
 	}
 }

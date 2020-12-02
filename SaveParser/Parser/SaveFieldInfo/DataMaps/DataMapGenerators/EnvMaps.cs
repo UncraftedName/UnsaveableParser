@@ -6,6 +6,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 	public sealed class EnvMaps : DataMapGenerator {
 
 		public const int MAX_WAKE_POINTS = 16;
+		public const int MAX_PATH = 260;
 		
 		
 		protected override void CreateDataMaps() {
@@ -158,6 +159,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_flCustomBloomScale", FLOAT);
 			DefineField("m_flCustomBloomScaleMinimum", FLOAT);
 			DefineField("m_bUseCustomBloomScale", BOOLEAN);
+			if (Game == Game.PORTAL2) {
+				DefineField("m_flBloomExponent", FLOAT);
+				DefineField("m_flBloomSaturation", FLOAT);
+			}
 			DefineThinkFunc("UpdateTonemapScaleBlend");
 			DefineInputFunc("SetTonemapScale", "InputSetTonemapScale", FLOAT);
 			DefineInputFunc("BlendTonemapScale", "InputBlendTonemapScale", STRING);
@@ -168,6 +173,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInputFunc("UseDefaultBloomScale", "InputUseDefaultBloomScale", VOID);
 			DefineInputFunc("SetBloomScale", "InputSetBloomScale", FLOAT);
 			DefineInputFunc("SetBloomScaleRange", "InputSetBloomScaleRange", FLOAT);
+			if (Game == Game.PORTAL2) {
+				DefineInputFunc("SetBloomExponent", "InputSetBloomExponent", FLOAT);
+				DefineInputFunc("SetBloomSaturation", "InputSetBloomSaturation", FLOAT);
+			}
 			
 			BeginDataMap("CCitadelEnergyCore", "CBaseEntity"); // charges up and then releases energy from its position
 			LinkNamesToMap("env_citadel_energy_core");
@@ -248,6 +257,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_HoldTime", "holdtime", FLOAT);
 			DefineInputFunc("Fade", "InputFade", VOID);
 			DefineOutput("m_OnBeginFade", "OnBeginFade");
+			if (Game == Game.PORTAL2)
+				DefineField("m_flReverseFadeDuration", FLOAT);
 			
 			BeginDataMap("TrailPoint_t");
 			DefineField("m_vecScreenPos", POSITION_VECTOR); // if screen space trails, then just a vector
@@ -316,6 +327,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_fog.maxdensity", "fogmaxdensity", FLOAT);
 			DefineKeyField("m_fog.farz", "farz", FLOAT);
 			DefineKeyField("m_fog.duration", "foglerptime", FLOAT);
+			if (Game == Game.PORTAL2)
+				DefineKeyField("m_fog.HDRColorScale", "HDRColorScale", FLOAT);
 			DefineThinkFunc("SetLerpValues");
 			DefineField("m_iChangedVariables", INTEGER);
 			DefineField("m_fog.lerptime", TIME);
@@ -323,6 +336,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_fog.colorSecondaryLerpTo", COLOR32);
 			DefineField("m_fog.startLerpTo", FLOAT);
 			DefineField("m_fog.endLerpTo", FLOAT);
+			if (Game == Game.PORTAL2)
+				DefineField("m_fog.maxdensityLerpTo", FLOAT);
 
 			BeginDataMap("CSmokeStackLightInfo");
 			DefineField("m_vPos", POSITION_VECTOR);
@@ -460,6 +475,65 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInputAndKeyField("m_RotationSpeed", "RotationSpeed", "SetRotationSpeed", FLOAT);
 			DefineInputAndKeyField("m_MovementSpeed", "MovementSpeed", "SetMovementSpeed", FLOAT);
 			DefineInputAndKeyField("m_Density", "Density", "SetDensity", FLOAT);
+			
+			BeginDataMap("CEnvProjectedTexture", "CPointEntity");
+			LinkNamesToMap("env_projectedtexture");
+			DefineField("m_hTargetEntity", EHANDLE);
+			DefineField("m_bState", BOOLEAN);
+			DefineKeyField("m_flLightFOV", "lightfov", FLOAT);
+			DefineKeyField("m_bEnableShadows", "enableshadows", BOOLEAN);
+			if (Game == Game.PORTAL2)
+				DefineKeyField("m_bSimpleProjection", "simpleprojection", BOOLEAN);
+			DefineKeyField("m_bLightOnlyTarget", "lightonlytarget", BOOLEAN);
+			DefineKeyField("m_bLightWorld", "lightworld", BOOLEAN);
+			DefineKeyField("m_bCameraSpace", "cameraspace", BOOLEAN);
+			DefineKeyField("m_flAmbient", "ambient", FLOAT);
+			DefineKeyField("m_SpotlightTextureName", "texturename", CHARACTER, MAX_PATH);
+			DefineKeyField("m_nSpotlightTextureFrame", "textureframe", INTEGER);
+			DefineKeyField("m_flNearZ", "nearz", FLOAT);
+			DefineKeyField("m_flFarZ", "farz", FLOAT);
+			DefineKeyField("m_nShadowQuality", "shadowquality", INTEGER);
+			if (Game == Game.PORTAL2) {
+				DefineKeyField("m_flBrightnessScale", "brightnessscale", FLOAT);
+				DefineField("m_LightColor", COLOR32);
+				DefineKeyField("m_flColorTransitionTime", "colortransitiontime", FLOAT);
+				DefineKeyField("m_flProjectionSize", "projection_size", FLOAT);
+				DefineKeyField("m_flRotation", "projection_rotation", FLOAT);
+			} else {
+				DefineField("m_LinearFloatLightColor", VECTOR);
+			}
+			DefineInputFunc("TurnOn", "InputTurnOn", VOID);
+			DefineInputFunc("TurnOff", "InputTurnOff", VOID);
+			if (Game == Game.PORTAL2) {
+				DefineInputFunc("AlwaysUpdateOn", "InputAlwaysUpdateOn", VOID);
+				DefineInputFunc("AlwaysUpdateOff", "InputAlwaysUpdateOff", VOID);
+			}
+			DefineInputFunc("FOV", "InputSetFOV", FLOAT);
+			DefineInputFunc("Target", "InputSetTarget", EHANDLE);
+			DefineInputFunc("CameraSpace", "InputSetCameraSpace", BOOLEAN);
+			DefineInputFunc("LightOnlyTarget", "InputSetLightOnlyTarget", BOOLEAN);
+			DefineInputFunc("LightWorld", "InputSetLightWorld", BOOLEAN);
+			DefineInputFunc("EnableShadows", "InputSetEnableShadows", BOOLEAN);
+			if (Game == Game.PORTAL2)
+				DefineInputFunc("LightColor", "InputSetLightColor", COLOR32);
+			DefineInputFunc("Ambient", "InputSetAmbient", FLOAT);
+			DefineInputFunc("SpotlightTexture", "InputSetSpotlightTexture", STRING);
+			DefineThinkFunc("InitialThink");
+			if (Game == Game.PORTAL2) {
+				DefineField("m_bAlwaysUpdate", BOOLEAN);
+				DefineField("m_iStyle", INTEGER);
+			}
+			
+			BeginDataMap("CLightGlow", "CBaseEntity");
+			LinkNamesToMap("env_lightglow");
+			DefineKeyField("m_nVerticalSize", "VerticalGlowSize", INTEGER);
+			DefineKeyField("m_nHorizontalSize", "HorizontalGlowSize", INTEGER);
+			DefineKeyField("m_nMinDist", "MinDist", INTEGER);
+			DefineKeyField("m_nMaxDist", "MaxDist", INTEGER);
+			DefineKeyField("m_nOuterMaxDist", "OuterMaxDist", INTEGER);
+			DefineKeyField("m_flGlowProxySize", "GlowProxySize", FLOAT);
+			DefineKeyField("m_flHDRColorScale", "HDRColorScale", FLOAT);
+			DefineInputFunc("Color", "InputColor", COLOR32);
 		}
 	}
 }

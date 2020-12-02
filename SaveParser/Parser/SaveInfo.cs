@@ -95,7 +95,8 @@ namespace SaveParser.Parser {
 	}
 
 
-	// if your game doesn't exist here, the save should™ still parse (at least without vphys parsing)
+	// If your game isn't listed here, the save should™ still parse (at least without vphys parsing). You can use the
+	// errors to deduce many of the field types, although you won't get detailed information such as if it's a keyfield.
 	[SuppressMessage("ReSharper", "InconsistentNaming")]
 	public enum Game {
 		PORTAL1_3420,

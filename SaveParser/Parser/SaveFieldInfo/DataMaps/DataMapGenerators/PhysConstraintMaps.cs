@@ -109,7 +109,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_Explosion", "explosion", INTEGER);
 			DefineKeyField("m_GibDir", "gibdir", VECTOR);
 			DefineField("m_hBreaker", EHANDLE);
-			DefineField("m_angle", FLOAT);
+			if (Game != Game.PORTAL2)
+				DefineField("m_angle", FLOAT);
 			DefineField("m_iszGibModel", STRING);
 			DefineField("m_iszSpawnObject", STRING);
 			DefineKeyField("m_ExplosionMagnitude", "explodemagnitude", INTEGER);
@@ -142,6 +143,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_iszModelName", STRING);
 			DefineField("m_hPhysicsAttacker", EHANDLE);
 			DefineField("m_flLastPhysicsInfluenceTime", TIME);
+			if (Game == Game.PORTAL2)
+				DefineField("m_flDmgModFire", FLOAT);
 			
 			BeginDataMap("CPhysBox", "CBreakable");
 			LinkNamesToMap("func_physbox");
@@ -194,6 +197,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_bThrownByPlayer", BOOLEAN);
 			DefineField("m_bFirstCollisionAfterLaunch", BOOLEAN);
 			DefineThinkFunc("ClearFlagsThink");
+			if (Game == Game.PORTAL2)
+				DefineField("m_bAllowPortalFunnel", BOOLEAN);
 			
 			BeginDataMap("CPhysExplosion", "CPointEntity");
 			LinkNamesToMap("env_physexplosion");
@@ -214,6 +219,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_flDmgModBullet", FLOAT);
 			DefineField("m_flDmgModClub", FLOAT);
 			DefineField("m_flDmgModExplosive", FLOAT);
+			if (Game == Game.PORTAL2)
+				DefineField("m_flDmgModFire", FLOAT);
 			DefineField("m_iszPhysicsDamageTableName", STRING);
 			DefineField("m_iszBreakableModel", STRING);
 			DefineField("m_iBreakableSkin", INTEGER);
@@ -279,6 +286,14 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineThinkFunc("BreakThink");
 			DefineEntityFunc("SurfaceTouch");
 			DefineInputFunc("Shatter", "InputShatter", VECTOR);
+			
+			BeginDataMap("CFuncVPhysicsClip", "CBaseEntity");
+			LinkNamesToMap("func_clip_vphysics");
+			DefineKeyField("m_iFilterName", "filtername", STRING);
+			DefineField("m_hFilter", EHANDLE);
+			DefineField("m_bDisabled", BOOLEAN);
+			DefineInputFunc("Enable", "InputEnable", VOID);
+			DefineInputFunc("Disable", "InputDisable", VOID);
 		}
 	}
 }

@@ -71,7 +71,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_MoveType", BYTE);
 			DefineField("m_MoveCollide", BYTE);
 			DefineField("m_hOwnerEntity", EHANDLE);
-			DefineField("m_CollisionGroup", INTEGER);
+			if (Game == Game.PORTAL2)
+				DefineKeyField("m_CollisionGroup", "CollisionGroup", INTEGER);
+			else
+				DefineField("m_CollisionGroup", INTEGER);
 			DefinePhysPtr("m_pPhysicsObject");
 			DefineField("m_flElasticity", FLOAT);
 			DefineKeyField("m_flShadowCastDistance", "shadowcastdist", FLOAT);
@@ -122,7 +125,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInputFunc("SetDamageFilter", "InputSetDamageFilter", STRING);
 			DefineInputFunc("EnableDamageForces", "InputEnableDamageForces", VOID);
 			DefineInputFunc("DisableDamageForces", "InputDisableDamageForces", VOID);
-			DefineInputFunc("DispatchEffect", "InputDispatchEffect", STRING);
+			if (Game != Game.PORTAL2)
+				DefineInputFunc("DispatchEffect", "InputDispatchEffect", STRING);
 			DefineInputFunc("DispatchResponse", "InputDispatchResponse", STRING);
 			DefineInputFunc("AddContext", "InputAddContext", STRING);
 			DefineInputFunc("RemoveContext", "InputRemoveContext", STRING);
@@ -148,9 +152,28 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineThinkFunc("ShadowCastDistThink");
 			DefineField("m_hEffectEntity", EHANDLE);
 			if (Game == Game.PORTAL2) {
-				DefineField("m_iSignifierName", STRING);
+				DefineKeyField("m_nMinCPULevel", "mincpulevel", BYTE);
+				DefineKeyField("m_nMaxCPULevel", "maxcpulevel", BYTE);
+				DefineKeyField("m_nMinGPULevel", "mingpulevel", BYTE);
+				DefineKeyField("m_nMaxGPULevel", "maxgpulevel", BYTE);
 				DefineField("m_iszScriptId", STRING);
-				DefineField("m_iszVScripts", STRING);
+				DefineKeyField("m_iszVScripts", "vscripts", STRING);
+				DefineKeyField("m_iszScriptThinkFunction", "thinkfunction", STRING);
+				DefineField("m_flCreateTime", TIME);
+				DefineField("m_iSignifierName", STRING);
+				DefineField("m_flDmgModFire", FLOAT);
+				DefineKeyField("m_AIAddOn", "addon", STRING);
+				DefineField("m_bClientSideRagdoll", BOOLEAN);
+				DefineInput("m_fadeMinDist", "fademindist", FLOAT);
+				DefineInput("m_fadeMaxDist", "fademaxdist", FLOAT);
+				DefineKeyField("m_flFadeScale", "fadescale", FLOAT);
+				DefineInputFunc("RunScriptFile", "InputRunScriptFile", STRING);
+				DefineInputFunc("RunScriptCode", "InputRunScript", STRING);
+				DefineInputFunc("CallScriptFunction", "InputCallScriptFunction", STRING);
+				DefineThinkFunc("FrictionRevertThink");
+				DefineThinkFunc("ScriptThink");
+				DefineKeyField("m_bLagCompensate", "LagCompensate", BOOLEAN);
+				DefineField("m_iObjectCapsCache", INTEGER);
 			}
 
 			BeginDataMap("CWorld", "CBaseEntity");
@@ -172,6 +195,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_flMinPropScreenSpaceWidth", "minpropscreenwidth", FLOAT);
 			DefineKeyField("m_iszDetailSpriteMaterial", "detailmaterial", STRING);
 			DefineKeyField("m_bColdWorld", "coldworld", BOOLEAN);
+			if (Game == Game.PORTAL2)
+				DefineField("m_nMaxBlobCount", INTEGER);
 			
 			BeginDataMap("CAnimationLayer");
 			DefineField("m_fFlags", INTEGER);
@@ -218,12 +243,20 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_iszLightingOrigin", "LightingOrigin", STRING);
 			DefineField("m_hLightingOrigin", EHANDLE);
 			DefineField("m_hLightingOriginRelative", EHANDLE);
-			DefineField("m_flModelWidthScale", FLOAT);
+			if (Game == Game.PORTAL2)
+				DefineKeyField("m_flModelScale", "ModelScale", FLOAT);
+			else
+				DefineField("m_flModelWidthScale", FLOAT);
 			DefineField("m_flDissolveStartTime", TIME);
 			DefineInputFunc("Ignite", "InputIgnite", VOID);
 			DefineInputFunc("IgniteLifetime", "InputIgniteLifetime", FLOAT);
-			DefineInputFunc("IgniteNumHitboxFires", "InputIgniteNumHitboxFires", INTEGER);
-			DefineInputFunc("IgniteHitboxFireScale", "InputIgniteHitboxFireScale", FLOAT);
+			if (Game == Game.PORTAL2) {
+				DefineInputFunc("IgniteNumHitboxFires", "InputIgnite", INTEGER);
+				DefineInputFunc("IgniteHitboxFireScale", "InputIgnite", FLOAT);
+			} else {
+				DefineInputFunc("IgniteNumHitboxFires", "InputIgniteNumHitboxFires", INTEGER);
+				DefineInputFunc("IgniteHitboxFireScale", "InputIgniteHitboxFireScale", FLOAT);
+			}
 			DefineInputFunc("BecomeRagdoll", "InputBecomeRagdoll", VOID);
 			DefineInputFunc("SetLightingOriginHack", "InputSetLightingOriginRelative", STRING);
 			DefineInputFunc("SetLightingOrigin", "InputSetLightingOrigin", STRING);
@@ -232,6 +265,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInput("m_fadeMaxDist", "fademaxdist", FLOAT);
 			DefineKeyField("m_flFadeScale", "fadescale", FLOAT);
 			DefineField("m_fBoneCacheFlags", SHORT);
+			if (Game == Game.PORTAL2)
+				DefineField("m_flFrozenThawRate", FLOAT);
 			
 			BeginDataMap("CBaseAnimatingOverlay", "CBaseAnimating");
 			DefineEmbeddedVector("m_AnimOverlay", "CAnimationLayer");
@@ -319,9 +354,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_vecSmoothedVelocity", VECTOR);
 			DefineField("m_iTargetVolume", INTEGER);
 			DefineField("m_rgItems", INTEGER, MAX_ITEMS);
-			DefineField("m_flSwimTime", TIME);
-			DefineField("m_flDuckTime", TIME);
-			DefineField("m_flDuckJumpTime", TIME);
+			if (Game != Game.PORTAL2) {
+				DefineField("m_flSwimTime", TIME);
+				DefineField("m_flDuckTime", TIME);
+				DefineField("m_flDuckJumpTime", TIME);
+			}
 			DefineField("m_flSuitUpdate", TIME);
 			DefineField("m_rgSuitPlayList", INTEGER, CSUITPLAYLIST);
 			DefineField("m_iSuitPlayNext", INTEGER);
@@ -376,6 +413,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_flConstraintRadius", FLOAT);
 			DefineField("m_flConstraintWidth", FLOAT);
 			DefineField("m_flConstraintSpeedFactor", FLOAT);
+			if (Game == Game.PORTAL2)
+				DefineField("m_bConstraintPastRadius", BOOLEAN);
 			DefineField("m_hZoomOwner", EHANDLE);
 			DefineField("m_flLaggedMovementValue", FLOAT);
 			DefineField("m_vNewVPhysicsPosition", VECTOR);
@@ -393,6 +432,13 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_flSideMove", FLOAT);
 			DefineField("m_vecPreviouslyPredictedOrigin", POSITION_VECTOR);
 			DefineField("m_nNumCrateHudHints", INTEGER);
+			if (Game == Game.PORTAL2) {
+				DefineField("m_hPostProcessCtrl", EHANDLE);
+				DefineField("m_hColorCorrectionCtrl", EHANDLE);
+				DefineEmbeddedField("m_PlayerFog", "fogplayerparams_t");
+				DefineField("m_bDropEnabled", BOOLEAN);
+				DefineField("m_bDuckEnabled", BOOLEAN);
+			}
 			
 			BeginDataMap("CHL2PlayerLocalData");
 			DefineField("m_flSuitPower", FLOAT);

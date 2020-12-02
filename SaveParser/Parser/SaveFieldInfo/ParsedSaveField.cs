@@ -14,7 +14,7 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		
 		protected static readonly Exception InvalidCastE = new InvalidCastException($"{typeof(ParsedSaveField)}: bad cast");
 
-		public virtual object? FieldAsObj => throw new Exception("not sure how you called this");
+		public virtual object? FieldAsObj => throw new Exception("trying to reference abstract field");
 		public readonly TypeDesc Desc;
 		public readonly int ElemCount;
 		public int ByteIndex;

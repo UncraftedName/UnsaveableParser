@@ -9,6 +9,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 		public const int PORTAL_FLOOR_TURRET_NUM_ROPES = 4;
 		public const int SECURITY_CAMERA_NUM_ROPES = 2;
 		public const int SNPCINT_NUM_PHASES = 3;
+		public const int SPEECH_NUM_CATEGORIES = 3;
 		
 
 		// this is a class that extends from CUtlVector<CAI_InterestTarget_t> but doesn't have its own datamap
@@ -440,7 +441,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInputFunc("Ragdoll", "InputRagdoll", VOID);
 			DefineOutput("m_OnDeploy", "OnDeploy");
 			DefineOutput("m_OnRetire", "OnRetire");
-			
+			if (Game == Game.PORTAL2)
+				DefineField("m_nTeamToLookAt", INTEGER);
+
 			BeginDataMap("CNPC_FloorTurret", "CNPCBaseInteractive<CAI_BaseNPC>");
 			DefineField("m_iAmmoType", INTEGER);
 			DefineField("m_bAutoStart", BOOLEAN);
@@ -678,6 +681,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInputFunc("InputReleased", "InputReleased", VOID);
 			DefineOutput("m_OnTargeted", "OnTargeted");
 			DefineOutput("m_OnReleased", "OnReleased");
+			
+			BeginDataMap("CAI_AllySpeechManager", "CLogicalEntity");
+			LinkNamesToMap("ai_ally_speech_manager");
+			DefineEmbeddedField("m_ConceptCategoryTimers", "CSimpleSimTimer", SPEECH_NUM_CATEGORIES);
+			//DEFINE_UTLMAP( m_ConceptTimers, FIELD_STRING, FIELD_EMBEDDED ), // todo
 		}
 	}
 }
