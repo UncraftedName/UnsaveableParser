@@ -17,13 +17,18 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		public virtual object? FieldAsObj => throw new Exception("trying to reference abstract field");
 		public readonly TypeDesc Desc;
 		public readonly int ElemCount;
-		public int ByteIndex;
+		public int ByteIndex {get; private set;}
 
 
 		protected ParsedSaveField(TypeDesc desc, int elemCount = 1) {
 			Desc = desc;
 			ElemCount = elemCount;
 			ByteIndex = -1;
+		}
+
+
+		internal void SetIndex(int index) {
+			ByteIndex = index;
 		}
 	}
 

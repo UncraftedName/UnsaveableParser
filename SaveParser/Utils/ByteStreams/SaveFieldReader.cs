@@ -115,26 +115,21 @@ namespace SaveParser.Utils.ByteStreams {
 			for (int i = 0; i < fieldsSaved; i++) {
 				StartBlock(info, out short byteSize, out string? s);
 				map.FieldDict.TryGetValue(s!, out TypeDesc? curFieldDesc);
-				bool skip = !ShouldReadField(curFieldDesc, out string? reason);
-				if (!skip) {
+				if (curFieldDesc != null) {
 					try {
 						int index = AbsoluteByteIndex;
-						var f = ReadSaveField(curFieldDesc!, info, byteSize);
-						if (f != null) { // I allow returning null here for the vphys read
-							f.ByteIndex = index;
-							ret.AddSaveField(f);
-						}
+						ParsedSaveField? f = ReadSaveField(curFieldDesc!, info, byteSize);
+						f?.SetIndex(index); // I allow returning null here for the vphys read
+						EndBlock(info); // try ending the block to see if we read this correctly
+						ret.AddSaveField(f);
 					} catch (Exception e) {
 						info.AddError($"exception while reading field {s} from datamap \"{map.Name}\": {e.Message}");
-						skip = true;
+						SkipCurrentBlock(info);
 					}
 				} else {
-					info.AddError($"skipping field \"{s}\" from datamap \"{map.Name}\" ({byteSize} bytes), {reason}");
-				}
-				if (skip)
+					info.AddError($"skipping field \"{s}\" from datamap \"{map.Name}\" ({byteSize} bytes), no appropriate field found");
 					SkipCurrentBlock(info);
-				else
-					EndBlock(info);
+				}
 			}
 			return ret;
 		}
@@ -226,28 +221,6 @@ namespace SaveParser.Utils.ByteStreams {
 				default:
 					throw new NotImplementedException($"reading for {desc.FieldType} is not implemented");
 			}
-		}
-
-
-		private static bool ShouldReadField(TypeDesc? desc, out string? reason) { // reason for skip
-			if (desc == null) {
-				reason = "no appropriate field found";
-				return false;
-			}
-
-			if ((desc.Flags & DescFlags.FTYPEDESC_SAVE) == 0) {
-				reason = "this field should not be saved";
-				return false;
-			}
-
-			// i think this is equivalent to what the game does
-			if (desc.FieldType == EMBEDDED && (desc.Flags & DescFlags.FTYPEDESC_PTR) != 0) {
-				reason = "this field is embedded but is also a pointer?";
-				return false;
-			}
-
-			reason = null;
-			return true;
 		}
 
 		

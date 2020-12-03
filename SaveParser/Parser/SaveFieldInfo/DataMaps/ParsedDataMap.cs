@@ -24,7 +24,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		}
 
 
-		public void AddSaveField(ParsedSaveField field) {
+		public void AddSaveField(ParsedSaveField? field) {
+			if (field == null) { // special case for vphys read
+				_capacity--;
+				return;
+			}
 			if (_thisFields.Count == _capacity)
 				throw new ConstraintException($"{nameof(ParsedDataMap)}: too many fields added ({_capacity})");
 			if (!_thisFields.TryAdd(field.Desc.Name, field)) {
