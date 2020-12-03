@@ -193,8 +193,6 @@ namespace SaveParser.Utils.ByteStreams {
 				throw new OverflowException($"the token list did not read the correct amount of bytes, {CurrentByteIndex - tmp - byteSize} bytes off");
 			return tokens;
 		}
-		
-		// I need to write these manually because I can't do Func<Span<byte>, T> cuz Span is a ref struct.
 
 
 		private static void AssertCorrectByteAlignment() => Debug.Assert(BitConverter.IsLittleEndian);
