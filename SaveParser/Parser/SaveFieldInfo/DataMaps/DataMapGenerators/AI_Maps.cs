@@ -578,7 +578,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_flLastTimeAcceptedSpeak", TIME);
 			
 			BeginDataMap("CNPC_Furniture", "CAI_BaseActor");
-			LinkNamesToMap("npc_furniture", "monster_firniture");
+			LinkNamesToMap("npc_furniture", "monster_furniture");
 			DefineEmbeddedField("m_BoneFollowerManager", "CBoneFollowerManager");
 			DefineInputFunc("DisablePlayerCollision", "InputDisablePlayerCollision", VOID);
 			DefineInputFunc("EnablePlayerCollision", "InputEnablePlayerCollision", VOID);
