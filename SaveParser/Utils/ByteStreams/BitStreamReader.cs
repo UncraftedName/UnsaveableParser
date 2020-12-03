@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -18,8 +19,7 @@ namespace SaveParser.Utils.ByteStreams {
 		}
 		public readonly int BytesRemaining => Start + Size - AbsoluteByteIndex;
 		internal bool IsLittleEndian; // this doesn't work w/ big endian atm, probably won't try to fix it since it's not necessary
-		private readonly byte CurrentByte => _data[AbsoluteByteIndex];
-		
+
 
 		public ByteStreamReader(byte[] data, bool isLittleEndian = true) : this(data, data.Length, 0, isLittleEndian) {}
 
@@ -63,12 +63,6 @@ namespace SaveParser.Utils.ByteStreams {
 		}
 
 
-		public readonly string ToHexString(string separator = " ") {
-			(byte[] bytes, int _) = Split().ReadRemainingBytes();
-			return ParserTextUtils.BytesToHexString(bytes, separator);
-		}
-
-
 		public override string ToString() {
 			return $"{{start: {Start}, size: {Size}, abs: {AbsoluteByteIndex}, rel: {CurrentByteIndex}}}";
 		}
@@ -100,19 +94,19 @@ namespace SaveParser.Utils.ByteStreams {
 
 		public bool ReadBool() {
 			EnsureCapacity(1);
-			return Data[AbsoluteByteIndex++] != 0;
+			return _data[AbsoluteByteIndex++] != 0;
 		}
 		
 
 		public byte ReadByte() {
 			EnsureCapacity(1);
-			return Data[AbsoluteByteIndex++];
+			return _data[AbsoluteByteIndex++];
 		}
 
 
 		public byte PeekByte() {
 			EnsureCapacity(1);
-			return CurrentByte;
+			return _data[AbsoluteByteIndex];
 		}
 
 
@@ -121,14 +115,12 @@ namespace SaveParser.Utils.ByteStreams {
 
 		public byte[] ReadBytes(int byteCount) {
 			byte[] result = new byte[byteCount];
-			ReadBytesToSpan(result.AsSpan());
+			ReadBytesToSpan(result);
 			return result;
 		}
-		
-		
+
+
 		public void ReadBytesToSpan(Span<byte> byteSpan) {
-			if (byteSpan.Length == 0)
-				return;
 			EnsureCapacity(byteSpan.Length);
 			_data.AsSpan(AbsoluteByteIndex, byteSpan.Length).CopyTo(byteSpan);
 			AbsoluteByteIndex += byteSpan.Length;
@@ -145,12 +137,6 @@ namespace SaveParser.Utils.ByteStreams {
 				}
 			}
 			return res;
-		}
-
-
-		private void ReadBytesToSpan(Span<byte> byteSpan, int byteCount) {
-			Span<byte> fullBytes = byteSpan.Slice(0, byteCount);
-			ReadBytesToSpan(fullBytes);
 		}
 
 
@@ -210,50 +196,39 @@ namespace SaveParser.Utils.ByteStreams {
 			return tokens;
 		}
 		
-		// I need to write these manually because I can't do Func<Span<byte>, T> cuz Span is a ref struct. 
+		// I need to write these manually because I can't do Func<Span<byte>, T> cuz Span is a ref struct.
+
+
+		private void AssertCorrectByteAlignment() => Debug.Assert(!BitConverter.IsLittleEndian ^ IsLittleEndian);
+		
+
+		public int ReadSInt() => (int)ReadUInt();
+		
 		
 		public uint ReadUInt() {
-			Span<byte> span = stackalloc byte[sizeof(uint)];
-			ReadBytesToSpan(span);
-			if (BitConverter.IsLittleEndian ^ IsLittleEndian)
-				span.Reverse();
-			return BitConverter.ToUInt32(span);
+			AssertCorrectByteAlignment();
+			var tmp = BitConverter.ToUInt32(_data, AbsoluteByteIndex);
+			AbsoluteByteIndex += sizeof(uint);
+			return tmp;
 		}
 
 
-		public int ReadSInt() {
-			Span<byte> span = stackalloc byte[sizeof(int)];
-			ReadBytesToSpan(span);
-			if (BitConverter.IsLittleEndian ^ IsLittleEndian)
-				span.Reverse();
-			return BitConverter.ToInt32(span);
-		}
-		
-		
+		public short ReadSShort() => (short)ReadUShort();
+
+
 		public ushort ReadUShort() {
-			Span<byte> span = stackalloc byte[sizeof(ushort)];
-			ReadBytesToSpan(span);
-			if (BitConverter.IsLittleEndian ^ IsLittleEndian)
-				span.Reverse();
-			return BitConverter.ToUInt16(span);
+			AssertCorrectByteAlignment();
+			var tmp = BitConverter.ToUInt16(_data, AbsoluteByteIndex);
+			AbsoluteByteIndex += sizeof(ushort);
+			return tmp;
 		}
 
-
-		public short ReadSShort() {
-			Span<byte> span = stackalloc byte[sizeof(short)];
-			ReadBytesToSpan(span);
-			if (BitConverter.IsLittleEndian ^ IsLittleEndian)
-				span.Reverse();
-			return BitConverter.ToInt16(span);
-		}
-		
 
 		public float ReadFloat() {
-			Span<byte> span = stackalloc byte[sizeof(float)];
-			ReadBytesToSpan(span);
-			if (BitConverter.IsLittleEndian ^ IsLittleEndian)
-				span.Reverse();
-			return BitConverter.ToSingle(span);
+			AssertCorrectByteAlignment();
+			var tmp = BitConverter.ToSingle(_data, AbsoluteByteIndex);
+			AbsoluteByteIndex += sizeof(float);
+			return tmp;
 		}
 
 
