@@ -18,17 +18,15 @@ namespace SaveParser.Utils.ByteStreams {
 			set => AbsoluteByteIndex = Start + value;
 		}
 		public readonly int BytesRemaining => Start + Size - AbsoluteByteIndex;
-		internal bool IsLittleEndian; // this doesn't work w/ big endian atm, probably won't try to fix it since it's not necessary
 
 
-		public ByteStreamReader(byte[] data, bool isLittleEndian = true) : this(data, data.Length, 0, isLittleEndian) {}
+		public ByteStreamReader(byte[] data) : this(data, data.Length, 0) {}
 
 
-		public ByteStreamReader(byte[] data, int size, int start, bool isLittleEndian = true) {
+		public ByteStreamReader(byte[] data, int size, int start) {
 			_data = data;
 			Size = size;
 			AbsoluteByteIndex = Start = start;
-			IsLittleEndian = isLittleEndian;
 		}
 
 
@@ -54,12 +52,12 @@ namespace SaveParser.Utils.ByteStreams {
 			if (newStart + byteCount > CurrentByteIndex + BytesRemaining)
 				throw new ArgumentOutOfRangeException(nameof(byteCount),
 					$"{BytesRemaining} bytes remaining, attempted to create a substream with {newStart + byteCount - BytesRemaining} too many bytes");
-			return new ByteStreamReader(_data, byteCount, Start + newStart, IsLittleEndian);
+			return new ByteStreamReader(_data, byteCount, Start + newStart);
 		}
 		
 
 		public readonly ByteStreamReader FromBeginning() {
-			return new ByteStreamReader(_data, Size, Start, IsLittleEndian);
+			return new ByteStreamReader(_data, Size, Start);
 		}
 
 
@@ -199,7 +197,7 @@ namespace SaveParser.Utils.ByteStreams {
 		// I need to write these manually because I can't do Func<Span<byte>, T> cuz Span is a ref struct.
 
 
-		private void AssertCorrectByteAlignment() => Debug.Assert(!BitConverter.IsLittleEndian ^ IsLittleEndian);
+		private static void AssertCorrectByteAlignment() => Debug.Assert(BitConverter.IsLittleEndian);
 		
 
 		public int ReadSInt() => (int)ReadUInt();
