@@ -193,6 +193,76 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			object?[] customParams = {elemFieldType, elemReadFunc, null}; // see UtilVector to see how these are used
 			AddFieldPrivate(new TypeDesc(name, vecFlags, vecReadFunc, customParams));
 		}
+		
+		
+		protected void DefineUtilMap(
+			string name,
+			FieldType keyType,
+			FieldType valType,
+			DescFlags utlMapFlags = FTYPEDESC_SAVE,
+			CustomReadFunc? keyReadFunc = null,
+			CustomReadFunc? valReadFunc = null)
+			=> DefineUtilMapPrivate(name, keyType, valType, null, null, utlMapFlags, keyReadFunc, valReadFunc);
+
+
+		protected void DefineUtilMap(
+			string name,
+			string embeddedKeyName,
+			FieldType valType,
+			DescFlags utlMapFlags = FTYPEDESC_SAVE,
+			CustomReadFunc? valReadFunc = null)
+			=> DefineUtilMapPrivate(name, EMBEDDED, valType, embeddedKeyName, null, utlMapFlags, null, valReadFunc);
+
+
+		protected void DefineUtilMap(
+			string name,
+			FieldType keyType,
+			string embeddedValName,
+			DescFlags utlMapFlags = FTYPEDESC_SAVE,
+			CustomReadFunc? keyReadFunc = null) 
+			=> DefineUtilMapPrivate(name, keyType, EMBEDDED, null, embeddedValName, utlMapFlags, keyReadFunc, null);
+
+
+		protected void DefineUtilMap(
+			string name,
+			string embeddedKeyName,
+			string embeddedValName,
+			DescFlags utlMapFlags = FTYPEDESC_SAVE)
+			=> DefineUtilMapPrivate(name, EMBEDDED, EMBEDDED, embeddedKeyName, embeddedValName, utlMapFlags, null, null);
+
+
+		// don't use dict since HashCode of value tuples always returns 0
+		private static readonly List<(FieldType keyType, FieldType valType, CustomReadFunc readFunc)> UtilMapFuncList
+			= new List<(FieldType, FieldType, CustomReadFunc)>();
+
+
+		private void DefineUtilMapPrivate(
+			string name,
+			FieldType keyType,
+			FieldType valType,
+			string? embeddedKeyName,
+			string? embeddedValName,
+			DescFlags utlMapFlags,
+			CustomReadFunc? keyReadFunc,
+			CustomReadFunc? valReadFunc)
+		{
+			// check to see if a read func has already been created for this key/val combo
+			CustomReadFunc? utlMapReadFunc = UtilMapFuncList.Find(tuple => tuple.keyType == keyType && tuple.valType == valType).readFunc;
+			if (utlMapReadFunc == null!) { // if not, make it with the wonders of reflection!!
+				utlMapReadFunc =
+					(CustomReadFunc)typeof(UtilMap<,>).MakeGenericType(
+							keyType == EMBEDDED ? typeof(ParsedDataMap) : TypeDesc.GetNetTypeFromFieldType(keyType),
+							valType == EMBEDDED ? typeof(ParsedDataMap) : TypeDesc.GetNetTypeFromFieldType(valType))
+						.GetMethods(BindingFlags.Static | BindingFlags.Public)
+						.Single(info => info.Name == nameof(UtilMap<object,object>.Restore) 
+										&& ParserUtils.IsMethodCompatibleWithDelegate<CustomReadFunc>(info))
+						.CreateDelegate(typeof(CustomReadFunc));
+				// add it to the list so we (hopefully) don't have to do that ^ everytime
+				UtilMapFuncList.Add((keyType, valType, utlMapReadFunc));
+			}
+			object?[] customParams = {keyType, keyReadFunc, embeddedKeyName, valType, valReadFunc, embeddedValName};
+			AddFieldPrivate(new TypeDesc(name, utlMapFlags, utlMapReadFunc, customParams));
+		}
 
 
 		private void FinishDataMap() {

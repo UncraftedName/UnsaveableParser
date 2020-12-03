@@ -685,7 +685,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			BeginDataMap("CAI_AllySpeechManager", "CLogicalEntity");
 			LinkNamesToMap("ai_ally_speech_manager");
 			DefineEmbeddedField("m_ConceptCategoryTimers", "CSimpleSimTimer", SPEECH_NUM_CATEGORIES);
-			//DEFINE_UTLMAP( m_ConceptTimers, FIELD_STRING, FIELD_EMBEDDED ), // todo
+			DefineUtilMap("m_ConceptTimers", STRING, "CSimpleSimTimer");
 		}
 	}
 }
