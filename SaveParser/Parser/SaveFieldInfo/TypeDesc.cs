@@ -18,12 +18,22 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		public readonly ushort NumElements;
 		public readonly DescFlags Flags;
 
-		internal readonly CustomReadFunc? CustomReadFunc;
+		private readonly CustomReadFunc? _customReadFunc;
 		internal readonly object?[]? CustomParams; // anything special needed for the custom read to work
 		public DataMap? EmbeddedMap; // set in global map creation
 
 		private string? _typeString;
 		public string TypeString => _typeString ??= EvaluateTypeString();
+		
+		internal readonly bool Placeholder;
+		
+
+#if DEBUG
+		public TypeDesc(string name) {
+			Name = name;
+			Placeholder = true;
+		}
+#endif
 
 
 		// custom field constructor
@@ -38,7 +48,7 @@ namespace SaveParser.Parser.SaveFieldInfo {
 			FieldType = CUSTOM;
 			NumElements = 1;
 			Flags = flags;
-			CustomReadFunc = customReadFunc;
+			_customReadFunc = customReadFunc;
 			CustomParams = customParams;
 			OutputName = outputName;
 		}
@@ -63,13 +73,13 @@ namespace SaveParser.Parser.SaveFieldInfo {
 			MapName = mapName;
 			NumElements = numElements;
 			Flags = flags;
-			CustomReadFunc = customReadFunc;
+			_customReadFunc = customReadFunc;
 			CustomParams = customParams;
 		}
 
 
 		internal ParsedSaveField? InvokeCustomReadFunc(ref ByteStreamReader bsr, SaveInfo info)
-			=> CustomReadFunc!(this, info, ref bsr);
+			=> _customReadFunc!(this, info, ref bsr);
 		
 		
 		public static Type GetNetTypeFromFieldType(FieldType fieldType) {

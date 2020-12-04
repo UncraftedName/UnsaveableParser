@@ -107,8 +107,10 @@ namespace SaveParser.Utils.ByteStreams {
 			string sym = ReadSymbol(info)!;
 			if (sym != map.Name) {
 				info.SDataMapLookup.TryGetValue(sym, out DataMap? cmpMap);
-				if (!ReferenceEquals(cmpMap, map))
+				if (!ReferenceEquals(cmpMap, map)) {
+					DetermineDataMapHierarchy(info, "no datamap found", AbsoluteByteIndex - 4);
 					throw new ArgumentException($"bad symbol, expected \"{map.Name}\" but read \"{sym}\"");
+				}
 			}
 			int fieldsSaved = ReadSInt();
 			ParsedDataMap ret = new ParsedDataMap(map, fieldsSaved);
@@ -116,14 +118,19 @@ namespace SaveParser.Utils.ByteStreams {
 				StartBlock(info, out short byteSize, out string? s);
 				map.FieldDict.TryGetValue(s!, out TypeDesc? curFieldDesc);
 				if (curFieldDesc != null) {
-					try {
-						int index = AbsoluteByteIndex;
-						ParsedSaveField? f = ReadSaveField(curFieldDesc!, info, byteSize);
-						f?.SetIndex(index); // I allow returning null here for the vphys read
-						EndBlock(info); // try ending the block to see if we read this correctly
-						ret.AddSaveField(f);
-					} catch (Exception e) {
-						info.AddError($"exception while reading field {s} from datamap \"{map.Name}\": {e.Message}");
+					if (!curFieldDesc.Placeholder) {
+						try {
+							int index = AbsoluteByteIndex;
+							ParsedSaveField? f = ReadSaveField(curFieldDesc!, info, byteSize);
+							f?.SetIndex(index); // I allow returning null here for the vphys read
+							EndBlock(info);     // try ending the block to see if we read this correctly
+							ret.AddSaveField(f);
+						} catch (Exception e) {
+							info.AddError($"exception while reading field {s} from datamap \"{map.Name}\": {e.Message}");
+							SkipCurrentBlock(info);
+						}
+					} else {
+						DetermineDataMapHierarchy(info, $"placeholder field \"{curFieldDesc.Name}\"", AbsoluteByteIndex);
 						SkipCurrentBlock(info);
 					}
 				} else {
@@ -132,6 +139,27 @@ namespace SaveParser.Utils.ByteStreams {
 				}
 			}
 			return ret;
+		}
+
+		
+		[Conditional("DEBUG")]
+		private void DetermineDataMapHierarchy(SaveInfo info, string context, int offset) {
+			int tmp = AbsoluteByteIndex;
+			AbsoluteByteIndex = offset;
+			Console.WriteLine($"Determining next datamaps hierarchy ({context})..");
+			for (int i = 0; i < 10; i++) {
+				if (ReadSShort() != 4) {
+					Console.WriteLine("first value not 4, exiting");
+					break;
+				}
+				Console.WriteLine($"datamap: {ReadSymbol(info)}");
+				int fieldsSaved = ReadSInt();
+				for (int j = 0; j < fieldsSaved; j++) {
+					StartBlock(info);
+					SkipCurrentBlock(info);
+				}
+			}
+			AbsoluteByteIndex = tmp;
 		}
 
 

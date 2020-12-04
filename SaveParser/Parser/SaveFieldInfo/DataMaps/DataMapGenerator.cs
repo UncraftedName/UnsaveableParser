@@ -264,6 +264,14 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			AddFieldPrivate(new TypeDesc(name, utlMapFlags, utlMapReadFunc, customParams));
 		}
 
+		
+		// use for embedded fields where you don't know the embedded type
+		protected void DefinePlaceholder(string name) {
+#if DEBUG
+			AddFieldPrivate(new TypeDesc(name));
+#endif
+		}
+
 
 		private void FinishDataMap() {
 			if (_mapReady && _tmpBaseClass != null)
