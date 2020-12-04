@@ -15,7 +15,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			
 			BeginDataMap("CGlobalState");
 			LinkNamesToMap("GLOBAL");
-			DefineEmbeddedVector("m_list", "globalentity_t");
+			DefineVector("m_list", "globalentity_t");
 			
 			BeginDataMap("globalentity_t");
 			DefineField("name", STRING); // todo also adds to a special symbol table?

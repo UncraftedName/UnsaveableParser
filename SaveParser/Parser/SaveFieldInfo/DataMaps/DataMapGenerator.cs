@@ -167,34 +167,34 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		}
 
 
-		protected void DefineEmbeddedVector(string name, string elementType)
+		protected void DefineVector(string name, string elementType, DescFlags vecFlags = FTYPEDESC_SAVE)
 			=> DefineCustomField(name, UtilVector<ParsedDataMap>.Restore, new object?[] {EMBEDDED, null, elementType});
 
 
-		protected void DefineGlobalEmbeddedVector(string name, string elementType)
-			=> DefineCustomField(name, UtilVector<ParsedDataMap>.Restore, new object?[] {EMBEDDED, null, elementType}, FTYPEDESC_SAVE | FTYPEDESC_GLOBAL);
+		private static readonly Dictionary<FieldType, CustomReadFunc> VecFuncList
+			= new Dictionary<FieldType, CustomReadFunc>();
 
-
-		// Vec stuff = stuff belonging to the vector field.
-		// Elem stuff = stuff belonging to the elements of the vector.
 		protected void DefineVector(
 			string name,
 			FieldType elemFieldType,
 			DescFlags vecFlags = FTYPEDESC_SAVE,
 			CustomReadFunc? elemReadFunc = null)
 		{
-			CustomReadFunc vecReadFunc =
-				(CustomReadFunc)typeof(UtilVector<>).MakeGenericType(TypeDesc.GetNetTypeFromFieldType(elemFieldType))
-				.GetMethods(BindingFlags.Static | BindingFlags.Public)
-				.Single(info => info.Name == nameof(UtilVector<object>.Restore) // dummy generic type
-								&& ParserUtils.IsMethodCompatibleWithDelegate<CustomReadFunc>(info))!
-				.CreateDelegate(typeof(CustomReadFunc));
-			
-			object?[] customParams = {elemFieldType, elemReadFunc, null}; // see UtilVector to see how these are used
+			if (!VecFuncList.TryGetValue(elemFieldType, out CustomReadFunc? vecReadFunc)) {
+				vecReadFunc =
+					(CustomReadFunc)typeof(UtilVector<>).MakeGenericType(
+							TypeDesc.GetNetTypeFromFieldType(elemFieldType))
+						.GetMethods(BindingFlags.Static | BindingFlags.Public)
+						.Single(info => info.Name == nameof(UtilVector<object>.Restore) 
+										&& ParserUtils.IsMethodCompatibleWithDelegate<CustomReadFunc>(info))
+						.CreateDelegate(typeof(CustomReadFunc));
+				VecFuncList.Add(elemFieldType, vecReadFunc);
+			}
+			object?[] customParams = {elemFieldType, elemReadFunc, null};
 			AddFieldPrivate(new TypeDesc(name, vecFlags, vecReadFunc, customParams));
 		}
-		
-		
+
+
 		protected void DefineUtilMap(
 			string name,
 			FieldType keyType,

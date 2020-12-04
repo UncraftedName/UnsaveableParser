@@ -44,7 +44,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineGlobalKeyField("m_nModelIndex", "modelindex", SHORT);
 			DefineField("touchStamp", INTEGER);
 			DefineCustomField("m_aThinkFunctions", ThinkContexts.Restore);
-			DefineEmbeddedVector("m_ResponseContexts", "ResponseContext_t");
+			DefineVector("m_ResponseContexts", "ResponseContext_t");
 			DefineKeyField("m_iszResponseContext", "ResponseContext", STRING);
 			DefineField("m_pfnThink", FUNCTION);
 			DefineField("m_pfnTouch", FUNCTION);
@@ -269,7 +269,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 				DefineField("m_flFrozenThawRate", FLOAT);
 			
 			BeginDataMap("CBaseAnimatingOverlay", "CBaseAnimating");
-			DefineEmbeddedVector("m_AnimOverlay", "CAnimationLayer");
+			DefineVector("m_AnimOverlay", "CAnimationLayer");
 			
 			BeginDataMap("CBaseFlex", "CBaseAnimatingOverlay"); // Animated characters who have vertex flex capability (e.g., facial expressions)
 			DefineField("m_flexWeight", FLOAT, MAXSTUDIOFLEXCTRL);
@@ -305,7 +305,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_flDamageAccumulator", FLOAT);
 			DefineInput("m_impactEnergyScale", "physdamagescale", FLOAT);
 			DefineField("m_CurrentWeaponProficiency", INTEGER);
-			DefineEmbeddedVector("m_Relationship", "Relationship_t");
+			DefineVector("m_Relationship", "Relationship_t");
 			DefineField("m_iAmmo", INTEGER, MAX_AMMO_SLOTS);
 			DefineField("m_hMyWeapons", EHANDLE, MAX_WEAPONS);
 			DefineField("m_hActiveWeapon", EHANDLE);

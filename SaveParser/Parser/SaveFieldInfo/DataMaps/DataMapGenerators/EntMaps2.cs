@@ -1,4 +1,6 @@
 // ReSharper disable All
+
+using static SaveParser.Parser.SaveFieldInfo.DescFlags;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
@@ -59,7 +61,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineKeyField("m_iszTemplateEntityNames[14]", "Template15", STRING);
 			DefineKeyField("m_iszTemplateEntityNames[15]", "Template16", STRING);
 			DefineVector("m_hTemplateEntities", CLASSPTR);
-			DefineEmbeddedVector("m_hTemplates", "template_t");
+			DefineVector("m_hTemplates", "template_t");
 			DefineInputFunc("ForceSpawn", "InputForceSpawn", VOID);
 			DefineOutput("m_pOutputOnSpawned", "OnEntitySpawned");
 			
@@ -113,7 +115,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			
 			BeginDataMap("CBoneFollowerManager");
 			DefineGlobalField("m_iNumBones", INTEGER);
-			DefineGlobalEmbeddedVector("m_physBones", "physfollower_t");
+			DefineVector("m_physBones", "physfollower_t", FTYPEDESC_SAVE | FTYPEDESC_GLOBAL);
 			
 			BeginDataMap("CDynamicProp", "CBreakableProp");
 			LinkNamesToMap("dynamic_prop", "prop_dynamic", "prop_dynamic_override");
@@ -297,8 +299,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			
 			BeginDataMap("vehiclesounds_t");
 			DefineField("iszSound", STRING, VS_NUM_SOUNDS);
-			DefineEmbeddedVector("pGears", "vehicle_gear_t");
-			DefineEmbeddedVector("crashSounds", "vehicle_crashsound_t");
+			DefineVector("pGears", "vehicle_gear_t");
+			DefineVector("crashSounds", "vehicle_crashsound_t");
 			DefineField("iszStateSounds", STRING, SS_NUM_STATES);
 			DefineField("minStateTime", FLOAT, SS_NUM_STATES);
 			
@@ -325,7 +327,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_chPreviousTextureType", CHARACTER);
 			DefineField("m_savedViewOffset", VECTOR);
 			DefineField("m_hExitBlocker", EHANDLE);
-			DefineEmbeddedVector("m_PassengerInfo", "CPassengerInfo");
+			DefineVector("m_PassengerInfo", "CPassengerInfo");
 			
 			DataMapProxy("CChoreoGenericServerVehicle", "CBaseServerVehicle");
 			

@@ -14,7 +14,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 
 		// this is a class that extends from CUtlVector<CAI_InterestTarget_t> but doesn't have its own datamap
 		private void Define_CAI_InterestTarget(string fieldName)
-			=> DefineEmbeddedVector(fieldName, "CAI_InterestTarget_t");
+			=> DefineVector(fieldName, "CAI_InterestTarget_t");
 
 
 		private void DefineBaseNpcInteractable() {
@@ -213,7 +213,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineEmbeddedField("m_pPathfinder", "CAI_Pathfinder");
 			DefineEmbeddedField("m_pMoveProbe", "CAI_MoveProbe");
 			DefineEmbeddedField("m_pMotor", "CAI_Motor");
-			DefineEmbeddedVector("m_UnreachableEnts", "UnreachableEnt_t");
+			DefineVector("m_UnreachableEnts", "UnreachableEnt_t");
 			DefineField("m_hInteractionPartner", EHANDLE);
 			DefineField("m_hLastInteractionTestTarget", EHANDLE);
 			DefineField("m_hForcedInteractionPartner", EHANDLE);
@@ -222,7 +222,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_bCannotDieDuringInteraction", BOOLEAN);
 			DefineField("m_iInteractionState", INTEGER);
 			DefineField("m_iInteractionPlaying", INTEGER);
-			DefineEmbeddedVector("m_SciprtedInteractions", "ScriptedNPCInteraction_t");
+			DefineVector("m_SciprtedInteractions", "ScriptedNPCInteraction_t");
 			DefineField("m_flInteractionYaw", FLOAT);
 			DefineEmbeddedField("m_CheckOnGroundTimer", "CSimpleSimTimer");
 			DefineField("m_vDefaultEyeOffset", VECTOR);
