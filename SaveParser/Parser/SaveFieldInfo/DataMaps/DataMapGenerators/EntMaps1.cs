@@ -459,46 +459,48 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_hLadder", EHANDLE);
 			DefineEmbeddedField("m_LadderMove", "LadderMove_t");
 
-			BeginDataMap("CHL2_Player", "CBasePlayer");
-			DefineField("m_nControlClass", INTEGER);
-			DefineEmbeddedField("m_HL2Local", "CHL2PlayerLocalData");
-			DefineField("m_bSprintEnabled", BOOLEAN);
-			DefineField("m_flTimeAllSuitDevicesOff", TIME);
-			DefineField("m_fIsSprinting", BOOLEAN);
-			DefineField("m_fIsWalking", BOOLEAN);
-			DefineField("m_vecMissPositions", POSITION_VECTOR, 16);
-			DefineField("m_nNumMissPositions", INTEGER);
-			DefineEmbeddedField("m_CommanderUpdateTimer", "CSimpleSimTimer");
-			DefineField("m_QueuedCommand", INTEGER);
-			DefineField("m_flTimeIgnoreFallDamage", TIME);
-			DefineField("m_bIgnoreFallDamageResetAfterImpact", BOOLEAN);
-			DefineField("m_flSuitPowerLoad", FLOAT);
-			DefineField("m_flIdleTime", TIME);
-			DefineField("m_flMoveTime", TIME);
-			DefineField("m_flLastDamageTime", TIME);
-			DefineField("m_flTargetFindTime", TIME);
-			DefineField("m_flAdmireGlovesAnimTime", TIME);
-			DefineField("m_flNextFlashlightCheckTime", TIME);
-			DefineField("m_flFlashlightPowerDrainScale", FLOAT);
-			DefineField("m_bFlashlightDisabled", BOOLEAN);
-			DefineField("m_bUseCappedPhysicsDamageTable", BOOLEAN);
-			DefineField("m_hLockedAutoAimEntity", EHANDLE);
-			DefineEmbeddedField("m_LowerWeaponTimer", "CSimpleSimTimer");
-			DefineEmbeddedField("m_AutoaimTimer", "CSimpleSimTimer");
-			DefineInputFunc("IgnoreFallDamage", "InputIgnoreFallDamage", FLOAT);
-			DefineInputFunc("IgnoreFallDamageWithoutReset", "InputIgnoreFallDamageWithoutReset", FLOAT);
-			DefineInputFunc("OnSquadMemberKilled", "OnSquadMemberKilled", VOID);
-			DefineInputFunc("DisableFlashlight", "InputDisableFlashlight", VOID);
-			DefineInputFunc("EnableFlashlight", "InputEnableFlashlight", VOID);
-			DefineInputFunc("ForceDropPhysObjects", "InputForceDropPhysObjects", VOID);
-			DefineSoundPatch("m_sndLeeches");
-			DefineSoundPatch("m_sndWaterSplashes");
-			DefineField("m_flArmorReductionTime", TIME);
-			DefineField("m_iArmorReductionFrom", INTEGER);
-			DefineField("m_flTimeUseSuspended", TIME);
-			DefineField("m_hLocatorTargetEntity", EHANDLE);
-			DefineField("m_flTimeNextLadderHint", TIME);
-			
+			if (Game != Game.PORTAL2) {
+				BeginDataMap("CHL2_Player", "CBasePlayer");
+				DefineField("m_nControlClass", INTEGER);
+				DefineEmbeddedField("m_HL2Local", "CHL2PlayerLocalData");
+				DefineField("m_bSprintEnabled", BOOLEAN);
+				DefineField("m_flTimeAllSuitDevicesOff", TIME);
+				DefineField("m_fIsSprinting", BOOLEAN);
+				DefineField("m_fIsWalking", BOOLEAN);
+				DefineField("m_vecMissPositions", POSITION_VECTOR, 16);
+				DefineField("m_nNumMissPositions", INTEGER);
+				DefineEmbeddedField("m_CommanderUpdateTimer", "CSimpleSimTimer");
+				DefineField("m_QueuedCommand", INTEGER);
+				DefineField("m_flTimeIgnoreFallDamage", TIME);
+				DefineField("m_bIgnoreFallDamageResetAfterImpact", BOOLEAN);
+				DefineField("m_flSuitPowerLoad", FLOAT);
+				DefineField("m_flIdleTime", TIME);
+				DefineField("m_flMoveTime", TIME);
+				DefineField("m_flLastDamageTime", TIME);
+				DefineField("m_flTargetFindTime", TIME);
+				DefineField("m_flAdmireGlovesAnimTime", TIME);
+				DefineField("m_flNextFlashlightCheckTime", TIME);
+				DefineField("m_flFlashlightPowerDrainScale", FLOAT);
+				DefineField("m_bFlashlightDisabled", BOOLEAN);
+				DefineField("m_bUseCappedPhysicsDamageTable", BOOLEAN);
+				DefineField("m_hLockedAutoAimEntity", EHANDLE);
+				DefineEmbeddedField("m_LowerWeaponTimer", "CSimpleSimTimer");
+				DefineEmbeddedField("m_AutoaimTimer", "CSimpleSimTimer");
+				DefineInputFunc("IgnoreFallDamage", "InputIgnoreFallDamage", FLOAT);
+				DefineInputFunc("IgnoreFallDamageWithoutReset", "InputIgnoreFallDamageWithoutReset", FLOAT);
+				DefineInputFunc("OnSquadMemberKilled", "OnSquadMemberKilled", VOID);
+				DefineInputFunc("DisableFlashlight", "InputDisableFlashlight", VOID);
+				DefineInputFunc("EnableFlashlight", "InputEnableFlashlight", VOID);
+				DefineInputFunc("ForceDropPhysObjects", "InputForceDropPhysObjects", VOID);
+				DefineSoundPatch("m_sndLeeches");
+				DefineSoundPatch("m_sndWaterSplashes");
+				DefineField("m_flArmorReductionTime", TIME);
+				DefineField("m_iArmorReductionFrom", INTEGER);
+				DefineField("m_flTimeUseSuspended", TIME);
+				DefineField("m_hLocatorTargetEntity", EHANDLE);
+				DefineField("m_flTimeNextLadderHint", TIME);
+			}
+
 			BeginDataMap("fogparams_t");
 			DefineField("dirPrimary", VECTOR);
 			DefineField("colorPrimary", COLOR32);
@@ -574,7 +576,14 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineEmbeddedField("m_fog", "fogparams_t");
 			DefineEmbeddedField("m_audio", "audioparams_t");
 
-			BeginDataMap("CPortal_Player", "CHL2_Player");
+			if (Game == Game.PORTAL2) {
+				BeginDataMap("PaintableEntity", "CBasePlayer"); // no source code for this :(
+				DefineField("m_iPaintPower", INTEGER); // todo paint type?
+
+				BeginDataMap("CPortal_Player", "PaintableEntity");
+			} else {
+				BeginDataMap("CPortal_Player", "CHL2_Player");
+			}
 			LinkNamesToMap("player");
 			DefineSoundPatch("m_pWooshSound");
 			DefineField("m_bHeldObjectOnOppositeSideOfPortal", BOOLEAN);
@@ -582,9 +591,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_bIntersectingPortalPlane", BOOLEAN);
 			DefineField("m_bStuckOnPortalCollisionObject", BOOLEAN);
 			DefineField("m_fTimeLastHurt", TIME);
-			DefineField("m_StatsThisLevel.iNumPortalsPlaced", INTEGER);
-			DefineField("m_StatsThisLevel.iNumStepsTaken", INTEGER);
-			DefineField("m_StatsThisLevel.fNumSecondsTaken", FLOAT);
+			if (Game != Game.PORTAL2) {
+				DefineField("m_StatsThisLevel.iNumPortalsPlaced", INTEGER);
+				DefineField("m_StatsThisLevel.iNumStepsTaken", INTEGER);
+				DefineField("m_StatsThisLevel.fNumSecondsTaken", FLOAT);
+			}
 			DefineField("m_fTimeLastNumSecondsUpdate", TIME);
 			DefineField("m_iNumCamerasDetatched", INTEGER);
 			DefineField("m_bPitchReorientation", BOOLEAN);
@@ -605,6 +616,43 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_vWorldSpaceCenterHolder", POSITION_VECTOR);
 			DefineField("m_hSurroundingLiquidPortal", EHANDLE);
 			DefineEmbeddedField("m_pExpresser", "CAI_Expresser"); // todo check
+			if (Game == Game.PORTAL2) { // this is all me guessing
+				DefineField("m_iSpawnInterpCounter", INTEGER);
+				DefineField("m_flMotionBlurAmount", FLOAT);
+				DefineField("m_flTimeLastTouchedGround", FLOAT);
+				DefineField("m_bPotatos", BOOLEAN);
+				DefineField("m_PlayerGunType", INTEGER);
+				DefineField("m_flHullHeight", FLOAT);
+				DefineEmbeddedField("m_PortalLocal", "CPortalPlayerLocalData");
+				DefineEmbeddedField("m_StatsThisLevel", "PortalPlayerStatistics_t");
+				
+				BeginDataMap("CPortalPlayerLocalData");
+				DefineField("m_nLocatorEntityIndices", EHANDLE, 16);
+				DefineField("m_StickNormal", VECTOR);
+				DefineField("m_OldStickNormal", VECTOR);
+				DefineField("m_Up", VECTOR);
+				DefineField("m_StandHullMin", VECTOR);
+				DefineField("m_StandHullMax", VECTOR);
+				DefineField("m_DuckHullMin", VECTOR);
+				DefineField("m_DuckHullMax", VECTOR);
+				DefineField("m_CachedStandHullMinAttempt", VECTOR);
+				DefineField("m_CachedStandHullMaxAttempt", VECTOR);
+				DefineField("m_CachedDuckHullMinAttempt", VECTOR);
+				DefineField("m_CachedDuckHullMaxAttempt", VECTOR);
+				DefineField("m_vLocalUp", VECTOR);
+				DefineField("m_PaintedPowerType", INTEGER); // todo paint type?
+				DefineField("m_flAirInputScale", FLOAT);
+				DefineField("m_flCurrentStickTime", FLOAT);
+				DefineField("m_nStickCameraState", INTEGER);
+				DefineField("m_bDoneStickInterp", BOOLEAN);
+				DefineField("m_bDoneCorrectPitch", BOOLEAN);
+
+				BeginDataMap("PortalPlayerStatistics_t");
+				DefineField("iNumPortalsPlaced", INTEGER);
+				DefineField("iNumStepsTaken", INTEGER);
+				DefineField("fNumSecondsTaken", FLOAT);
+				DefineField("fDistanceTaken", FLOAT);
+			}
 
 			BeginDataMap("LadderMove_t");
 			DefineField("m_bForceLadderMove", BOOLEAN);
