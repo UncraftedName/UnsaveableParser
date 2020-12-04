@@ -168,7 +168,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 
 
 		protected void DefineVector(string name, string elementType, DescFlags vecFlags = FTYPEDESC_SAVE)
-			=> DefineCustomField(name, UtilVector<ParsedDataMap>.Restore, new object?[] {EMBEDDED, null, elementType});
+			=> DefineCustomField(name, UtilVector<ParsedDataMap>.Restore, new object?[] {EMBEDDED, null, elementType}, vecFlags);
 
 
 		private static readonly Dictionary<FieldType, CustomReadFunc> VecFuncList
@@ -231,7 +231,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			=> DefineUtilMapPrivate(name, EMBEDDED, EMBEDDED, embeddedKeyName, embeddedValName, utlMapFlags, null, null);
 
 
-		// don't use dict since HashCode of value tuples always returns 0
 		private static readonly List<(FieldType keyType, FieldType valType, CustomReadFunc readFunc)> UtilMapFuncList
 			= new List<(FieldType, FieldType, CustomReadFunc)>();
 

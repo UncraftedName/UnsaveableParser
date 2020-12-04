@@ -10,8 +10,6 @@ namespace SaveParser.Parser.SaveFieldInfo {
 
 
 	public abstract class ParsedSaveField : AppendableClass, IEquatable<ParsedSaveField> {
-		
-		protected static readonly Exception InvalidCastE = new InvalidCastException($"{typeof(ParsedSaveField)}: bad cast");
 
 		public readonly TypeDesc Desc;
 		public int ByteIndex {get; private set;}

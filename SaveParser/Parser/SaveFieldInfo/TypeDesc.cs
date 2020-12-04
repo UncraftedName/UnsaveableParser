@@ -24,14 +24,23 @@ namespace SaveParser.Parser.SaveFieldInfo {
 
 		private string? _typeString;
 		public string TypeString => _typeString ??= EvaluateTypeString();
-		
-		internal readonly bool Placeholder;
-		
+
+		internal bool Placeholder {
+			get {
+#if DEBUG
+				return _placeholder;
+#endif
+				return false;
+			}
+		}
+
 
 #if DEBUG
-		public TypeDesc(string name) {
+		private readonly bool _placeholder;
+		
+		internal TypeDesc(string name) {
 			Name = name;
-			Placeholder = true;
+			_placeholder = true;
 		}
 #endif
 
