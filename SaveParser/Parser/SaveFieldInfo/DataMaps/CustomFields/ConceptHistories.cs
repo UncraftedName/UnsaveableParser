@@ -5,10 +5,23 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 	
 	public class ConceptHistories : ParsedSaveField {
 
-		public (string conceptName, ParsedDataMap history, ParsedDataMap? response)[] Histories;
-		
-		
-		public ConceptHistories(TypeDesc desc) : base(desc) {}
+		public readonly (string conceptName, ParsedDataMap history, ParsedDataMap? response)[] Histories;
+
+
+		public ConceptHistories(
+			TypeDesc desc,
+			(string conceptName, ParsedDataMap history, ParsedDataMap? response)[] histories)
+			: base(desc)
+		{
+			Histories = histories;
+		}
+
+
+		public override bool Equals(ParsedSaveField? other) {
+			if (other == null || !(other is ConceptHistories otherHistories))
+				return false;
+			return Equals(Histories, otherHistories.Histories); // todo check if value tuple does this right
+		}
 		
 		
 		public override void AppendToWriter(IIndentedWriter iw) {
@@ -41,7 +54,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 					histories[i].response = bsr.ReadDataMap("AI_Response", info);
 				bsr.EndBlock(info);
 			}
-			return new ConceptHistories(typeDesc) {Histories = histories};
+			return new ConceptHistories(typeDesc, histories);
 		}
 	}
 }

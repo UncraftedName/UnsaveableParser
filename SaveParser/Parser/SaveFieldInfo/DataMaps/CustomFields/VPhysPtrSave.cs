@@ -11,24 +11,43 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 
 	public abstract class RestoredVPhysicsObject : ParsedSaveField {
 		
-		public int OldObj; // I think this is a pointer from before the save?
-		
-		protected RestoredVPhysicsObject(TypeDesc desc) : base(desc) {}
+		public readonly int OldObj; // I think this is a pointer from before the save?
+
+
+		protected RestoredVPhysicsObject(TypeDesc desc, int oldObj) : base(desc) {
+			OldObj = oldObj;
+		}
 		
 
 		public override void AppendToWriter(IIndentedWriter iw) {
 			iw.Append(ParserTextUtils.CamelCaseToLowerSpaced(GetType().Name));
 			iw.Append($" (old obj = {OldObj}):");
 		}
+
+
+		public abstract bool Equals(RestoredVPhysicsObject resPhysObj);
+
+
+		public override bool Equals(ParsedSaveField? other) {
+			if (other == null || !(other is RestoredVPhysicsObject vphysObj) || OldObj != vphysObj.OldObj)
+				return false;
+			return Equals(vphysObj);
+		}
 	}
 	
 	
 	public class PhysicsObject : RestoredVPhysicsObject {
 		
-		public ParsedDataMap ObjectTemplate;
-		public ParsedDataMap? ControllerTemplate;
+		public readonly ParsedDataMap ObjectTemplate;
+		public readonly ParsedDataMap? ControllerTemplate;
 
-		public PhysicsObject(TypeDesc desc) : base(desc) {}
+
+		public PhysicsObject(TypeDesc desc, int oldObj, ParsedDataMap objTemplate, ParsedDataMap? controllerTemplate)
+			: base(desc, oldObj)
+		{
+			ObjectTemplate = objTemplate;
+			ControllerTemplate = controllerTemplate;
+		}
 		
 		
 		public override void AppendToWriter(IIndentedWriter iw) {
@@ -42,15 +61,26 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 			}
 			iw.FutureIndent--;
 		}
+
+
+		public override bool Equals(RestoredVPhysicsObject resPhysObj) {
+			if (!(resPhysObj is PhysicsObject physObj))
+				return false;
+			return Equals(ObjectTemplate,physObj.ObjectTemplate) &&
+				   Equals(ControllerTemplate, physObj.ControllerTemplate);
+		}
 	}
 
 
 	public class PhysicsConstraintGroup : RestoredVPhysicsObject {
 
-		public ParsedDataMap GroupTemplate;
-		
-		public PhysicsConstraintGroup(TypeDesc desc) : base(desc) {}
-		
+		public readonly ParsedDataMap GroupTemplate;
+
+
+		public PhysicsConstraintGroup(TypeDesc desc, int oldObj, ParsedDataMap groupTemplate) : base(desc, oldObj) {
+			GroupTemplate = groupTemplate;
+		}
+
 
 		public override void AppendToWriter(IIndentedWriter iw) {
 			base.AppendToWriter(iw);
@@ -59,17 +89,35 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 			GroupTemplate.AppendToWriter(iw);
 			iw.FutureIndent--;
 		}
+
+
+		public override bool Equals(RestoredVPhysicsObject resPhysObj) {
+			if (!(resPhysObj is PhysicsConstraintGroup restoredConstraintGroup))
+				return false;
+			return Equals(GroupTemplate, restoredConstraintGroup.GroupTemplate);
+		}
 	}
 
 
 	public class PhysicsConstraint : RestoredVPhysicsObject {
 
-		public ConstraintType PhysicsConstraintType;
-		public ParsedDataMap Header;
-		public ParsedDataMap? Constraint;
-		
-		
-		public PhysicsConstraint(TypeDesc desc) : base(desc) {}
+		public readonly ConstraintType PhysicsConstraintType;
+		public readonly ParsedDataMap Header;
+		public readonly ParsedDataMap? Constraint;
+
+
+		public PhysicsConstraint(
+			TypeDesc desc,
+			int oldObj,
+			ConstraintType physicsConstraintType,
+			ParsedDataMap header,
+			ParsedDataMap? constraint)
+			: base(desc, oldObj)
+		{
+			PhysicsConstraintType = physicsConstraintType;
+			Header = header;
+			Constraint = constraint;
+		}
 
 
 		public override void AppendToWriter(IIndentedWriter iw) {
@@ -82,6 +130,15 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 				Constraint.AppendToWriter(iw);
 			}
 			iw.FutureIndent--;
+		}
+
+
+		public override bool Equals(RestoredVPhysicsObject resPhysObj) {
+			if (!(resPhysObj is PhysicsConstraint restoredConstraint))
+				return false;
+			return PhysicsConstraintType == restoredConstraint.PhysicsConstraintType &&
+				   Equals(Header, restoredConstraint.Header) &&
+				   Equals(Constraint, restoredConstraint.Constraint);
 		}
 
 
@@ -101,11 +158,13 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 
 	public class PhysicsMotionController : RestoredVPhysicsObject {
 		
-		public ParsedDataMap MotionController;
-		
-		
-		public PhysicsMotionController(TypeDesc desc) : base(desc) {}
-		
+		public readonly ParsedDataMap MotionController;
+
+
+		public PhysicsMotionController(TypeDesc desc, int oldObj, ParsedDataMap motionController) : base(desc, oldObj) {
+			MotionController = motionController;
+		}
+
 
 		public override void AppendToWriter(IIndentedWriter iw) {
 			base.AppendToWriter(iw);
@@ -114,15 +173,24 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 			MotionController.AppendToWriter(iw);
 			iw.FutureIndent--;
 		}
+
+
+		public override bool Equals(RestoredVPhysicsObject resPhysObj) {
+			if (!(resPhysObj is PhysicsMotionController restoredMotionController))
+				return false;
+			return Equals(MotionController, restoredMotionController.MotionController);
+		}
 	}
 
 
 	public class PhysicsSpring : RestoredVPhysicsObject {
 
-		public ParsedDataMap Spring;
-		
+		public readonly ParsedDataMap Spring;
 
-		public PhysicsSpring(TypeDesc desc) : base(desc) {}
+
+		public PhysicsSpring(TypeDesc desc, int oldObj, ParsedDataMap spring) : base(desc, oldObj) {
+			Spring = spring;
+		}
 
 
 		public override void AppendToWriter(IIndentedWriter iw) {
@@ -132,15 +200,24 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 			Spring.AppendToWriter(iw);
 			iw.FutureIndent--;
 		}
+
+
+		public override bool Equals(RestoredVPhysicsObject resPhysObj) {
+			if (!(resPhysObj is PhysicsSpring restoredSpring))
+				return false;
+			return Equals(Spring, restoredSpring.Spring);
+		}
 	}
 
 
 	public class PhysicsVehicleController : RestoredVPhysicsObject {
 
-		public ParsedDataMap Controller;
-		
-		
-		public PhysicsVehicleController(TypeDesc desc) : base(desc) {}
+		public readonly ParsedDataMap Controller;
+
+
+		public PhysicsVehicleController(TypeDesc desc, int oldObj, ParsedDataMap controller) : base(desc, oldObj) {
+			Controller = controller;
+		}
 
 
 		public override void AppendToWriter(IIndentedWriter iw) {
@@ -149,6 +226,13 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 			iw.AppendLine();
 			Controller.AppendToWriter(iw);
 			iw.FutureIndent--;
+		}
+
+
+		public override bool Equals(RestoredVPhysicsObject resPhysObj) {
+			if (!(resPhysObj is PhysicsVehicleController restoredVehController))
+				return false;
+			return Equals(Controller, restoredVehController.Controller);
 		}
 	}
 	
@@ -180,15 +264,15 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 						ot.GetFieldOrDefault<bool>("hasShadowController")
 							? bsr.ReadDataMap("vphysics_save_cshadowcontroller_t", saveInfo)
 							: null;
-					return new PhysicsObject(typeDesc) {OldObj = oldObj, ObjectTemplate = ot, ControllerTemplate = ct};
+					return new PhysicsObject(typeDesc, oldObj, ot, ct);
 				case PIID_IPHYSICSFLUIDCONTROLLER:
 					break;
 				case PIID_IPHYSICSSPRING:
 					var s = bsr.ReadDataMap("vphysics_save_cphysicsspring_t", saveInfo);
-					return new PhysicsSpring(typeDesc) {OldObj = oldObj, Spring = s};
+					return new PhysicsSpring(typeDesc, oldObj, s);
 				case PIID_IPHYSICSCONSTRAINTGROUP:
 					var gt = bsr.ReadDataMap("vphysics_save_cphysicsconstraintgroup_t", saveInfo);
-					return new PhysicsConstraintGroup(typeDesc) {OldObj = oldObj, GroupTemplate = gt};
+					return new PhysicsConstraintGroup(typeDesc, oldObj, gt);
 				case PIID_IPHYSICSCONSTRAINT:
 					var header = bsr.ReadDataMap("vphysics_save_cphysicsconstraint_t", saveInfo);
 					ConstraintType type = (ConstraintType)(int)header.GetFieldOrDefault<int>("constraintType");
@@ -200,18 +284,17 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 						string datamapName = $"vphysics_save_{type.ToString().Replace("_", "").ToLower()}_t";
 						constraint = bsr.ReadDataMap(datamapName, saveInfo);
 					}
-					return new PhysicsConstraint(typeDesc)
-						{OldObj = oldObj, Header = header, PhysicsConstraintType = type, Constraint = constraint};
+					return new PhysicsConstraint(typeDesc, oldObj, type, header, constraint);
 				case PIID_IPHYSICSSHADOWCONTROLLER:
 					break;
 				case PIID_IPHYSICSPLAYERCONTROLLER:
 					break;
 				case PIID_IPHYSICSMOTIONCONTROLLER:
 					var mc = bsr.ReadDataMap("vphysics_save_motioncontroller_t", saveInfo);
-					return new PhysicsMotionController(typeDesc) {OldObj = oldObj, MotionController = mc};
+					return new PhysicsMotionController(typeDesc, oldObj, mc);
 				case PIID_IPHYSICSVEHICLECONTROLLER:
 					var vc = bsr.ReadDataMap("vphysics_save_cvehiclecontroller_t", saveInfo);
-					return new PhysicsVehicleController(typeDesc) {OldObj = oldObj, Controller = vc};
+					return new PhysicsVehicleController(typeDesc, oldObj, vc);
 				case PIID_IPHYSICSGAMETRACE:
 					break;
 				default:

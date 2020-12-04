@@ -12,10 +12,30 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		IEnumerable<KeyValuePair<TK, TV>>
 	{
 		
-		public TypeDesc KeyDesc, ValDesc;
-		public KeyValuePair<ParsedSaveField<TK>, ParsedSaveField<TV>>[] Elements;
+		public readonly TypeDesc KeyDesc, ValDesc;
+		public readonly KeyValuePair<ParsedSaveField<TK>, ParsedSaveField<TV>>[] Elements;
 
-		public UtilMap(TypeDesc desc) : base(desc) {}
+
+		public UtilMap(
+			TypeDesc desc,
+			KeyValuePair<ParsedSaveField<TK>, ParsedSaveField<TV>>[] elements,
+			TypeDesc keyDesc,
+			TypeDesc valDesc)
+			: base(desc)
+		{
+			KeyDesc = keyDesc;
+			ValDesc = valDesc;
+			Elements = elements;
+		}
+
+
+		public override bool Equals(ParsedSaveField? other) {
+			if (other == null || !(other is UtilMap<TK, TV> otherUtlMap))
+				return false;
+			return Equals(KeyDesc, otherUtlMap.KeyDesc) &&
+				   Equals(ValDesc, otherUtlMap.ValDesc) &&
+				   Elements.SequenceEqual(otherUtlMap.Elements);
+		}
 		
 		
 		public override void AppendToWriter(IIndentedWriter iw) {
@@ -38,7 +58,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 					if (i < Elements.Length - 1)
 						iw.Append(",");
 				}
-
 				iw.FutureIndent--;
 			}
 		}
@@ -89,7 +108,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 				res[i] = new KeyValuePair<ParsedSaveField<TK>, ParsedSaveField<TV>>(k, v);
 			}
 			bsr.EndBlock(info);
-			return new UtilMap<TK, TV>(mapDesc) {Elements = res, KeyDesc = keyDesc, ValDesc = valDesc};
+			return new UtilMap<TK, TV>(mapDesc, res, keyDesc, valDesc);
 		}
 
 		// this was confusing but convenient for UtilVector, but here it's really stupid

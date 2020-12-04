@@ -10,17 +10,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 
 		public readonly T[] Array;
 		public readonly TypeDesc ElemDesc;
-		public override object FieldAsObj => Array;
 
 
 		private UtilVector(T[] array, TypeDesc elemDesc, TypeDesc desc) : base(desc) {
 			Array = array;
 			ElemDesc = elemDesc;
 		}
-		
-		
-		// do not remove, see note at ParsedSaveField
-		public UtilVector(TypeDesc desc) : this(null!, null!, desc) {}
 
 
 		public override void AppendToWriter(IIndentedWriter iw) {
@@ -57,7 +52,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 				flags: DescFlags.FTYPEDESC_SAVE,
 				fieldType: (FieldType)@params[0],
 				customReadFunc: (CustomReadFunc?)@params[1],
-				numElements: (ushort)(embMap == null ? count : 1))
+				numElements: (ushort)(embMap == null ? count : 1)) // todo should this really have count elems?
 			{
 				EmbeddedMap = embMap
 			};
@@ -79,6 +74,13 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 			object?[] customParams = {FieldType.EMBEDDED, null, elemMapName};
 			TypeDesc vecDesc = new TypeDesc(vecName, DescFlags.FTYPEDESC_SAVE, Restore, customParams);
 			return UtilVector<ParsedDataMap>.Restore(vecDesc, info, ref bsr);
+		}
+		
+		
+		public override bool Equals(ParsedSaveField? other) {
+			if (other == null || !(other is UtilVector<T> otherVec))
+				return false;
+			return Equals(Desc, otherVec.Desc) && Array.SequenceEqual(otherVec.Array);
 		}
 
 

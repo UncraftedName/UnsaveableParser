@@ -12,13 +12,23 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 	// a collection of I/O fire events
 	public class EventsSave : ParsedSaveField, IReadOnlyList<ParsedDataMap> {
 
-		public ParsedSaveField? Value;
-		public ParsedDataMap[]? Events;
-		
-		
-		public EventsSave(TypeDesc desc) : base(desc) {}
-		
-		
+		public readonly ParsedSaveField? Value;
+		public readonly ParsedDataMap[]? Events;
+
+
+		public EventsSave(TypeDesc desc, ParsedSaveField? value, ParsedDataMap[]? events) : base(desc) {
+			Value = value;
+			Events = events;
+		}
+
+
+		public override bool Equals(ParsedSaveField? other) {
+			if (other == null || !(other is EventsSave otherEvents))
+				return false;
+			return Equals(Value, otherEvents.Value) && ParserUtils.NullableSequenceEquals(Events, otherEvents.Events);
+		}
+
+
 		public override void AppendToWriter(IIndentedWriter iw) {
 			iw.Append($"{Events!.Length} {Desc.Name} output");
 			if (Events.Length != 1)
@@ -70,7 +80,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 			for (int i = 0; i < count; i++)
 				events[i] = bsr.ReadDataMap("EntityOutput", info);
 
-			return new EventsSave(typeDesc) {Value = psf, Events = events};
+			return new EventsSave(typeDesc, psf, events);
 		}
 
 

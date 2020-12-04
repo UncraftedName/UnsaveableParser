@@ -75,5 +75,16 @@ namespace SaveParser.Utils {
 				.Select(x => x.ParameterType)
 				.SequenceEqual(method.GetParameters().Select(x => x.ParameterType));
 		}
+
+		
+		// TODO TEST THIS LOGIC
+		public static bool NullableSequenceEquals<T>(IEnumerable<T>? a, IEnumerable<T>? b) {
+			if (a != null || b != null) {
+				if (a == null ^ b == null)
+					return false;
+				return a!.SequenceEqual(b!);
+			}
+			return true;
+		}
 	}
 }

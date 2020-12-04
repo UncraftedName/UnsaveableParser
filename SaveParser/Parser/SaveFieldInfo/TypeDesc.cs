@@ -181,7 +181,7 @@ namespace SaveParser.Parser.SaveFieldInfo {
 
 
 		public override int GetHashCode() {
-			return HashCode.Combine((int)FieldType, Name, InputName, OutputName, MapName, NumElements, (int)Flags, EmbeddedMap);
+			return HashCode.Combine((int)FieldType, Name, InputName, OutputName, MapName, NumElements, (int)Flags);
 		}
 
 

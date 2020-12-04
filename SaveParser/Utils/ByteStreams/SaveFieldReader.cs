@@ -107,7 +107,7 @@ namespace SaveParser.Utils.ByteStreams {
 			string sym = ReadSymbol(info)!;
 			if (sym != map.Name) {
 				info.SDataMapLookup.TryGetValue(sym, out DataMap? cmpMap);
-				if (cmpMap != map)
+				if (!ReferenceEquals(cmpMap, map))
 					throw new ArgumentException($"bad symbol, expected \"{map.Name}\" but read \"{sym}\"");
 			}
 			int fieldsSaved = ReadSInt();

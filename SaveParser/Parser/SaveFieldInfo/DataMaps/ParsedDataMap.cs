@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using SaveParser.Utils;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 	
-	public class ParsedDataMap : AppendableClass {
+	public class ParsedDataMap : AppendableClass, IEquatable<ParsedDataMap> {
 
 		public readonly DataMap DataMap;
 		private readonly OrderedDictionary<string, ParsedSaveField> _thisFields;
@@ -37,7 +38,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 				 * a problem for me since I add the fields to a dict. So I just make sure the values of the duplicate
 				 * fields are equal (which they always should be).
 				 */
-				if (Equals(_thisFields[field.Desc.Name].FieldAsObj, field.FieldAsObj))
+				if (Equals(_thisFields[field.Desc.Name], field))
 					_capacity--; // we're not gonna be adding the same field again
 				else
 					throw new ConstraintException($"two duplicate keys with different values for key \"{field.Desc.Name}\"");
@@ -54,7 +55,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			_combinedFields = new OrderedDictionary<string, ParsedSaveField>((IOrderedDictionary<string, ParsedSaveField>)_baseParsedMap.ParsedFields);
 			// here we have the same duplicate key problem as above, but now it's with A.field == B.field where A : B
 			foreach (var (key, value) in _thisFields) {
-				if (!_combinedFields.TryAdd(key, value) && !Equals(_combinedFields[key].FieldAsObj, value.FieldAsObj)) {
+				if (!_combinedFields.TryAdd(key, value) && !Equals(_combinedFields[key], value)) {
 					// formatting is dumb, too bad!
 					throw new ConstraintException($"duplicate field names, {DataMap.Name}::{{{_combinedFields[key].ToString()}}} does not match {dataMap.DataMap.Name}::{{{value.ToString()}}}");
 				}
@@ -99,13 +100,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		}
 
 
-		public T GetCustomTypeFieldOrDefault<T>(string name) where T : ParsedSaveField, new() {
-			if (ParsedFields.TryGetValue(name, out ParsedSaveField? saveField))
-				return (T)saveField;
-			return (T)Activator.CreateInstance(typeof(T), DataMap.FieldDict.GetValueOrDefault(name))!;
-		}
-
-
 		public override void AppendToWriter(IIndentedWriter iw) {
 			iw.Append($"{DataMap.Name}:");
 			EnumerableAppendHelper(_thisFields.Values, iw);
@@ -117,5 +111,23 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 				nextBase.AppendToWriter(iw);
 			}
 		}
+
+
+		public bool Equals(ParsedDataMap? other) {
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return DataMap.Equals(other.DataMap)
+				   && ParsedFields.OrderBy(pair => pair.Key).SequenceEqual(other.ParsedFields.OrderBy(pair => pair.Key));
+		}
+
+
+#pragma warning disable 659
+		public override bool Equals(object? obj) {
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != GetType()) return false;
+			return Equals((ParsedDataMap)obj);
+		}
+#pragma warning restore 659
 	}
 }

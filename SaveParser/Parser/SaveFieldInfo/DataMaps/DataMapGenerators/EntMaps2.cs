@@ -267,7 +267,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInputFunc("FadeOut", "InputFadeOut", FLOAT);
 			
 			BeginDataMap("CFuncAreaPortalBase", "CBaseEntity");
-			DefineField("m_portalNumber", INTEGER);
+			// this is not supposed to be a key field, but there will a problem combining datamaps if it isn't
+			DefineKeyField("m_portalNumber", "portalnumber", INTEGER);
 			DefineKeyField("m_iPortalVersion", "PortalVersion", INTEGER);
 			
 			BeginDataMap("CAreaPortal", "CFuncAreaPortalBase");

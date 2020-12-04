@@ -1,3 +1,4 @@
+using System.Linq;
 using SaveParser.Utils;
 using SaveParser.Utils.ByteStreams;
 
@@ -5,11 +6,19 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 	
 	public class ThinkContexts : ParsedSaveField {
 
-		public (ParsedDataMap map, Func? func)[] Contexts;
-		public override object FieldAsObj => Contexts;
+		public readonly (ParsedDataMap map, Func? func)[] Contexts; // todo better ToString()?
 
 
-		private ThinkContexts(TypeDesc desc) : base(desc) {}
+		private ThinkContexts(TypeDesc desc, (ParsedDataMap map, Func? func)[] contexts) : base(desc) {
+			Contexts = contexts;
+		}
+
+
+		public override bool Equals(ParsedSaveField? other) {
+			if (other == null || !(other is ThinkContexts otherContexts))
+				return false;
+			return Contexts.SequenceEqual(otherContexts.Contexts);
+		}
 
 
 		public override void AppendToWriter(IIndentedWriter iw) {
@@ -41,8 +50,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 				}
 			}
 			bsr.EndBlock(info);
-			
-			return new ThinkContexts(typeDesc) {Contexts = contexts};
+
+			return new ThinkContexts(typeDesc, contexts);
 		}
 	}
 }

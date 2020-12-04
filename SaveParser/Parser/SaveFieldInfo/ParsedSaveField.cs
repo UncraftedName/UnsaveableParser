@@ -9,20 +9,16 @@ using SaveParser.Utils;
 namespace SaveParser.Parser.SaveFieldInfo {
 
 
-	// NOTE: every class that inherits should have an explicit ctor(TypeDesc), see ParsedDataMap.GetCustomTypeFieldOrDefault
-	public abstract class ParsedSaveField : AppendableClass {
+	public abstract class ParsedSaveField : AppendableClass, IEquatable<ParsedSaveField> {
 		
 		protected static readonly Exception InvalidCastE = new InvalidCastException($"{typeof(ParsedSaveField)}: bad cast");
 
-		public virtual object? FieldAsObj => throw new Exception("trying to reference abstract field");
 		public readonly TypeDesc Desc;
-		public readonly int ElemCount;
 		public int ByteIndex {get; private set;}
 
 
-		protected ParsedSaveField(TypeDesc desc, int elemCount = 1) {
+		protected ParsedSaveField(TypeDesc desc) {
 			Desc = desc;
-			ElemCount = elemCount;
 			ByteIndex = -1;
 		}
 
@@ -30,6 +26,19 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		internal void SetIndex(int index) {
 			ByteIndex = index;
 		}
+		
+		
+		public abstract bool Equals(ParsedSaveField? other);
+
+
+#pragma warning disable 659
+		public override bool Equals(object? obj) {
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != GetType()) return false;
+			return Equals((ParsedSaveField)obj);
+		}
+#pragma warning restore 659
 	}
 
 
@@ -37,17 +46,37 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		
 		public T Field;
 		public static implicit operator T(ParsedSaveField<T> p) => p.Field;
+		public readonly int ElemCount;
 
-		public override object FieldAsObj => Field!;
 
-		public ParsedSaveField(T field, TypeDesc desc, int elemCount = 1) : base(desc, elemCount) {
+		public ParsedSaveField(T field, TypeDesc desc, int elemCount = 1) : base(desc) {
 			Field = field;
+			ElemCount = elemCount;
 		}
 		
-		// do not remove, see note at ParsedSaveField
-		public ParsedSaveField(TypeDesc desc) : this (default!, desc) {}
 		
-		
+		public override bool Equals(ParsedSaveField? other) { // todo test
+			if (other == null || !(other is ParsedSaveField<T> otherParsedField))
+				return false;
+			if (Field == null)
+				return otherParsedField.Field == null;
+			else if (otherParsedField.Field == null)
+				return false;
+			if (ElemCount != otherParsedField.ElemCount || !Equals(Desc, otherParsedField.Desc))
+				return false;
+			if (ElemCount == 1) {
+				return Field.Equals(otherParsedField.Field);
+			} else {
+				var a = ((IEnumerable)Field).GetEnumerator();
+				var b = ((IEnumerable)otherParsedField.Field).GetEnumerator();
+				while (a.MoveNext())
+					if (!(b.MoveNext() && Equals(a.Current, b.Current)))
+						return false;
+				return !b.MoveNext();
+			}
+		}
+
+
 		private static bool IsOverride(MethodInfo m) {
 			return m.GetBaseDefinition().DeclaringType != m.DeclaringType;
 		}
@@ -65,13 +94,13 @@ namespace SaveParser.Parser.SaveFieldInfo {
 				case FieldType.EMBEDDED:
 					iw.Append($"{Desc.EmbeddedMap!.Name}");
 					if (ElemCount == 1) {
-						if (!(Field is ParsedDataMap))
+						if (!(Field is ParsedDataMap emMap))
 							throw new Exception($"Unexpected type for embedded field: {Field!.GetType()}");
 						iw.Append($" {Desc.Name}:");
-						EnumerableAppendHelper(((ParsedDataMap)FieldAsObj).ParsedFields.Values, iw);
+						EnumerableAppendHelper(emMap.ParsedFields.Values, iw);
 					} else {
 						iw.Append($"[{ElemCount}] {Desc.Name}:");
-						EnumerableAppendHelper(FieldAsObj as IEnumerable<ParsedDataMap>, iw);
+						EnumerableAppendHelper(Field as IEnumerable<ParsedDataMap>, iw);
 					}
 					return;
 				case FieldType.CUSTOM:

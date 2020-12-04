@@ -57,27 +57,14 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		}
 
 
+#pragma warning disable 659
 		public override bool Equals(object? obj) {
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != this.GetType()) return false;
+			if (obj.GetType() != GetType()) return false;
 			return Equals((DataMap)obj);
 		}
-
-
-		public override int GetHashCode() {
-			return HashCode.Combine(Name, BaseMap, FieldDictInternal, Functions);
-		}
-
-
-		public static bool operator ==(DataMap? left, DataMap? right) {
-			return Equals(left, right);
-		}
-
-
-		public static bool operator !=(DataMap? left, DataMap? right) {
-			return !Equals(left, right);
-		}
+#pragma warning restore 659
 	}
 
 

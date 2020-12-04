@@ -5,11 +5,29 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 	
 	public class SoundPatch : ParsedSaveField {
 
-		public (ParsedDataMap patch, ParsedDataMap?[]? commands)[] Patches;
-		public override object FieldAsObj => Patches;
-		
+		public readonly (ParsedDataMap patch, ParsedDataMap?[]? commands)[] Patches;
 
-		public SoundPatch(TypeDesc desc) : base(desc) {}
+
+		public SoundPatch(TypeDesc desc, (ParsedDataMap patch, ParsedDataMap?[]? commands)[] patches) : base(desc) {
+			Patches = patches;
+		}
+
+
+		public override bool Equals(ParsedSaveField? other) {
+			if (other == null || !(other is SoundPatch otherPatch))
+				return false;
+			if (Patches.Length != otherPatch.Patches.Length)
+				return false;
+			for (int i = 0; i < Patches.Length; i++) {
+				(ParsedDataMap? patchA, ParsedDataMap?[]? commandsA) = Patches[i];
+				(ParsedDataMap? patchB, ParsedDataMap?[]? commandsB) = otherPatch.Patches[i];
+				if (!Equals(patchA, patchB))
+					return false;
+				if (!ParserUtils.NullableSequenceEquals(commandsA, commandsB))
+					return false;
+			}
+			return true;
+		}
 		
 		
 		public override void AppendToWriter(IIndentedWriter iw) {
@@ -60,7 +78,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 				}
 			}
 			bsr.EndBlock(info);
-			return new SoundPatch(typeDesc) {Patches = patches};
+			return new SoundPatch(typeDesc, patches);
 		}
 	}
 }
