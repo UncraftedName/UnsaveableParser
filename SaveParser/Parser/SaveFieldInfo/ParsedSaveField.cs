@@ -1,10 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
-using System.Reflection;
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
 using SaveParser.Utils;
+using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
 namespace SaveParser.Parser.SaveFieldInfo {
 
@@ -73,132 +72,45 @@ namespace SaveParser.Parser.SaveFieldInfo {
 				return !b.MoveNext();
 			}
 		}
-
-
-		private static bool IsOverride(MethodInfo m) {
-			return m.GetBaseDefinition().DeclaringType != m.DeclaringType;
-		}
-		
-		private static readonly HashSet<Type> _validEnumerableTypes = new HashSet<Type>();
 		
 		
-		// a wee bit silly
+		// a wee bit excessive
 		public override void AppendToWriter(IIndentedWriter iw) {
 			if (Field == null) {
 				iw.Append("null");
 				return;
 			}
-			switch (Desc.FieldType) {
-				case FieldType.EMBEDDED:
-					iw.Append($"{Desc.EmbeddedMap!.Name}");
-					if (ElemCount == 1) {
-						if (!(Field is ParsedDataMap emMap))
-							throw new Exception($"Unexpected type for embedded field: {Field!.GetType()}");
-						iw.Append($" {Desc.Name}:");
-						EnumerableAppendHelper(emMap.ParsedFields.Values, iw);
-					} else {
-						iw.Append($"[{ElemCount}] {Desc.Name}:");
-						EnumerableAppendHelper(Field as IEnumerable<ParsedDataMap>, iw);
-					}
+			if (Desc.FieldType == EMBEDDED) {
+				iw.Append($"{Desc.EmbeddedMap!.Name}");
+				if (ElemCount == 1) {
+					if (!(Field is ParsedDataMap emMap))
+						throw new Exception($"Unexpected type for embedded field: {Field!.GetType()}");
+					iw.Append($" {Desc.Name}:");
+					EnumerableAppendHelper(emMap.ParsedFields.Values, iw);
+				} else {
+					iw.Append($"[{ElemCount}] {Desc.Name}:");
+					EnumerableAppendHelper(Field as IEnumerable<ParsedDataMap>, iw);
+				}
+				return;
+			} else {
+				iw.Append($"{Desc.TypeString.PadRight(12)} {Desc.Name}: ");
+				if (Desc.FieldType == CUSTOM) {
+					iw.Append(Field.ToString());
 					return;
-				case FieldType.CUSTOM:
-					iw.Append($"{Desc}: "); //todo custom spacing doesn't always work
-					break;
-				default:
-					iw.Append($"{Desc.TypeString.PadRight(12)} {Desc.Name}: ");
-					break;
+				}
 			}
 			if (ElemCount == 1) {
 				if (Field is IAppendable ap)
 					ap.AppendToWriter(iw);
-				else if (Field is IEnumerable<IAppendable> || typeof(IAppendable).IsAssignableFrom(Field!.GetType().GetElementType()))
-					EnumerableAppendHelper((IEnumerable<IAppendable>)Field, iw);
 				else
-					iw.Append(Field!.ToString()!);
+					iw.Append(Field.ToString()!);
 			} else {
-
-				if (Field is CharArray chrArr) {
+				if (Field is CharArray chrArr)
 					iw.Append(chrArr);
-					return;
-				}
-
-				// todo
-				if (Field is IEnumerable ie && ie.GetType() != typeof(IEnumerable)) { // wacky huh?
-					Type t = ie.GetType();
-					if (!_validEnumerableTypes.Contains(t)) {
-						iw.Append(ie.SequenceToString());
-						return;
-					}
-					Type elemType = null!;
-					if (t.IsArray)
-						elemType = t.GetElementType()!;
-					if (IsOverride(elemType.GetMethod("ToString", new Type[0])!))
-						_validEnumerableTypes.Add(t);
-					//var a = typeof(IEnumerable<>).IsAssignableFrom(t);
-					//if (t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-				}
-
-
-
-				switch (Field) {
-					case IEnumerable<float> f:
-						iw.Append(f.SequenceToString());
-						break;
-					case IEnumerable<int> i:
-						iw.Append(i.SequenceToString());
-						break;
-					case IEnumerable<short> s:
-						iw.Append(s.SequenceToString());
-						break;
-					case IEnumerable<byte> b:
-						iw.Append(b.SequenceToString());
-						break;
-					case IEnumerable<bool> b:
-						iw.Append(b.SequenceToString());
-						break;
-					case CharArray ca:
-						iw.Append(ca);
-						break;
-					case IEnumerable<Vector2> v:
-						iw.Append(v.SequenceToString());
-						break;
-					case IEnumerable<Vector3> v:
-						iw.Append(v.SequenceToString());
-						break;
-					case IEnumerable<Vector4> v:
-						iw.Append(v.SequenceToString());
-						break;
-					case IEnumerable<Ehandle> e:
-						iw.Append(e.SequenceToString());
-						break;
-					case IEnumerable<Tick> t:
-						iw.Append(t.SequenceToString());
-						break;
-					case IEnumerable<Time> t:
-						iw.Append(t.SequenceToString());
-						break;
-					case IEnumerable<ModelName> t:
-						iw.Append(t.SequenceToString());
-						break;
-					case IEnumerable<SoundName> t:
-						iw.Append(t.SequenceToString());
-						break;
-					case IEnumerable<ModelIndex> t:
-						iw.Append(t.SequenceToString());
-						break;
-					case IEnumerable<MaterialIndex> t:
-						iw.Append(t.SequenceToString());
-						break;
-					case IEnumerable<Color32> c:
-						iw.Append(c.SequenceToString());
-						break;
-					case IEnumerable<Interval> i:
-						iw.Append(i.SequenceToString());
-						break;
-					default:
-						iw.Append($"UNIMPLEMENTED TYPE FOR TOSTRING(): {Field!.GetType()}");
-						break;
-				}
+				else if (Field is IEnumerable ie2)
+					iw.Append(ie2.SequenceToString());
+				else
+					throw new Exception($"field is type \"{Field.GetType()}\", cannot convert to string");
 			}
 		}
 	}

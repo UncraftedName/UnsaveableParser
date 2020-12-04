@@ -13,7 +13,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 		public const int VEHICLE_MAX_GEAR_COUNT = 6;
 		
 
-		// todo this returns fields that don't format the ToString with spaces - "custom materialIndex: metal"
 		protected void DefineMaterialIndexDataOps(string name) {
 			static ParsedSaveField MatReadFunc(TypeDesc desc, SaveInfo info, ref ByteStreamReader bsr)
 				=> new ParsedSaveField<MaterialIndexStr>((MaterialIndexStr)bsr.ReadStringOfLength(bsr.ReadSInt()), desc);

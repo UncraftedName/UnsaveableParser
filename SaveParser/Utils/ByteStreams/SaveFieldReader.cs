@@ -217,7 +217,7 @@ namespace SaveParser.Utils.ByteStreams {
 					return ReadSimple<Interval>(desc, bytesAvail);
 				case CHARACTER:
 					return desc.NumElements == 1 ? ReadSimple<byte, char>(desc, bytesAvail, b => (char)b)
-						: new ParsedSaveField<CharArray>(ReadCharArray(bytesAvail), desc);
+						: new ParsedSaveField<CharArray>(ReadCharArray(bytesAvail), desc, bytesAvail);
 				case COLOR32:
 					return ReadSimple<int, Color32>(desc, bytesAvail, i => (Color32)i);
 				case TIME:
