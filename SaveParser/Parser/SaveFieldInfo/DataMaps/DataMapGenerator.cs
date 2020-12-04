@@ -99,7 +99,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		protected void DefineOutput(string name, string outputName) {
 			var td = new TypeDesc(name, FTYPEDESC_SAVE | FTYPEDESC_KEY | FTYPEDESC_OUTPUT, EventsSave.Restore, outputName: outputName);
 			AddFieldPrivate(td);
-			CurMap.FunctionsInternal.Add(new OutputDataMapFunc(td, name, outputName));
+			CurMap.InputFuncsInternal.Add(new OutputDataMapFunc(td, name, outputName));
 		}
 
 
@@ -122,18 +122,31 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		
 		// not relevant for save files, but i'll save these anyways
 		protected void DefineInputFunc(string inputName, string inputFunc, FieldType fieldType) {
-			CurMap.FunctionsInternal.Add(new InputDataMapFunc(inputFunc, inputName, fieldType));
+			CurMap.InputFuncsInternal.Add(new InputDataMapFunc(inputFunc, inputName, fieldType));
 		}
 		
-		// i don't even know what these are for, but they seem to be implemented the same as DEFINE_FUNCTION
-		protected void DefineThinkFunc(string funcName) {}
-		protected void DefineEntityFunc(string funcName) {}
-		protected void DefineUseFunc(string funcName) {}
+
+		protected void DefineFunction(string name) {
+			AddFieldPrivate(new TypeDesc(name, FUNCTION));
+			CurMap.AdditionalFuncsInternal.Add((name, FunctionType.NORMAL));
+		}
+
+		// I don't know what these are for - they seem to be implemented similarly to DEFINE_FUNCTION.
+		// They might be used as inputs in game, but I haven't seen them come up in save files...
+		
+		protected void DefineThinkFunc(string funcName) {
+			CurMap.AdditionalFuncsInternal.Add((funcName, FunctionType.THINK));
+		}
 
 
-		// this should be related to the above Func methods..
-		protected void DefineFunction(string name)
-			=> AddFieldPrivate(new TypeDesc(name, FUNCTION));
+		protected void DefineEntityFunc(string funcName) {
+			CurMap.AdditionalFuncsInternal.Add((funcName, FunctionType.ENTITY));
+		}
+
+
+		protected void DefineUseFunc(string funcName) {
+			CurMap.AdditionalFuncsInternal.Add((funcName, FunctionType.USE));
+		}
 
 
 		protected void DefineCustomField(

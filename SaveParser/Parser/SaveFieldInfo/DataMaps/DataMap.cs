@@ -14,8 +14,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		internal readonly Dictionary<string, TypeDesc> FieldDictInternal;
 		public IReadOnlyDictionary<string, TypeDesc> FieldDict => FieldDictInternal;
 		public int TotalFieldCount => FieldDictInternal.Count + (BaseMap?.TotalFieldCount ?? 0);
-		public readonly List<DataMapFunc> FunctionsInternal;
-		public IReadOnlyList<DataMapFunc> Functions => FunctionsInternal;
+		internal readonly List<DataMapFunc> InputFuncsInternal;
+		public IReadOnlyList<DataMapFunc> InputFuncs => InputFuncsInternal;
+		internal readonly List<(string name, FunctionType type)> AdditionalFuncsInternal;
+		public IReadOnlyList<(string name, FunctionType type)> AdditionalFuncs;
 
 
 		// other fields are populated after initialization
@@ -31,7 +33,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 				}
 			}
 			Name = name;
-			FunctionsInternal = new List<DataMapFunc>();
+			InputFuncsInternal = new List<DataMapFunc>();
+			AdditionalFuncsInternal = new List<(string, FunctionType)>();
 		}
 
 
@@ -53,7 +56,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			return Name == other.Name
 				   && Equals(BaseMap, other.BaseMap)
 				   && FieldDictInternal.Count == other.FieldDictInternal.Count && !FieldDictInternal.Except(other.FieldDictInternal).Any()
-				   && Functions.SequenceEqual(other.Functions);
+				   && InputFuncs.SequenceEqual(other.InputFuncs);
 		}
 
 
@@ -118,5 +121,13 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		public override string ToString() {
 			return $"output func {ExternalName}";
 		}
+	}
+
+
+	public enum FunctionType {
+		NORMAL,
+		THINK,
+		ENTITY,
+		USE
 	}
 }
