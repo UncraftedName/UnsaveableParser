@@ -74,8 +74,11 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		}
 		
 		
+		public override void AppendToWriter(IIndentedWriter iw) => AppendWithCustomPad(iw, 9);
+
+
 		// a wee bit excessive
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public void AppendWithCustomPad(IIndentedWriter iw, int padCount = 0) {
 			if (Field == null) {
 				iw.Append("null");
 				return;
@@ -92,12 +95,11 @@ namespace SaveParser.Parser.SaveFieldInfo {
 					EnumerableAppendHelper(Field as IEnumerable<ParsedDataMap>, iw);
 				}
 				return;
-			} else {
-				iw.Append($"{Desc.TypeString.PadRight(12)} {Desc.Name}: ");
-				if (Desc.FieldType == CUSTOM) {
-					iw.Append(Field.ToString());
-					return;
-				}
+			}
+			iw.Append($"{Desc.TypeString.PadRight(padCount)} {Desc.Name}: ");
+			if (Desc.FieldType == CUSTOM) {
+				iw.Append(Field.ToString());
+				return;
 			}
 			if (ElemCount == 1) {
 				if (Field is IAppendable ap)

@@ -6,7 +6,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 	
 	public class ThinkContexts : ParsedSaveField {
 
-		public readonly (ParsedDataMap map, Func? func)[] Contexts; // todo better ToString()?
+		public readonly (ParsedDataMap map, Func? func)[] Contexts;
 
 
 		private ThinkContexts(TypeDesc desc, (ParsedDataMap map, Func? func)[] contexts) : base(desc) {

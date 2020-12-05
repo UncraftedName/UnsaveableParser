@@ -20,7 +20,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		public override bool Equals(ParsedSaveField? other) {
 			if (other == null || !(other is ConceptHistories otherHistories))
 				return false;
-			return Equals(Histories, otherHistories.Histories); // todo check if value tuple does this right
+			return Equals(Histories, otherHistories.Histories);
 		}
 		
 		
