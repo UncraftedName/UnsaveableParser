@@ -19,8 +19,8 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		public readonly DescFlags Flags;
 
 		private readonly CustomReadFunc? _customReadFunc;
-		internal readonly object?[]? CustomParams; // anything special needed for the custom read to work
-		public DataMap? EmbeddedMap; // set in global map creation
+		internal readonly object?[]? CustomParams;      // anything special needed for the custom read to work
+		public DataMap? EmbeddedMap {internal set;get;} // set in global map creation
 
 		private string? _typeString;
 		public string TypeString => _typeString ??= EvaluateTypeString();

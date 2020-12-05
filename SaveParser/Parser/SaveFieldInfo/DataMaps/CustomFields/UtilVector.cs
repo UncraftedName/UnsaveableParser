@@ -52,19 +52,27 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 				flags: DescFlags.FTYPEDESC_SAVE,
 				fieldType: (FieldType)@params[0],
 				customReadFunc: (CustomReadFunc?)@params[1],
-				numElements: (ushort)(embMap == null ? count : 1)) // todo should this really have count elems?
+				numElements: (ushort)(embMap == null ? count : 1))
 			{
 				EmbeddedMap = embMap
 			};
 			
 			// Sometimes the count is one but the read result does not have an element. I'm not sure if this is
 			// intended or not but by default that will cause an exception.
+			
 			DataMap vecMap = new DataMap(embMap == null ? "elems" : "uv", new[] {elemDesc});
-			T[] res = new T[count];
-			for (int i = 0; i < count; i++) {
+			T[] res;
+			if (embMap == null && count > 1) {
 				ParsedDataMap mapReadResult = bsr.ReadDataMap(vecMap, info);
-				res[i] = (ParsedSaveField<T>)mapReadResult.ParsedFields.Single().Value;
+				res = (ParsedSaveField<T[]>)mapReadResult.ParsedFields.Single().Value;
+			} else { // if the field type is embedded then the elements are read one by one
+				res = new T[count];
+				for (int i = 0; i < count; i++) {
+					ParsedDataMap mapReadResult = bsr.ReadDataMap(vecMap, info);
+					res[i] = (ParsedSaveField<T>)mapReadResult.ParsedFields.Single().Value;
+				}
 			}
+
 			return new UtilVector<T>(res, elemDesc, vecDesc);
 		}
 
