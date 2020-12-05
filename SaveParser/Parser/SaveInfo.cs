@@ -13,6 +13,7 @@ namespace SaveParser.Parser {
 		
 		internal ParseContext ParseContext;
 		internal readonly List<string> Errors = new List<string>();
+		internal readonly SourceSave SaveFile;
 		
 		public Vector3 LandmarkPos;
 		public Time BaseTime;
@@ -24,7 +25,8 @@ namespace SaveParser.Parser {
 		public readonly IReadOnlyDictionary<string, DataMap> CDataMapLookup; // client
 
 
-		public SaveInfo(Game game) {
+		public SaveInfo(SourceSave saveFile, Game game) {
+			SaveFile = saveFile;
 			ParseContext = new ParseContext(0);
 			Game = game;
 			TickInterval = game switch {
@@ -43,8 +45,9 @@ namespace SaveParser.Parser {
 		}
 
 
-		public void AddError(string e) {
-			Console.Out.WriteLineColored(e);
+		public void AddError(string e, bool print = true) {
+			if (print)
+				Console.Out.WriteLineColored(e);
 			Errors.Add(e);
 		}
 		

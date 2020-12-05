@@ -22,7 +22,7 @@ namespace SaveParser.Parser {
 		// i don't have a good way of getting the game from the file itself, so that will have to be passed in manually
 		public SourceSave(byte[] bytes, Game game) : base(null) {
 			_privateReader = new ByteStreamReader(bytes);
-			SaveInfo = new SaveInfo(game);
+			SaveInfo = new SaveInfo(this, game);
 		}
 
 

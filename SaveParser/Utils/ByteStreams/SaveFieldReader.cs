@@ -141,27 +141,6 @@ namespace SaveParser.Utils.ByteStreams {
 			return ret;
 		}
 
-		
-		[Conditional("DEBUG")]
-		private void DetermineDataMapHierarchy(SaveInfo info, string context, int offset) {
-			int tmp = AbsoluteByteIndex;
-			AbsoluteByteIndex = offset;
-			Console.WriteLine($"Determining next datamaps hierarchy ({context})..");
-			for (int i = 0; i < 10; i++) {
-				if (ReadSShort() != 4) {
-					Console.WriteLine("first value not 4, exiting");
-					break;
-				}
-				Console.WriteLine($"datamap: {ReadSymbol(info)}");
-				int fieldsSaved = ReadSInt();
-				for (int j = 0; j < fieldsSaved; j++) {
-					StartBlock(info);
-					SkipCurrentBlock(info);
-				}
-			}
-			AbsoluteByteIndex = tmp;
-		}
-
 
 		// all of these generic types must* stay consistent with TypeDesc.GetNetTypeFromFieldType
 		private ParsedSaveField? ReadSaveField(TypeDesc desc, SaveInfo info, int bytesAvail) {
