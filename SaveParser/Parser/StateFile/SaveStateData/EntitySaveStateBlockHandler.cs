@@ -12,7 +12,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData {
 		
 		public EntitySaveStateBlock(SourceSave? saveRef, ETableHeader dataHeader) : base(saveRef, dataHeader) {}
 		
-		private static HashSet<string> _searched = new HashSet<string>(); // for debugging
+		private static readonly HashSet<string> Searched = new HashSet<string>(); // for debugging
 		
 		
 		protected override void Parse(ref ByteStreamReader bsr) {
@@ -26,14 +26,16 @@ namespace SaveParser.Parser.StateFile.SaveStateData {
 					continue;
 				if (!SaveInfo.SDataMapLookup.TryGetValue(className, out DataMap? entMap)) {
 					string s = $"{nameof(EntitySaveStateBlock)}.{nameof(Parse)} - datamap for \"{className}\" not found";
-					if (!_searched.Contains(s) && bsr.ReadSShort() == 4) {
+					if (bsr.ReadSShort() == 4 && Searched.Add(s)) {
 						bsr.DetermineDataMapHierarchy(SaveInfo,
 							$"{nameof(EntitySaveStateBlock)}.{nameof(Parse)} - datamap for \"{className}\" not found",
 							bsr.AbsoluteByteIndex - 2);
-						_searched.Add(s);
 					}
-
-					SaveInfo.AddError(s, false);
+					SaveInfo.AddError(s
+#if DEBUG
+						,false
+#endif
+						);
 					continue;
 				}
 				EntData[i] = EntDataFactory.CreateFromName(SaveRef!, entHeader, entMap);

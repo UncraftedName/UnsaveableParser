@@ -74,7 +74,7 @@ namespace SaveParser.Utils {
 				builder.Append($"{x}{separator}");
 				containsElements = true;
 			}
-			if (containsElements) 
+			if (containsElements)
 				builder.Remove(builder.Length - separator.Length, separator.Length);
 			builder.Append(end);
 			return builder.ToString();

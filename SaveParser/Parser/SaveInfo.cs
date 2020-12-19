@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Numerics;
 using SaveParser.Parser.SaveFieldInfo;
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
@@ -23,6 +25,9 @@ namespace SaveParser.Parser {
 		// todo two separate map lookups makes me :(( (maybe use special generators for shared classes)
 		public readonly IReadOnlyDictionary<string, DataMap> SDataMapLookup; // server
 		public readonly IReadOnlyDictionary<string, DataMap> CDataMapLookup; // client
+		
+		// map name, parent name, fields
+		internal readonly List<DeterminedDataMap> DeterminedDatamaps;
 
 
 		public SaveInfo(SourceSave saveFile, Game game) {
@@ -34,6 +39,7 @@ namespace SaveParser.Parser {
 				Game.PORTAL2 => 1.0f / 60,
 				_ => throw new ArgumentOutOfRangeException(nameof(game), game, "invalid game type")
 			};
+			DeterminedDatamaps = new List<DeterminedDataMap>();
 			// should be last
 			SDataMapLookup = GlobalDataMapGenerator.GetDataMapList(this, false);
 			CDataMapLookup = GlobalDataMapGenerator.GetDataMapList(this, true);
@@ -57,6 +63,21 @@ namespace SaveParser.Parser {
 
 		internal DataMapGeneratorInfo CreateGenInfo(bool client) {
 			return new DataMapGeneratorInfo(Game, client);
+		}
+
+
+		[Conditional("DEBUG")]
+		internal void PrintDeterminedDatamaps() {
+			if (DeterminedDatamaps.Count == 0)
+				return;
+			Console.WriteLine("\nThese fields were determined for datamaps that don't don't exist in the project:");
+			foreach ((var mapName, string? parentName, var fields) in DeterminedDatamaps.Select(m => m.Deconstruct())) {
+				Console.Write($"\nBeginDataMap(\"{mapName}");
+				Console.WriteLine(parentName == null ? ");" : $", \"{parentName}\");");
+				foreach ((short byteSize, string fieldName) in fields) {
+					Console.WriteLine($"DefineField(\"{fieldName}\", {byteSize});");
+				}
+			}
 		}
 	}
 
@@ -104,5 +125,24 @@ namespace SaveParser.Parser {
 	public enum Game {
 		PORTAL1_3420,
 		PORTAL2
+	}
+
+
+	internal class DeterminedDataMap {
+		
+		public readonly string MapName;
+		public string? ParentName;
+		public HashSet<(short byteSize, string fieldName)> Fields;
+		
+		
+		public DeterminedDataMap(string mapName) {
+			MapName = mapName;
+			Fields = new HashSet<(short byteSize, string fieldName)>();
+		}
+
+
+		public (string, string?, HashSet<(short byteSize, string fieldName)>) Deconstruct() {
+			return (MapName, ParentName, Fields);
+		}
 	}
 }

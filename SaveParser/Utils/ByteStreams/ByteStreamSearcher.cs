@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using SaveParser.Parser;
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
 using SaveParser.Parser.StateFile.SaveStateData.EntData;
@@ -10,15 +9,15 @@ namespace SaveParser.Utils.ByteStreams {
 	
 	// some utility extensions of the reader so I can do brute force searches when the game code isn't enough
 	public partial struct ByteStreamReader {
-		
-		
+
 		[Conditional("DEBUG")]
 		internal void DetermineDataMapHierarchy(SaveInfo info, string context, int offset) {
 			List<string> classes = new List<string>();
 			int tmp = AbsoluteByteIndex;
 			AbsoluteByteIndex = offset;
-			Console.Out.WriteLineColored($"Determining next datamaps hierarchy ({context})", ConsoleColor.Magenta);
+			Console.Out.WriteLineColored($"Determining next datamaps hierarchy ({context})", ConsoleColor.White);
 			bool baseRead = false;
+			string? prevMap = null;
 			for (int i = 0; i < 10; i++) {
 				if (ReadSShort() != 4) {
 					Console.WriteLine("first value not 4..");
@@ -38,19 +37,44 @@ namespace SaveParser.Utils.ByteStreams {
 					navigator.ParseStream(ref this);
 					EndBlock(info);
 					continue;
-				} else {
-					if (info.SDataMapLookup.TryGetValue(s, out DataMap? m) && m.BaseMap == null && !(baseRead ^= true))
-						break;
-					classes.Add(s);
 				}
-				int fieldsSaved = ReadSInt();
-				for (int j = 0; j < fieldsSaved; j++) {
-					StartBlock(info);
-					SkipCurrentBlock(info);
-				}
+				if (info.SDataMapLookup.TryGetValue(s, out DataMap? m) && m.BaseMap == null && !(baseRead ^= true))
+					break;
+				classes.Add(s);
+				DeterminedDataMap? newMap = DetermineFields(info, s, m != null);
+				if (newMap != null && newMap.ParentName == null)
+					newMap.ParentName = prevMap;
+				prevMap = s;
 			}
 			AbsoluteByteIndex = tmp;
-			Console.WriteLine(((IEnumerable<string>)classes).Reverse().SequenceToString(" -> ", "", ""));
+			var col = Console.ForegroundColor;
+			for (int i = classes.Count - 1; i >= 0; i--) {
+				string @class = classes[i];
+				Console.ForegroundColor =
+					info.SDataMapLookup.ContainsKey(@class) ? ConsoleColor.Cyan : ConsoleColor.DarkRed;
+				Console.Write(@class);
+				if (i != 0)
+					Console.Write(" -> ");
+			}
+			Console.ForegroundColor = col;
+			Console.WriteLine();
+		}
+		
+		
+		private DeterminedDataMap? DetermineFields(SaveInfo info, string datamapName, bool skip) {
+			DeterminedDataMap? map = info.DeterminedDatamaps.Find(m => m.MapName == datamapName);
+			if (map == null && !skip) {
+				map = new DeterminedDataMap(datamapName);
+				info.DeterminedDatamaps.Add(map);
+			}
+			int fieldsSaved = ReadSInt();
+			for (int j = 0; j < fieldsSaved; j++) {
+				StartBlock(info, out short byteSize, out string? fieldName);
+				if (!skip)
+					map!.Fields.Add((byteSize, fieldName!));
+				SkipCurrentBlock(info);
+			}
+			return map;
 		}
 	}
 }

@@ -577,10 +577,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineEmbeddedField("m_audio", "audioparams_t");
 
 			if (Game == Game.PORTAL2) {
-				BeginDataMap("PaintableEntity", "CBasePlayer"); // no source code for this :(
+				BeginDataMap("PaintableEntity", "CBasePlayer"); // no source code for this :( todo this isn't quite right
 				DefineField("m_iPaintPower", INTEGER); // todo paint type?
 
-				BeginDataMap("CPortal_Player", "PaintableEntity");
+				BeginDataMap("CPortal_Player", "PaintableEntity"); // todo PaintPowerUser<CPaintableEntity<CBaseMultiplayerPlayer>>
 			} else {
 				BeginDataMap("CPortal_Player", "CHL2_Player");
 			}
@@ -616,7 +616,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineField("m_vWorldSpaceCenterHolder", POSITION_VECTOR);
 			DefineField("m_hSurroundingLiquidPortal", EHANDLE);
 			DefineEmbeddedField("m_pExpresser", "CAI_Expresser"); // todo check
-			if (Game == Game.PORTAL2) { // this is all me guessing
+			if (Game == Game.PORTAL2) {
 				DefineField("m_iSpawnInterpCounter", INTEGER);
 				DefineField("m_flMotionBlurAmount", FLOAT);
 				DefineField("m_flTimeLastTouchedGround", FLOAT);

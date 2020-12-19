@@ -52,6 +52,7 @@ namespace SaveParser.Parser {
 
 			SaveInfo.Cleanup();
 			Debug.Assert(bsr.BytesRemaining == 0);
+			SaveInfo.PrintDeterminedDatamaps();
 		}
 		
 		

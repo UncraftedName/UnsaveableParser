@@ -72,12 +72,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 					res[i] = (ParsedSaveField<T>)mapReadResult.ParsedFields.Single().Value;
 				}
 			}
-
 			return new UtilVector<T>(res, elemDesc, vecDesc);
 		}
 
 
-		// called like "UtilVector<ParsedDataMap>.RestoreEmbedded", vecName is just for debugging purposes
+		// called like "UtilVector<ParsedDataMap>.RestoreEmbedded"
 		public static UtilVector<ParsedDataMap> RestoreEmbedded(string vecName, string elemMapName, SaveInfo info, ref ByteStreamReader bsr) {
 			object?[] customParams = {FieldType.EMBEDDED, null, elemMapName};
 			TypeDesc vecDesc = new TypeDesc(vecName, DescFlags.FTYPEDESC_SAVE, Restore, customParams);

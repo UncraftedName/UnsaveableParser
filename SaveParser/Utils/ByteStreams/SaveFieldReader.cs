@@ -55,6 +55,7 @@ namespace SaveParser.Utils.ByteStreams {
 		}
 		
 
+		// todo, for base maps that overlap (e.g. paintable entity,  make their names not possible to look up in the global list)
 		public ParsedDataMap ReadDataMapRecursive(DataMap map, SaveInfo info) {
 			if (map.BaseMap == null)
 				return ReadDataMap(map, info);
