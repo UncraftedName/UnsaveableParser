@@ -17,7 +17,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		internal readonly List<DataMapFunc> InputFuncsInternal;
 		public IReadOnlyList<DataMapFunc> InputFuncs => InputFuncsInternal;
 		internal readonly List<(string name, FunctionType type)> AdditionalFuncsInternal;
-		public IReadOnlyList<(string name, FunctionType type)> AdditionalFuncs;
+		public IReadOnlyList<(string name, FunctionType type)> AdditionalFuncs => AdditionalFuncsInternal;
 
 
 		// other fields are populated after initialization
