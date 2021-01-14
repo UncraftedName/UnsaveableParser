@@ -13,6 +13,10 @@ using SaveParser.Utils;
 namespace SaveParser.Parser {
 	
 	public class SaveInfo {
+
+		// datamap lists are stored here, so if you decide to parse two saves it won't necessarily regenerate every time
+		private static readonly Dictionary<DataMapGeneratorInfo, IReadOnlyDictionary<string, DataMap>> CreatedDataMapLists 
+			= new Dictionary<DataMapGeneratorInfo, IReadOnlyDictionary<string, DataMap>>();
 		
 		internal ParseContext ParseContext;
 		internal readonly List<string> Errors = new List<string>();
@@ -25,7 +29,7 @@ namespace SaveParser.Parser {
 		public string? SaveDir;
 		// todo two separate map lookups makes me :(( (maybe use special generators for shared classes)
 		public readonly IReadOnlyDictionary<string, DataMap> SDataMapLookup; // server
-		public readonly IReadOnlyDictionary<string, DataMap> CDataMapLookup; // client, always null until I start using it
+		public readonly IReadOnlyDictionary<string, DataMap> CDataMapLookup; // client, unused atm
 		
 		// map name, parent name, fields
 		internal readonly List<DeterminedDataMap> DeterminedDatamaps;
@@ -44,14 +48,12 @@ namespace SaveParser.Parser {
 			
 			// should be last
 			DataMapGeneratorInfo info = new DataMapGeneratorInfo(game, false);
-			SaveParserDataMapGenerator handler = new SaveParserDataMapGenerator(info);
-			IDataMapInfoGeneratorHandler.IterateAllGenerators(handler);
-			SDataMapLookup = handler.CompleteDataMapCollection; // after iteration, this is the result we need
-			// now do the exact same thing to get the client maps
-			// info = new DataMapGeneratorInfo(game, true);
-			// handler = new SaveParserDataMapGenerator(info);
-			// IDataMapInfoGeneratorHandler.IterateAllGenerators(handler);
-			// CDataMapLookup = handler.CompleteDataMapCollection;
+			if (!CreatedDataMapLists.TryGetValue(info, out SDataMapLookup!)) {
+				SaveParserDataMapGenerator handler = new SaveParserDataMapGenerator(info);
+				IDataMapInfoGeneratorHandler.IterateAllGenerators(handler);
+				SDataMapLookup = handler.CompleteDataMapCollection; // after iteration, this is the result we need
+				CreatedDataMapLists[info] = SDataMapLookup;
+			}
 		}
 
 
@@ -103,7 +105,7 @@ namespace SaveParser.Parser {
 	}
 
 
-	public class DataMapGeneratorInfo {
+	public class DataMapGeneratorInfo : IEquatable<DataMapGeneratorInfo> {
 		
 		public readonly Game Game;
 		// these are here for consistency to game code, or because I'm not sure of their values
@@ -119,6 +121,25 @@ namespace SaveParser.Parser {
 		public DataMapGeneratorInfo(Game game, bool isClient) {
 			Game = game;
 			IsDefClientDll = isClient;
+		}
+
+
+		public bool Equals(DataMapGeneratorInfo? other) {
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return Game == other.Game && IsDefClientDll == other.IsDefClientDll;
+		}
+
+
+		public override bool Equals(object? obj) {
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			return obj.GetType() == GetType() && Equals((DataMapGeneratorInfo)obj);
+		}
+
+
+		public override int GetHashCode() {
+			return HashCode.Combine((int)Game, IsDefClientDll);
 		}
 	}
 

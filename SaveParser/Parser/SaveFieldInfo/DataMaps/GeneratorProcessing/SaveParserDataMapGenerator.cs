@@ -25,7 +25,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 		private bool _finished;
 
 		private readonly Dictionary<string, DataMap> _maps;
-		public Dictionary<string, DataMap> CompleteDataMapCollection { // after iteration, this is the final result
+		public IReadOnlyDictionary<string, DataMap> CompleteDataMapCollection { // after iteration, this is the final result
 			get {
 				if (_finished)
 					return _maps;
