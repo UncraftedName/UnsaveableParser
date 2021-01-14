@@ -9,7 +9,7 @@ save.Parse();
 // get the server state file (there might be many (don't ask))
 SaveGameStateFile sFile = save.StateFiles.OfType<SaveGameStateFile>().First();
 // get the appropriate field from the "header"
-Time t = sFile.SaveHeader.GetFieldOrDefault<Time>("time__USE_VCR_MODE");
+Time t = sFile.SaveHeader.GetFieldOrDefault<Time>("time__USE_VCR_MODE");  // just use "time" for p2 saves
 Console.WriteLine(t);
 ```
 ```
