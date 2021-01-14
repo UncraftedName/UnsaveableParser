@@ -1,11 +1,12 @@
 // ReSharper disable All
 
+using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
 using static SaveParser.Parser.SaveFieldInfo.DescFlags;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
-namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
+namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 	
-	public sealed class EntMaps2 : DataMapGenerator {
+	public sealed class EntMaps2 : DataMapInfoGenerator {
 
 		public const int SS_NUM_STATES = 20;
 		public const int VS_NUM_SOUNDS = 9;
@@ -13,7 +14,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 		public const int MAX_WORLD_SOUNDS_SP = 64;
 		
 		
-		protected override void CreateDataMaps() {
+		protected override void GenerateDataMaps() {
 			BeginDataMap("CSound");
 			DefineField("m_hOwner", EHANDLE);
 			DefineField("m_iVolume", INTEGER);

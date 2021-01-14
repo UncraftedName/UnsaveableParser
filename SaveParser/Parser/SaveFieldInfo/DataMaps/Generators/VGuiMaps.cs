@@ -1,17 +1,18 @@
 // ReSharper disable All
 
+using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
 using SaveParser.Utils.ByteStreams;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
-namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
+namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 	
-	public class VGuiMaps : DataMapGenerator {
+	public class VGuiMaps : DataMapInfoGenerator {
 
 		private static ParsedSaveField VGuiScreenStringOps(TypeDesc desc, SaveInfo info, ref ByteStreamReader bsr)
 			=> new ParsedSaveField<string>(bsr.ReadStringOfLength(bsr.ReadSInt()), desc);
 		
 
-		protected override void CreateDataMaps() {
+		protected override void GenerateDataMaps() {
 			BeginDataMap("CVguiScreen", "CBaseEntity");
 			LinkNamesToMap("vgui_screen", "vgui_screen_team", "CVGuiScreen"); // not sure if the last one is a typo
 			DefineCustomField("m_nPanelName", VGuiScreenStringOps);

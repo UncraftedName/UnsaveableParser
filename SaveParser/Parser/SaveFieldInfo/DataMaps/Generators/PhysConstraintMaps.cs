@@ -1,14 +1,16 @@
 // ReSharper disable All
+
+using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
-namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
+namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 	
-	public class PhysConstraintMaps : DataMapGenerator {
+	public class PhysConstraintMaps : DataMapInfoGenerator {
 
 		public const int MAX_NUM_PANELS = 16;
 		
 		
-		protected override void CreateDataMaps() {
+		protected override void GenerateDataMaps() {
 			BeginDataMap("CPhysConstraint", "CLogicalEntity");
 			DefinePhysPtr("m_pConstraint");
 			DefineKeyField("m_nameSystem", "constraintsystem", STRING);

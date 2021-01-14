@@ -1,12 +1,13 @@
 // ReSharper disable All
 
 using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
+using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
 using SaveParser.Utils.ByteStreams;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
-namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
+namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 	
-	public class VPhysicsMaps : DataMapGenerator {
+	public class VPhysicsMaps : DataMapInfoGenerator {
 
 		public const int VEHICLE_MAX_AXLE_COUNT = 4;
 		public const int VEHICLE_MAX_WHEEL_COUNT = 2 * VEHICLE_MAX_AXLE_COUNT;
@@ -54,7 +55,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 		}
 		
 		
-		protected override void CreateDataMaps() { // todo redo the vehicles part
+		protected override void GenerateDataMaps() { // todo redo the vehicles part
 			BeginDataMap("PhysBlockHeader_t");
 			DefineField("nSaved", INTEGER);
 			DefineField("pWorldObject", INTEGER); // this is a pointer saved for remapping

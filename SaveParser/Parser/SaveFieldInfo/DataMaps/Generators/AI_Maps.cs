@@ -1,11 +1,12 @@
 // ReSharper disable All
 using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
+using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
-namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
+namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 	
-	public sealed class AI_Maps : DataMapGenerator {
-		
+	public sealed class AI_Maps : DataMapInfoGenerator {
+
 		public const int PORTAL_FLOOR_TURRET_NUM_ROPES = 4;
 		public const int SECURITY_CAMERA_NUM_ROPES = 2;
 		public const int SNPCINT_NUM_PHASES = 3;
@@ -24,7 +25,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 		}
 
 
-		protected override void CreateDataMaps() {
+		protected override void GenerateDataMaps() {
 			BeginDataMap("AIScheduleState_t");
 			DefineField("iCurTask", INTEGER);
 			DefineField("fTaskStatus", INTEGER); // enum TaskStatus_e

@@ -1,15 +1,17 @@
 // ReSharper disable All
+
+using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
-namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
+namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 	
-	public sealed class EnvMaps : DataMapGenerator {
+	public sealed class EnvMaps : DataMapInfoGenerator {
 
 		public const int MAX_WAKE_POINTS = 16;
 		public const int MAX_PATH = 260;
 		
 		
-		protected override void CreateDataMaps() {
+		protected override void GenerateDataMaps() {
 			BeginDataMap("CSteamJet", "CBaseParticleEntity");
 			LinkNamesToMap("env_steam", "env_steamjet");
 			DefineKeyField("m_StartSize", "StartSize", FLOAT);
@@ -71,7 +73,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 			DefineInputFunc("ForceSpawnAtEntityOrigin", "InputForceSpawnAtEntityOrigin", STRING);
 			DefineThinkFunc("CheckSpawnThink");
 			
-			DataMapProxy("CTextureToggle", "CPointEntity");
+			BeginDataMap("CTextureToggle", "CPointEntity");
 			LinkNamesToMap("env_texturetoggle");
 			DefineInputFunc("IncrementTextureIndex", "InputIncrementBrushTexIndex", VOID);
 			DefineInputFunc("SetTextureIndex", "InputSetBrushTexIndex", INTEGER);

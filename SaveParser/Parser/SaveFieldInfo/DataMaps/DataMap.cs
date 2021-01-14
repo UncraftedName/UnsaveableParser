@@ -56,7 +56,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			return Name == other.Name
 				   && Equals(BaseMap, other.BaseMap)
 				   && FieldDictInternal.Count == other.FieldDictInternal.Count && !FieldDictInternal.Except(other.FieldDictInternal).Any()
-				   && InputFuncs.SequenceEqual(other.InputFuncs);
+				   && InputFuncs.SequenceEqual(other.InputFuncs); // todo
 		}
 
 

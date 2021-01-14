@@ -1,16 +1,17 @@
 // ReSharper disable All
 
+using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
 using SaveParser.Utils.ByteStreams;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
-namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
+namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 	
-	public class EntMaps4 : DataMapGenerator {
+	public class EntMaps4 : DataMapInfoGenerator {
 		
 		public const int MAX_BEAM_ENTS = 10;
 		
 		
-		protected override void CreateDataMaps() {
+		protected override void GenerateDataMaps() {
 			DataMapProxy("CInfoTarget", "CPointEntity");
 			LinkNamesToMap("info_target");
 			

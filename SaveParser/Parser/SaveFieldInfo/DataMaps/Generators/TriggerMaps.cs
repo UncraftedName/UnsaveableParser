@@ -1,14 +1,16 @@
 // ReSharper disable All
+
+using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
-namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
+namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 	
-	public class TriggerMaps : DataMapGenerator {
+	public class TriggerMaps : DataMapInfoGenerator {
 		
 		public const int cchMapNameMost = 32;
 		
 		
-		protected override void CreateDataMaps() {
+		protected override void GenerateDataMaps() {
 			BeginDataMap("CTriggerGravity", "CBaseTrigger");
 			LinkNamesToMap("trigger_gravity");
 			DefineFunction("GravityTouch");

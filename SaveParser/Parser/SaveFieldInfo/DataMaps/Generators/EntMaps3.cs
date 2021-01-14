@@ -1,9 +1,11 @@
 // ReSharper disable All
+
+using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
-namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
+namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 	
-	public class EntMaps3 : DataMapGenerator {
+	public class EntMaps3 : DataMapInfoGenerator {
 		
 		public const int kMAXCONTROLPOINTS = 63;
 		public const int kSERVERCONTROLLEDPOINTS = 4;
@@ -11,7 +13,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 		public const int MAX_PATH = 260;
 		
 		
-		protected override void CreateDataMaps() {
+		protected override void GenerateDataMaps() {
 			BeginDataMap("CProp_Portal", "CBaseAnimating");
 			LinkNamesToMap("prop_portal");
 			DefineField("m_hLinkedPortal", EHANDLE);

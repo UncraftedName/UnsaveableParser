@@ -1,11 +1,13 @@
 // ReSharper disable All
+
+using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
-namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
+namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 	
-	internal class StateFileDataMaps : DataMapGenerator {
+	internal class StateFileDataMaps : DataMapInfoGenerator {
 		
-		protected override void CreateDataMaps() {
+		protected override void GenerateDataMaps() {
 			BeginDataMap("GameHeader");
 			DefineField("mapName", CHARACTER, 32);
 			DefineField("comment", CHARACTER, 80);

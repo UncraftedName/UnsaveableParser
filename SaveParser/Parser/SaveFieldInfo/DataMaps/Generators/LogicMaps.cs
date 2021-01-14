@@ -1,14 +1,16 @@
 // ReSharper disable All
+
+using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
-namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
+namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 	
-	public sealed class LogicMaps : DataMapGenerator {
+	public sealed class LogicMaps : DataMapInfoGenerator {
 
 		public const int MAX_LOGIC_CASES = 16;
 		
 		
-		protected override void CreateDataMaps() {
+		protected override void GenerateDataMaps() {
 			BeginDataMap("CLogicAuto", "CBaseEntity");
 			LinkNamesToMap("logic_auto");
 			DefineKeyField("m_globalstate", "globalstate", STRING);

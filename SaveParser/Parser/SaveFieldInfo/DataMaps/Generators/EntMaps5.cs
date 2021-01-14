@@ -1,9 +1,11 @@
 // ReSharper disable All
+
+using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
-namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
+namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 	
-	public class EntMaps5 : DataMapGenerator {
+	public class EntMaps5 : DataMapInfoGenerator {
 
 		public const int RAGDOLL_MAX_ELEMENTS = 24;
 		public const int VPHYSICS_MAX_OBJECT_LIST_COUNT = 1024;
@@ -17,7 +19,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 		}
 		
 
-		protected override void CreateDataMaps() {
+		protected override void GenerateDataMaps() {
 			BeginDataMap("CBaseButton", "CBaseToggle");
 			DefineKeyField("m_vecMoveDir", "movedir", VECTOR);
 			DefineField("m_fStayPushed", BOOLEAN);

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Numerics;
 using SaveParser.Parser.SaveFieldInfo;
 using SaveParser.Parser.SaveFieldInfo.DataMaps;
+using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
 using SaveParser.Parser.StateFile.SaveStateData.EntData;
 using SaveParser.Utils;
 
@@ -24,7 +25,7 @@ namespace SaveParser.Parser {
 		public string? SaveDir;
 		// todo two separate map lookups makes me :(( (maybe use special generators for shared classes)
 		public readonly IReadOnlyDictionary<string, DataMap> SDataMapLookup; // server
-		public readonly IReadOnlyDictionary<string, DataMap> CDataMapLookup; // client
+		public readonly IReadOnlyDictionary<string, DataMap> CDataMapLookup; // client, always null until I start using it
 		
 		// map name, parent name, fields
 		internal readonly List<DeterminedDataMap> DeterminedDatamaps;
@@ -40,9 +41,17 @@ namespace SaveParser.Parser {
 				_ => throw new ArgumentOutOfRangeException(nameof(game), game, "invalid game type")
 			};
 			DeterminedDatamaps = new List<DeterminedDataMap>();
+			
 			// should be last
-			SDataMapLookup = GlobalDataMapGenerator.GetDataMapList(this, false);
-			CDataMapLookup = GlobalDataMapGenerator.GetDataMapList(this, true);
+			DataMapGeneratorInfo info = new DataMapGeneratorInfo(game, false);
+			SaveParserDataMapGenerator handler = new SaveParserDataMapGenerator(info);
+			IDataMapInfoGeneratorHandler.IterateAllGenerators(handler);
+			SDataMapLookup = handler.CompleteDataMapCollection; // after iteration, this is the result we need
+			// now do the exact same thing to get the client maps
+			// info = new DataMapGeneratorInfo(game, true);
+			// handler = new SaveParserDataMapGenerator(info);
+			// IDataMapInfoGeneratorHandler.IterateAllGenerators(handler);
+			// CDataMapLookup = handler.CompleteDataMapCollection;
 		}
 
 
@@ -59,11 +68,6 @@ namespace SaveParser.Parser {
 		
 		
 		public int TimeToTicks(float time) => (int)((0.5f + time) / TickInterval);
-
-
-		internal DataMapGeneratorInfo CreateGenInfo(bool client) {
-			return new DataMapGeneratorInfo(Game, client);
-		}
 
 
 		[Conditional("DEBUG")]
@@ -99,7 +103,7 @@ namespace SaveParser.Parser {
 	}
 
 
-	internal class DataMapGeneratorInfo {
+	public class DataMapGeneratorInfo {
 		
 		public readonly Game Game;
 		// these are here for consistency to game code, or because I'm not sure of their values
@@ -112,9 +116,9 @@ namespace SaveParser.Parser {
 		public readonly bool IsDefClientDll;
 		
 		
-		public DataMapGeneratorInfo(Game game, bool isDefClientDll) {
+		public DataMapGeneratorInfo(Game game, bool isClient) {
 			Game = game;
-			IsDefClientDll = isDefClientDll;
+			IsDefClientDll = isClient;
 		}
 	}
 
@@ -128,6 +132,7 @@ namespace SaveParser.Parser {
 	}
 
 
+	// used for debugging when I come across some map that I haven't seen before
 	internal class DeterminedDataMap {
 		
 		public readonly string MapName;

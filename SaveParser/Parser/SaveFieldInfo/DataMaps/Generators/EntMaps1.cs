@@ -1,10 +1,11 @@
 // ReSharper disable All
 using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
+using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
-namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
+namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 	
-	public sealed class EntMaps1 : DataMapGenerator {
+	public sealed class EntMaps1 : DataMapInfoGenerator {
 		
 		public const int NUM_BONECTRLS = 4;
 		public const int NUM_POSEPAREMETERS = 24;
@@ -23,9 +24,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.DataMapGenerators {
 		public const int MAX_WEAPONS = 48;
 		public const int MAXSTUDIOFLEXCTRL = 96;
 		public const int MAX_POWERUPS = 4;
-		
-		
-		protected override void CreateDataMaps() {
+
+
+		protected override void GenerateDataMaps() {
 			BeginDataMap("CBaseEntity");
 			DefineKeyField("m_iClassname", "classname", STRING);
 			DefineGlobalKeyField("m_iGlobalname", "globalname", STRING);
