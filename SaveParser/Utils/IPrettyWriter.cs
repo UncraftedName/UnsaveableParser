@@ -234,6 +234,14 @@ namespace SaveParser.Utils {
 			return PrettyToStringHelper(this);
 		}
 
+
+		public virtual string ToString(string indentStr) {
+			PrettyToStringWriter iw = new PrettyToStringWriter();
+			PrettyWrite(iw);
+			return iw.ToString(indentStr);
+		}
+		
+
 		public static string PrettyToStringHelper(IPretty ia) {
 			IPrettyWriter iw = new PrettyToStringWriter();
 			ia.PrettyWrite(iw);
