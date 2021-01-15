@@ -121,7 +121,7 @@ namespace SaveParser.Utils {
 		private static readonly Dictionary<Type, FieldInfo[]> FieldLookup = new Dictionary<Type, FieldInfo[]>();
 		
 
-		public static void DefaultAppendToWriter(object? obj, IPrettyWriter iw) {
+		public static void DefaultPrettyWrite(object? obj, IPrettyWriter iw) {
 			if (obj == null) {
 				iw.Append("null");
 				return;
@@ -140,10 +140,10 @@ namespace SaveParser.Utils {
 					iw.Append("null");
 				} else {
 					switch (fieldObj) {
-						case IPretty appendable:
+						case IPretty pretty:
 							iw.FutureIndent++;
 							iw.AppendLine();
-							appendable.PrettyWrite(iw);
+							pretty.PrettyWrite(iw);
 							iw.FutureIndent--;
 							break;
 						case string s:

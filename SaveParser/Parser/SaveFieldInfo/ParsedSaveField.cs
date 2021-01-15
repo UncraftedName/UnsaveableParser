@@ -74,11 +74,11 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		}
 		
 		
-		public override void PrettyWrite(IPrettyWriter iw) => AppendWithCustomPad(iw, 9);
+		public override void PrettyWrite(IPrettyWriter iw) => PrettyWriteWithCustomPad(iw, 9);
 
 
 		// a wee bit excessive
-		public void AppendWithCustomPad(IPrettyWriter iw, int padCount = 0) {
+		public void PrettyWriteWithCustomPad(IPrettyWriter iw, int padCount = 0) {
 			if (Field == null) {
 				iw.Append("null");
 				return;

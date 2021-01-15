@@ -38,7 +38,7 @@ namespace SaveParser.Parser {
 
 
 		public override void PrettyWrite(IPrettyWriter iw) {
-			ParserTextUtils.DefaultAppendToWriter(this, iw);
+			ParserTextUtils.DefaultPrettyWrite(this, iw);
 		}
 	}
 }

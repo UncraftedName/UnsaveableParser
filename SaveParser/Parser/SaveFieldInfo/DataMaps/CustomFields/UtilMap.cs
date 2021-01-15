@@ -49,11 +49,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 				for (int i = 0; i < Elements.Length; i++) {
 					var (key, value) = Elements[i];
 					iw.Append("\n{");
-					key.AppendWithCustomPad(iw);
+					key.PrettyWriteWithCustomPad(iw);
 					iw.Append(",");
 					if (ValDesc.FieldType == EMBEDDED)
 						iw.AppendLine();
-					value.AppendWithCustomPad(iw);
+					value.PrettyWriteWithCustomPad(iw);
 					iw.Append("}");
 					if (i < Elements.Length - 1)
 						iw.Append(",");
