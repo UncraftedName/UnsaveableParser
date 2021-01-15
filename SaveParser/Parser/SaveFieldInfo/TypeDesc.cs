@@ -25,6 +25,7 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		private string? _typeString;
 		public string TypeString => _typeString ??= EvaluateTypeString();
 
+#pragma warning disable 162
 		internal bool Placeholder {
 			get {
 #if DEBUG
@@ -33,6 +34,7 @@ namespace SaveParser.Parser.SaveFieldInfo {
 				return false;
 			}
 		}
+#pragma warning restore 162
 
 
 #if DEBUG
