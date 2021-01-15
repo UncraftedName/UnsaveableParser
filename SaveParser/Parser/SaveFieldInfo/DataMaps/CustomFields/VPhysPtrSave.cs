@@ -19,7 +19,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 		
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append(ParserTextUtils.CamelCaseToLowerSpaced(GetType().Name));
 			iw.Append($" (old obj = {OldObj}):");
 		}
@@ -50,14 +50,14 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 		
 		
-		public override void AppendToWriter(IIndentedWriter iw) {
-			base.AppendToWriter(iw);
+		public override void PrettyWrite(IPrettyWriter iw) {
+			base.PrettyWrite(iw);
 			iw.FutureIndent++;
 			iw.AppendLine();
-			ObjectTemplate.AppendToWriter(iw);
+			ObjectTemplate.PrettyWrite(iw);
 			if (ControllerTemplate != null) {
 				iw.AppendLine();
-				ControllerTemplate.AppendToWriter(iw);
+				ControllerTemplate.PrettyWrite(iw);
 			}
 			iw.FutureIndent--;
 		}
@@ -82,11 +82,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
-			base.AppendToWriter(iw);
+		public override void PrettyWrite(IPrettyWriter iw) {
+			base.PrettyWrite(iw);
 			iw.FutureIndent++;
 			iw.AppendLine();
-			GroupTemplate.AppendToWriter(iw);
+			GroupTemplate.PrettyWrite(iw);
 			iw.FutureIndent--;
 		}
 
@@ -120,14 +120,14 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
-			base.AppendToWriter(iw);
+		public override void PrettyWrite(IPrettyWriter iw) {
+			base.PrettyWrite(iw);
 			iw.FutureIndent++;
 			iw.AppendLine();
-			Header.AppendToWriter(iw);
+			Header.PrettyWrite(iw);
 			if (Constraint != null) {
 				iw.AppendLine();
-				Constraint.AppendToWriter(iw);
+				Constraint.PrettyWrite(iw);
 			}
 			iw.FutureIndent--;
 		}
@@ -166,11 +166,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
-			base.AppendToWriter(iw);
+		public override void PrettyWrite(IPrettyWriter iw) {
+			base.PrettyWrite(iw);
 			iw.FutureIndent++;
 			iw.AppendLine();
-			MotionController.AppendToWriter(iw);
+			MotionController.PrettyWrite(iw);
 			iw.FutureIndent--;
 		}
 
@@ -193,11 +193,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
-			base.AppendToWriter(iw);
+		public override void PrettyWrite(IPrettyWriter iw) {
+			base.PrettyWrite(iw);
 			iw.FutureIndent++;
 			iw.AppendLine();
-			Spring.AppendToWriter(iw);
+			Spring.PrettyWrite(iw);
 			iw.FutureIndent--;
 		}
 
@@ -220,11 +220,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
-			base.AppendToWriter(iw);
+		public override void PrettyWrite(IPrettyWriter iw) {
+			base.PrettyWrite(iw);
 			iw.FutureIndent++;
 			iw.AppendLine();
-			Controller.AppendToWriter(iw);
+			Controller.PrettyWrite(iw);
 			iw.FutureIndent--;
 		}
 

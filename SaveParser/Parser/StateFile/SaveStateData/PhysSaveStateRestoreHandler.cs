@@ -53,17 +53,17 @@ namespace SaveParser.Parser.StateFile.SaveStateData {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append($"{PhysObjects.Count} physics descriptions:");
 			iw.FutureIndent++;
 			foreach ((ParsedDataMap header, ParsedSaveField[]? objects) in PhysObjects) {
 				iw.AppendLine();
-				header.AppendToWriter(iw);
+				header.PrettyWrite(iw);
 				if (objects != null) {
 					iw.Append($"\n{objects.Length} phys object{(objects.Length == 1 ? "" : "s")}");
 					if (objects.Length > 0) {
 						iw.Append(":");
-						EnumerableAppendHelper(objects, iw);
+						EnumerablePrettyWriteHelper(objects, iw);
 					}
 				}
 			}

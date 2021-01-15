@@ -4,7 +4,7 @@ using SaveParser.Utils.ByteStreams;
 
 namespace SaveParser.Parser {
 	
-	public abstract class SaveComponent : AppendableClass {
+	public abstract class SaveComponent : PrettyClass {
 		
 		public readonly SourceSave? SaveRef;
 		protected SaveInfo SaveInfo => SaveRef!.SaveInfo;
@@ -37,7 +37,7 @@ namespace SaveParser.Parser {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			ParserTextUtils.DefaultAppendToWriter(this, iw);
 		}
 	}

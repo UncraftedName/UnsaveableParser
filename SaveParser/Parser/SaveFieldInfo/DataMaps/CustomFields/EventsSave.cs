@@ -29,7 +29,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append($"{Events!.Length} {Desc.Name} output");
 			if (Events.Length != 1)
 				iw.Append("s");
@@ -37,10 +37,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 				iw.Append(":");
 				if (Value != null) {
 					iw.AppendLine();
-					Value.AppendToWriter(iw);
+					Value.PrettyWrite(iw);
 				}
 				if (Events.Length > 0)
-					EnumerableAppendHelper(Events!, iw);
+					EnumerablePrettyWriteHelper(Events!, iw);
 			}
 		}
 

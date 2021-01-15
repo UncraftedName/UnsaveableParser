@@ -8,7 +8,7 @@ using static SaveParser.Parser.SaveFieldInfo.FieldType;
 namespace SaveParser.Parser.SaveFieldInfo {
 
 
-	public abstract class ParsedSaveField : AppendableClass, IEquatable<ParsedSaveField> {
+	public abstract class ParsedSaveField : PrettyClass, IEquatable<ParsedSaveField> {
 
 		public readonly TypeDesc Desc;
 		public int ByteIndex {get; private set;}
@@ -74,11 +74,11 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		}
 		
 		
-		public override void AppendToWriter(IIndentedWriter iw) => AppendWithCustomPad(iw, 9);
+		public override void PrettyWrite(IPrettyWriter iw) => AppendWithCustomPad(iw, 9);
 
 
 		// a wee bit excessive
-		public void AppendWithCustomPad(IIndentedWriter iw, int padCount = 0) {
+		public void AppendWithCustomPad(IPrettyWriter iw, int padCount = 0) {
 			if (Field == null) {
 				iw.Append("null");
 				return;
@@ -89,10 +89,10 @@ namespace SaveParser.Parser.SaveFieldInfo {
 					if (!(Field is ParsedDataMap emMap))
 						throw new Exception($"Unexpected type for embedded field: {Field!.GetType()}");
 					iw.Append($" {Desc.Name}:");
-					EnumerableAppendHelper(emMap.ParsedFields.Values, iw);
+					EnumerablePrettyWriteHelper(emMap.ParsedFields.Values, iw);
 				} else {
 					iw.Append($"[{ElemCount}] {Desc.Name}:");
-					EnumerableAppendHelper(Field as IEnumerable<ParsedDataMap>, iw);
+					EnumerablePrettyWriteHelper(Field as IEnumerable<ParsedDataMap>, iw);
 				}
 				return;
 			}
@@ -102,8 +102,8 @@ namespace SaveParser.Parser.SaveFieldInfo {
 				return;
 			}
 			if (ElemCount == 1) {
-				if (Field is IAppendable ap)
-					ap.AppendToWriter(iw);
+				if (Field is IPretty ap)
+					ap.PrettyWrite(iw);
 				else
 					iw.Append(Field.ToString()!);
 			} else {

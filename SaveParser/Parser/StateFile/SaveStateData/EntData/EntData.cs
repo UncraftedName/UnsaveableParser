@@ -28,12 +28,12 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			if (ParsedFields == null) {
 				iw.Append($"parsing fields failed for entity class: {ClassMap}");
 			} else {
 				iw.Append("parsed fields - ");
-				ParsedFields.AppendToWriter(iw);
+				ParsedFields.PrettyWrite(iw);
 			}
 		}
 	}

@@ -24,19 +24,19 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 		
 		
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append($"{Histories.Length} concept histories:");
 			iw.FutureIndent++;
 			foreach ((string conceptName, ParsedDataMap history, ParsedDataMap? response) in Histories) {
 				iw.Append($"\n{conceptName}:");
 				iw.FutureIndent++;
 				iw.AppendLine();
-				history.AppendToWriter(iw);
+				history.PrettyWrite(iw);
 				iw.AppendLine();
 				if (response == null)
 					iw.Append("no response");
 				else
-					response.AppendToWriter(iw);
+					response.PrettyWrite(iw);
 				iw.FutureIndent--;
 			}
 			iw.FutureIndent--;

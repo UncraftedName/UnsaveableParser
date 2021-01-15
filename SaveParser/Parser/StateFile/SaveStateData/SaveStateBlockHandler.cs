@@ -36,7 +36,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData {
 		protected SaveStateBlock(SourceSave? saveRef, THeader dataHeader) : base(saveRef, dataHeader) {}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append($"category: {DataHeader.Name}");
 		}
 	}

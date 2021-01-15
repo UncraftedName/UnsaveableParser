@@ -7,7 +7,7 @@ using SaveParser.Utils;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 	
-	public class ParsedDataMap : AppendableClass, IEquatable<ParsedDataMap> {
+	public class ParsedDataMap : PrettyClass, IEquatable<ParsedDataMap> {
 
 		public readonly DataMap DataMap;
 		private readonly OrderedDictionary<string, ParsedSaveField> _thisFields;
@@ -100,15 +100,15 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append($"{DataMap.Name}:");
-			EnumerableAppendHelper(_thisFields.Values, iw);
+			EnumerablePrettyWriteHelper(_thisFields.Values, iw);
 			var nextBase = _baseParsedMap;
 			while (nextBase != null && nextBase._thisFields.Count == 0)
 				nextBase = nextBase._baseParsedMap;
 			if (nextBase != null) {
 				iw.Append("\nfields inherited from ");
-				nextBase.AppendToWriter(iw);
+				nextBase.PrettyWrite(iw);
 			}
 		}
 

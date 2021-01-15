@@ -18,15 +18,15 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append("UtilVector<");
 			iw.Append(ElemDesc.FieldType == FieldType.EMBEDDED ? ElemDesc.EmbeddedMap!.Name : ElemDesc.TypeString);
 			iw.Append($">[{Array.Length}] ");
 			iw.Append($"{Desc.Name}");
 			if (Array.Length > 0) {
 				iw.Append(": ");
-				if (Array is IAppendable[] ia)
-					EnumerableAppendHelper(ia, iw);
+				if (Array is IPretty[] ia)
+					EnumerablePrettyWriteHelper(ia, iw);
 				else
 					iw.Append(Array.SequenceToString());
 			}

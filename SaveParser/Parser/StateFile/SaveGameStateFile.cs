@@ -99,26 +99,26 @@ namespace SaveParser.Parser.StateFile {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append(Name);
 			iw.FutureIndent++;
 			iw.AppendLine($"\nversion: {Version}");
 			iw.AppendLine($"ID: {Id}");
-			BlockHeadersInfo.AppendToWriter(iw);
+			BlockHeadersInfo.PrettyWrite(iw);
 			iw.Append($"\n{SaveGameHeaders.Count} headers:");
-			EnumerableAppendHelper(SaveGameHeaders, iw, false);
-			SaveHeader.AppendToWriter(iw);
+			EnumerablePrettyWriteHelper(SaveGameHeaders, iw, false);
+			SaveHeader.PrettyWrite(iw);
 			iw.AppendLine();
 			if (AdjacencyList != null) {
 				iw.Append("adjacents: ");
-				EnumerableAppendHelper(AdjacencyList, iw, false);
+				EnumerablePrettyWriteHelper(AdjacencyList, iw, false);
 			}
 			if (LightStyleList != null) {
 				iw.Append("light styles: ");
-				EnumerableAppendHelper(LightStyleList, iw, false);
+				EnumerablePrettyWriteHelper(LightStyleList, iw, false);
 			}
 			iw.Append($"{Blocks.Count} blocks:");
-			EnumerableAppendHelper(Blocks, iw); // add last field bool
+			EnumerablePrettyWriteHelper(Blocks, iw); // add last field bool
 			iw.FutureIndent--;
 		}
 	}

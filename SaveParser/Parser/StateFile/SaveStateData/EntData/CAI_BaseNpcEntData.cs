@@ -46,24 +46,24 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append($"{ClassMap.Name}:");
 			iw.FutureIndent++;
 			iw.Append("\nextra data for CAI_BaseNPC:");
 			iw.FutureIndent++;
 			iw.AppendLine();
-			ExtendedHeader.AppendToWriter(iw);
+			ExtendedHeader.PrettyWrite(iw);
 			iw.AppendLine();
 			if (Conditions != null) {
-				Conditions.AppendToWriter(iw);
+				Conditions.PrettyWrite(iw);
 				iw.AppendLine();
 			}
 			if (Navigator != null) {
-				Navigator.AppendToWriter(iw);
+				Navigator.PrettyWrite(iw);
 				iw.AppendLine();
 			}
 			iw.FutureIndent--;
-			base.AppendToWriter(iw);
+			base.PrettyWrite(iw);
 			iw.FutureIndent--;
 		}
 		
@@ -94,7 +94,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 			}
 
 
-			public override void AppendToWriter(IIndentedWriter iw) {
+			public override void PrettyWrite(IPrettyWriter iw) {
 				iw.AppendLine($"m_Conditions: {Conditions.SequenceToString()}");
 				iw.AppendLine($"m_CustomInterruptConditions: {CustomInterruptConditions.SequenceToString()}");
 				iw.AppendLine($"m_ConditionsPreIgnore: {ConditionsPreIgnore.SequenceToString()}");

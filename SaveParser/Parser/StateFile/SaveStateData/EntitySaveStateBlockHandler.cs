@@ -45,11 +45,11 @@ namespace SaveParser.Parser.StateFile.SaveStateData {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
-			base.AppendToWriter(iw);
+		public override void PrettyWrite(IPrettyWriter iw) {
+			base.PrettyWrite(iw);
 			iw.Append($"\n{EntData.Length} entities:");
 #pragma warning disable 8631
-			EnumerableAppendHelper(EntData, iw, enumerate: true);
+			EnumerablePrettyWriteHelper(EntData, iw, enumerate: true);
 #pragma warning restore 8631
 		}
 	}

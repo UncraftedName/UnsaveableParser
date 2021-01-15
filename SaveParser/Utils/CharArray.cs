@@ -3,7 +3,7 @@ using System;
 namespace SaveParser.Utils {
 	
 	// represents a c-style string like char[60] which is null-terminated
-	public readonly struct CharArray : IAppendable {
+	public readonly struct CharArray : IPretty {
 
 		private readonly int _length; // this is equal to or longer than the string length
 		public readonly string Str;
@@ -27,7 +27,7 @@ namespace SaveParser.Utils {
 		}
 
 
-		public void AppendToWriter(IIndentedWriter iw) {
+		public void PrettyWrite(IPrettyWriter iw) {
 			iw.Append(Str);
 		}
 

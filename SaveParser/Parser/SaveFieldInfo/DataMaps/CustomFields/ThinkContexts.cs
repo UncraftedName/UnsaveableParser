@@ -21,13 +21,13 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append($"{Contexts.Length} think contexts:");
 			iw.FutureIndent++;
 			foreach ((ParsedDataMap? m, Func? f) in Contexts) {
 				iw.AppendLine();
 				iw.AppendLine(f.HasValue ? $"think function: {f.Value}" : "no think function");
-				m.AppendToWriter(iw);
+				m.PrettyWrite(iw);
 			}
 			iw.FutureIndent--;
 		}

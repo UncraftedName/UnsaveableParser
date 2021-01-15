@@ -38,7 +38,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 		
 		
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append("UtilMap<");
 			iw.Append(KeyDesc.FieldType == EMBEDDED ? KeyDesc.EmbeddedMap!.Name : KeyDesc.TypeString);
 			iw.Append(",");

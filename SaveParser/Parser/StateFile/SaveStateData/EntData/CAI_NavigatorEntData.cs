@@ -21,11 +21,11 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append($"{ClassMap.Name} (version {Version}):");
 			iw.FutureIndent++;
 			iw.AppendLine();
-			MinPathArray.AppendToWriter(iw);
+			MinPathArray.PrettyWrite(iw);
 			iw.FutureIndent--;
 		}
 	}

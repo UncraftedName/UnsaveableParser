@@ -37,7 +37,7 @@ namespace SaveParser.Parser.StateFile {
 			}
 		}
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append($"name: {Name}, ");
 		}
 	}
@@ -59,13 +59,13 @@ namespace SaveParser.Parser.StateFile {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
-			base.AppendToWriter(iw);
+		public override void PrettyWrite(IPrettyWriter iw) {
+			base.PrettyWrite(iw);
 			iw.Append($"{EntHeaders.Length} entity headers:");
 			iw.FutureIndent++;
 			foreach (ParsedDataMap entHeader in EntHeaders) {
 				iw.AppendLine();
-				entHeader.AppendToWriter(iw);
+				entHeader.PrettyWrite(iw);
 			}
 			iw.FutureIndent--;
 		}
@@ -82,8 +82,8 @@ namespace SaveParser.Parser.StateFile {
 			Version = bsr.ReadSShort();
 		}
 		
-		public override void AppendToWriter(IIndentedWriter iw) {
-			base.AppendToWriter(iw);
+		public override void PrettyWrite(IPrettyWriter iw) {
+			base.PrettyWrite(iw);
 			iw.Append($"version: {Version}");
 		}
 	}
@@ -102,11 +102,11 @@ namespace SaveParser.Parser.StateFile {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
-			base.AppendToWriter(iw);
+		public override void PrettyWrite(IPrettyWriter iw) {
+			base.PrettyWrite(iw);
 			iw.FutureIndent++;
 			iw.AppendLine();
-			PhysHeader.AppendToWriter(iw);
+			PhysHeader.PrettyWrite(iw);
 			iw.FutureIndent--;
 		}
 	}

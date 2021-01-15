@@ -62,16 +62,16 @@ namespace SaveParser.Parser {
 		}
 
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append("");
-			SourceFileHeader.AppendToWriter(iw);
+			SourceFileHeader.PrettyWrite(iw);
 			iw.AppendLine();
-			GameHeader.AppendToWriter(iw);
+			GameHeader.PrettyWrite(iw);
 			iw.AppendLine();
-			Globals.AppendToWriter(iw);
+			Globals.PrettyWrite(iw);
 			foreach (EmbeddedStateFile stateFile in StateFiles) {
 				iw.AppendLine();
-				stateFile.AppendToWriter(iw);
+				stateFile.PrettyWrite(iw);
 			}
 			iw.Append("\n\n\nErrors:\n");
 			foreach (string errorStr in SaveInfo.Errors)

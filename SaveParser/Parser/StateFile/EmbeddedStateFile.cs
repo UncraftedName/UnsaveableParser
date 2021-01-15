@@ -34,7 +34,7 @@ namespace SaveParser.Parser.StateFile {
 		
 		public UnknownStateFile(SourceSave saveRef, CharArray name) : base(saveRef, name) {}
 
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append($"{Name}, {Reader.Size} bytes");
 		}
 	}

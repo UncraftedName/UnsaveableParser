@@ -11,7 +11,7 @@ namespace SaveParser.Parser {
 	
 	public static class Structs {
 
-		public static void DefaultAppendToWriter<T>(this ref T str, IIndentedWriter iw) where T : struct {
+		public static void DefaultAppendToWriter<T>(this ref T str, IPrettyWriter iw) where T : struct {
 			FieldInfo[] fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public);
 			for (int i = 0; i < fields.Length; i++) {
 				iw.Append($"{fields[i].Name}: {fields[i].GetValue(str)}");
@@ -21,7 +21,7 @@ namespace SaveParser.Parser {
 		}
 
 
-		public static void DefaultAppendToWriterOneLine<T>(this ref T str, IIndentedWriter iw) where T : struct {
+		public static void DefaultAppendToWriterOneLine<T>(this ref T str, IPrettyWriter iw) where T : struct {
 			FieldInfo[] fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public);
 			iw.Append("{");
 			for (int i = 0; i < fields.Length; i++) {

@@ -30,7 +30,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		}
 		
 		
-		public override void AppendToWriter(IIndentedWriter iw) {
+		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append($"{Patches.Length} sound patch");
 			if (Patches.Length != 1)
 				iw.Append("es");
@@ -39,7 +39,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 				iw.FutureIndent++;
 				foreach ((ParsedDataMap patch, ParsedDataMap?[]? commands) in Patches) {
 					iw.AppendLine();
-					patch.AppendToWriter(iw);
+					patch.PrettyWrite(iw);
 					if (commands != null) {
 						iw.Append($"\n{commands.Length} command");
 						if (commands.Length != 1)
@@ -47,7 +47,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 						if (commands.Length > 0) {
 							iw.Append(":");
 #pragma warning disable 8631
-							EnumerableAppendHelper(commands, iw);
+							EnumerablePrettyWriteHelper(commands, iw);
 #pragma warning restore 8631
 						}
 					}

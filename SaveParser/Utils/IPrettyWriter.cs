@@ -7,7 +7,7 @@ using System.Text;
 
 namespace SaveParser.Utils {
 
-	public interface IIndentedWriter : IDisposable {
+	public interface IPrettyWriter : IDisposable {
 		int FutureIndent {get;set;}
 		int LastLineLength {get;}
 		void Append(string? s);
@@ -19,7 +19,7 @@ namespace SaveParser.Utils {
 	
 
 
-	public class IndentedToStringWriter : IIndentedWriter {
+	public class PrettyToStringWriter : IPrettyWriter {
 		
 		private readonly List<string> _lines;
 		private readonly List<int> _indentCount;
@@ -36,7 +36,7 @@ namespace SaveParser.Utils {
 		public int LastLineLength => _lines[^1].Length;
 		
 		
-		public IndentedToStringWriter() {
+		public PrettyToStringWriter() {
 			_lines = new List<string> {""};
 			_indentCount = new List<int>{0};
 		}
@@ -113,7 +113,7 @@ namespace SaveParser.Utils {
 	
 	
 	
-	public class IndentedTextWriter : StreamWriter, IIndentedWriter {
+	public class PrettyStreamWriter : StreamWriter, IPrettyWriter {
 		
 		private int _futureIndent;
 
@@ -127,11 +127,11 @@ namespace SaveParser.Utils {
 		private readonly string _indentStr;
 
 
-		public IndentedTextWriter(Stream stream, int bufferSize = 1024, bool leaveOpen = false, string indentStr = "\t")
+		public PrettyStreamWriter(Stream stream, int bufferSize = 1024, bool leaveOpen = false, string indentStr = "\t")
 			: this(stream, Encoding.UTF8, bufferSize, leaveOpen, indentStr) {}
 
 
-		public IndentedTextWriter(
+		public PrettyStreamWriter(
 			Stream stream,
 			Encoding encoding,
 			int bufferSize = 1024,
@@ -219,49 +219,49 @@ namespace SaveParser.Utils {
 	
 	
 	
-	public interface IAppendable {
-		void AppendToWriter(IIndentedWriter iw);
+	public interface IPretty {
+		void PrettyWrite(IPrettyWriter iw);
 	}
 
 
 	// This lets me see the toString() representation by just using the append function that I implement for every
 	// component anyway.
-	public abstract class AppendableClass : IAppendable {
+	public abstract class PrettyClass : IPretty {
 		
-		public abstract void AppendToWriter(IIndentedWriter iw);
+		public abstract void PrettyWrite(IPrettyWriter iw);
 		
 		public new virtual string ToString() {
-			return AppendHelper(this);
+			return PrettyToStringHelper(this);
 		}
 
-		public static string AppendHelper(IAppendable ia) {
-			IIndentedWriter iw = new IndentedToStringWriter();
-			ia.AppendToWriter(iw);
+		public static string PrettyToStringHelper(IPretty ia) {
+			IPrettyWriter iw = new PrettyToStringWriter();
+			ia.PrettyWrite(iw);
 			return iw.ToString()!;
 		}
 
 
-		public static void EnumerableAppendHelper<T>(
-			IEnumerable<T>? appendables,
-			IIndentedWriter iw,
+		public static void EnumerablePrettyWriteHelper<T>(
+			IEnumerable<T>? pretties,
+			IPrettyWriter iw,
 			bool lastField = true,
 			bool enumerate = false
-		) where T : IAppendable
+		) where T : IPretty
 		{
-			if (appendables == null) {
+			if (pretties == null) {
 				iw.Append("null");
 				return;
 			}
 			iw.FutureIndent++;
 			int i = 0;
-			foreach (var appendable in appendables) {
+			foreach (var appendable in pretties) {
 				iw.AppendLine();
 				if (enumerate)
 					iw.Append($"{i++} ");
 				if (appendable == null)
 					iw.Append("null");
 				else
-					appendable.AppendToWriter(iw);
+					appendable.PrettyWrite(iw);
 			}
 
 			iw.FutureIndent--;
@@ -270,10 +270,10 @@ namespace SaveParser.Utils {
 		}
 
 
-		public static void IndentedAppendHelper(IAppendable ia, IIndentedWriter iw, bool lastField = true) {
+		public static void SimplePrettyHelper(IPretty ia, IPrettyWriter iw, bool lastField = true) {
 			iw.FutureIndent++;
 			iw.AppendLine();
-			ia.AppendToWriter(iw);
+			ia.PrettyWrite(iw);
 			iw.FutureIndent--;
 			if (!lastField)
 				iw.AppendLine();
