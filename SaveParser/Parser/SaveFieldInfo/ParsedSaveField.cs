@@ -98,7 +98,9 @@ namespace SaveParser.Parser.SaveFieldInfo {
 			}
 			iw.Append($"{Desc.TypeString.PadRight(padCount)} {Desc.Name}: ");
 			if (Desc.FieldType == CUSTOM) {
-				iw.Append(Field.ToString());
+				iw.Append(ElemCount == 1
+					? Field.ToString() :
+					((IEnumerable)Field).SequenceToString());
 				return;
 			}
 			if (ElemCount == 1) {
