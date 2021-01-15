@@ -13,9 +13,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 	// creates the global datamap dictionary used by the parser
 	public class SaveParserDataMapGenerator : IDataMapInfoGeneratorHandler {
 		
-		private readonly DataMapGeneratorInfo _genInfo;
-		DataMapGeneratorInfo IDataMapInfoGeneratorHandler.GenInfo => _genInfo;
-
 		private readonly HashSet<string> _emptyRoots;
 		private readonly List<(DataMap map, string baseClass)> _unresolvedBaseClasses;
 		private readonly Dictionary<string, string> _proxies; // name, base class
@@ -32,10 +29,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 				throw new ConstraintException("not notified of finished iteration");
 			}
 		}
+		public DataMapGeneratorInfo GenInfo {get;}
 
 
 		public SaveParserDataMapGenerator(DataMapGeneratorInfo info) {
-			_genInfo = info;
+			GenInfo = info;
 			_maps = new Dictionary<string, DataMap>(100);
 			_emptyRoots = new HashSet<string>();
 			_proxies = new Dictionary<string, string>(50);
