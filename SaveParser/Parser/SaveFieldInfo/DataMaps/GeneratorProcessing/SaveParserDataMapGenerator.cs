@@ -49,25 +49,22 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 
 		// it's time to link all the pieces together
 		public void OnFinishedIterationOfInfoGenerators() {
-			
-			// If there exists any proxies/links A->B->C->D, then create a direct proxy A->D.
-			// For example, consider the datamaps with this inheritance pattern - A:B, B:C, C:D, & D:E.
-			// But imagine that A, B, and C are just proxies. So when you look for A or B, you really mean D.
-			foreach ((string name, string baseClass) in _proxies.ToList()) { // can't modify dict during enumeration
-				string b = baseClass;
-				while (_proxies.TryGetValue(b, out string? actualBase))
-					b = actualBase;
-				_proxies[name] = b;
-			}
 
-			// go through all proxies, if the value does not exist in the global datamaps then add it
+			// go through all proxies, if the key does not exist in the complete collection then add it
 			foreach ((string name, string baseClass) in _proxies) {
+				// If there exists any proxies/links A->B->C, then we want A->C.
+				// For example, consider the datamaps with this inheritance pattern - A:B, B:C, C:D, & D:E.
+				// But imagine that A, B, and C are just proxies. So when you look for A or B, you really mean D.
+				string actualBase = baseClass;
+				while (_proxies.TryGetValue(actualBase, out string? nextBase))
+					actualBase = nextBase;
+				
 				if (_maps.TryGetValue(name, out DataMap? existingMap)) {
-					if (existingMap.Name != baseClass)
-						throw new ConstraintException($"\"{name}\" already present in as \"{existingMap.Name}\", tried to overwrite with \"{baseClass}\"");
+					if (existingMap.Name != actualBase)
+						throw new ConstraintException($"\"{name}\" already present in as \"{existingMap.Name}\", tried to overwrite with \"{actualBase}\"");
 					continue;
 				}
-				_maps.Add(name, _maps[baseClass]);
+				_maps.Add(name, _maps[actualBase]);
 			}
 			
 			// resolve base classes
