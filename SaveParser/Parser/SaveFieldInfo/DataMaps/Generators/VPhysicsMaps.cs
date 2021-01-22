@@ -13,13 +13,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 		public const int VEHICLE_MAX_WHEEL_COUNT = 2 * VEHICLE_MAX_AXLE_COUNT;
 		public const int VEHICLE_MAX_GEAR_COUNT = 6;
 		
-
-		protected void DefineMaterialIndexDataOps(string name) {
-			static ParsedSaveField MatReadFunc(TypeDesc desc, SaveInfo info, ref ByteStreamReader bsr)
-				=> new ParsedSaveField<MaterialIndexStr>((MaterialIndexStr)bsr.ReadStringOfLength(bsr.ReadSInt()), desc);
-			DefineCustomField(name, MatReadFunc);
-		}
-		
 		
 		// this is different from PhysPtr, here the datamap is read right away (since we're in the vphys section)
 		// todo, the custom read func will just return a ref to another vphys object (i think)

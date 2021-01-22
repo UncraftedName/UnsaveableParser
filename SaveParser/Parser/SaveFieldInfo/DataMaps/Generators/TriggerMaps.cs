@@ -180,6 +180,25 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 				DefineInputFunc("TeleportEntity", "InputTeleportEntity", STRING);
 				DefineInputFunc("TeleportToCurrentPos", "InputTeleportToCurrentPos", VOID);
 			}
+
+			if (Game == Game.PORTAL2) {
+				BeginDataMap("CPortalButtonTrigger", "CBaseTrigger");
+				LinkNamesToMap("trigger_portal_button");
+				DefineField("m_pOwnerButton", CLASSPTR);
+				
+				BeginDataMap("CTriggerCatapult", "CBaseTrigger");
+				LinkNamesToMap("trigger_catapult");
+				DefineField("m_flPlayerVelocity", FLOAT);
+				DefineField("m_flPhysicsVelocity", FLOAT);
+				DefineField("m_strLaunchTarget", STRING);
+				DefineField("m_bUseThresholdCheck", BOOLEAN);
+				DefineField("m_bUseExactVelocity", BOOLEAN);
+				DefineField("m_flLowerThreshold", FLOAT);
+				DefineField("m_flUpperThreshold", FLOAT);
+				DefineField("m_flAirControlSupressionTime", FLOAT);
+				DefineField("m_hLaunchTarget", EHANDLE);
+
+			}
 		}
 	}
 }

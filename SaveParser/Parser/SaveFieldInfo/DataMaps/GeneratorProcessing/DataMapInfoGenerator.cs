@@ -1,4 +1,5 @@
 using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
+using SaveParser.Utils.ByteStreams;
 using static SaveParser.Parser.SaveFieldInfo.DescFlags;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
@@ -29,8 +30,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 			=> BeginTemplatedMap(dataMapName, null, baseName, null);
 
 
-		protected void DeclareTemplatedClass(string className, string dataMapName)
-			=> _handler.DeclareTemplatedClass(className, dataMapName);
+		protected void DeclareTemplatedClass(string className, string? dataMapName = null)
+			=> _handler.DeclareTemplatedClass(className, dataMapName ?? className);
 
 
 		protected void BeginTemplatedMap(string name, string? templateType, string? baseName, string? baseTemplateType) {
@@ -120,6 +121,13 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 		// phys stuff is actually restored during the phys block handler, it's only queued for restore in the ents
 		protected void DefinePhysPtr(string name)
 			=> _handler.DefineCustomField(name, CPhysicsEnvironment.QueueRestore);
+		
+
+		protected void DefineMaterialIndexDataOps(string name) {
+			static ParsedSaveField MatReadFunc(TypeDesc desc, SaveInfo info, ref ByteStreamReader bsr)
+				=> new ParsedSaveField<MaterialIndexStr>((MaterialIndexStr)bsr.ReadStringOfLength(bsr.ReadSInt()), desc);
+			DefineCustomField(name, MatReadFunc);
+		}
 
 
 		// an embedded field simply means that the field should be read like a data map (recursively)

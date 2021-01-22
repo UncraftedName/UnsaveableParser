@@ -1,6 +1,7 @@
 // ReSharper disable All
 using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
 using SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing;
+using SaveParser.Utils.ByteStreams;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
 
 namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
@@ -11,6 +12,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 		public const int SECURITY_CAMERA_NUM_ROPES = 2;
 		public const int SNPCINT_NUM_PHASES = 3;
 		public const int SPEECH_NUM_CATEGORIES = 3;
+		public const int MAX_RESPONSE_NAME = 64;
+		public const int MAX_RULE_NAME = 64;
 		
 
 		// this is a class that extends from CUtlVector<CAI_InterestTarget_t> but doesn't have its own datamap
@@ -687,6 +690,52 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			LinkNamesToMap("ai_ally_speech_manager");
 			DefineEmbeddedField("m_ConceptCategoryTimers", "CSimpleSimTimer", SPEECH_NUM_CATEGORIES);
 			DefineUtilMap("m_ConceptTimers", STRING, "CSimpleSimTimer");
+			
+			BeginDataMap("AI_ResponseParams");
+			DefineField("flags", SHORT);
+			DefineField("odds", SHORT);
+			DefineField("soundlevel", BYTE);
+			DefineField("delay", INTEGER);
+			DefineField("respeakdelay", INTEGER);
+			
+			BeginDataMap("AI_Response");
+			DefineField("m_Type", BYTE);
+			DefineField("m_szResponseName", CHARACTER, MAX_RESPONSE_NAME);
+			DefineField("m_szMatchingRule", CHARACTER, MAX_RULE_NAME);
+			DefineEmbeddedField("m_Params", "AI_ResponseParams");
+			
+			BeginDataMap("CAI_PlayerAlly", "CAI_BaseActor");
+			DefineEmbeddedField("m_PendingResponse", "AI_Response");
+			DefineField("m_PendingConcept", STRING); // stdstring, not sure if it's read differently
+			DefineField("m_TimePendingSet", TIME);
+			DefineField("m_hTalkTarget", EHANDLE);
+			DefineField("m_flNextRegenTime", TIME);
+			DefineField("m_flTimePlayerStartStare", TIME);
+			DefineField("m_hPotentialSpeechTarget", EHANDLE);
+			DefineField("m_flNextIdleSpeechTime", TIME);
+			DefineField("m_iQARandomNumber", INTEGER);
+			DefineField("m_hSpeechFilter", EHANDLE);
+			DefineEmbeddedField("m_ConceptCategoryTimers", "CSimpleSimTimer", SPEECH_NUM_CATEGORIES); // ConceptCategory_t
+			DefineKeyField("m_bGameEndAlly", "GameEndAlly", BOOLEAN);
+			DefineField("m_bCanSpeakWhileScripting", BOOLEAN);
+			DefineField("m_flHealthAccumulator", FLOAT);
+			DefineField("m_flTimeLastRegen", TIME);
+			DefineInputFunc("IdleRespond", "InputIdleRespond", VOID);
+			DefineInputFunc("SpeakResponseConcept", "InputSpeakResponseConcept", STRING);
+			DefineInputFunc("MakeGameEndAlly", "InputMakeGameEndAlly", VOID);
+			DefineInputFunc("MakeRegularAlly", "InputMakeRegularAlly", VOID);
+			DefineInputFunc("AnswerQuestion", "InputAnswerQuestion", INTEGER);
+			DefineInputFunc("AnswerQuestionHello", "InputAnswerQuestionHello", INTEGER);
+			DefineInputFunc("EnableSpeakWhileScripting", "InputEnableSpeakWhileScripting", VOID);
+			DefineInputFunc("DisableSpeakWhileScripting", "InputDisableSpeakWhileScripting", VOID);
+
+			if (Game == Game.PORTAL2) {
+				BeginDataMap("CNPC_PersonalityCore", "CAI_PlayerAlly");
+				LinkNamesToMap("npc_personality_core");
+				DefineField("m_flNextIdleSoundTime", FLOAT);
+				DefineField("m_iIdleOverrideSequence", INTEGER);
+				DefineField("m_hProjectedTexture", EHANDLE);
+			}
 		}
 	}
 }

@@ -19,6 +19,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 		private readonly List<(string, TypeDesc)> _unresolvedEmbeddedFields;
 		private readonly List<(DataMap map, string className, string? templateName, bool isBase)> _unresolvedDataMapNames;
 		private readonly Dictionary<string, string> _templatedClasses;
+		private readonly OrderedDictionary<string, List<TypeDesc>> _fieldsForTemplatedClasses;
 		private DataMap? _curMap;
 		private (string name, string baseClass)? _curProxy;
 		private bool _finished;
@@ -42,6 +43,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 			_unresolvedEmbeddedFields = new List<(string, TypeDesc)>();
 			_unresolvedDataMapNames = new List<(DataMap, string, string?, bool)>();
 			_templatedClasses = new Dictionary<string, string>();
+			_fieldsForTemplatedClasses = new OrderedDictionary<string, List<TypeDesc>>();
 			_curMap = null;
 			_curProxy = null;
 			_finished = false;
@@ -78,6 +80,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 							map.BaseMap = _maps[actual];
 					} else {
 						map.DataMapName = _templatedClasses[className]; // gets the custom datamap name
+						foreach (TypeDesc td in _fieldsForTemplatedClasses[className])
+							map.FieldDictInternal.Add(td.Name, td);
 					}
 				} catch {
 					throw new Exception(isBase
@@ -108,9 +112,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 		
 		private void AddFieldPrivate(TypeDesc td) {
 			CheckFinish();
-			if (_curMap == null || _curProxy != null)
+			if (_curProxy != null)
 				throw new NullReferenceException("attempted to add a field to a proxy");
-			_curMap.FieldDictInternal.Add(td.Name, td);
+			if (_curMap == null)
+				_fieldsForTemplatedClasses.Last().Value.Add(td); // add these later, I only implemented basic fields
+			else
+				_curMap.FieldDictInternal.Add(td.Name, td);
 		}
 
 
@@ -141,7 +148,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 
 
 		public void DeclareTemplatedClass(string className, string dataMapName) {
+			_curMap = null;
+			_curProxy = null;
 			_templatedClasses.Add(className, dataMapName);
+			_fieldsForTemplatedClasses[className] = new List<TypeDesc>();
 		}
 
 
