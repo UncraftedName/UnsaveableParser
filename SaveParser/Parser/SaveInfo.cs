@@ -78,7 +78,7 @@ namespace SaveParser.Parser {
 				return;
 			Console.WriteLine("\nThese fields were determined for datamaps that don't don't exist in the project:");
 			foreach ((var mapName, string? parentName, var fields) in DeterminedDatamaps.Select(m => m.Deconstruct())) {
-				Console.Write($"\nBeginDataMap(\"{mapName}");
+				Console.Write($"\nBeginDataMap(\"{mapName}\"");
 				Console.WriteLine(parentName == null ? ");" : $", \"{parentName}\");");
 				foreach ((short byteSize, string fieldName) in fields) {
 					Console.WriteLine($"DefineField(\"{fieldName}\", {byteSize});");
