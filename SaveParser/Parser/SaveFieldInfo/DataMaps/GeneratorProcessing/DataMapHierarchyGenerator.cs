@@ -86,12 +86,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 		
 		public DataMapGeneratorInfo GenInfo {get;}
 		public SortedDictionary<string, TreeNode> Roots;
-		private readonly Dictionary<string, ClassNode> _classNodes;
+		private readonly OrderedDictionary<string, ClassNode> _classNodes;
 
 
 		public DataMapHierarchyGenerator(DataMapGeneratorInfo genInfo) {
 			GenInfo = genInfo;
-			_classNodes = new Dictionary<string, ClassNode>();
+			_classNodes = new OrderedDictionary<string, ClassNode>();
 		}
 
 
