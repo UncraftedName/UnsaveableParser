@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using SaveParser.Utils;
 
 
@@ -9,8 +8,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 
 	public class DataMap : IEquatable<DataMap> {
 
-		public readonly string Name;
-		public DataMap? BaseMap {get;internal set;}
+		public string DataMapName {get;internal set;} // resolved after all maps are processed
+		private readonly string? _className;
+		// you can always lookup this map by using its class name, but maybe not its datamap name
+		public string ClassName => _className ?? DataMapName;
+		
+		public DataMap? BaseMap {get;internal set;}  // resolved after all maps are processed
 		internal readonly Dictionary<string, TypeDesc> FieldDictInternal;
 		public IReadOnlyDictionary<string, TypeDesc> FieldDict => FieldDictInternal;
 		public int TotalFieldCount => FieldDictInternal.Count + (BaseMap?.TotalFieldCount ?? 0);
@@ -20,40 +23,44 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 		public IReadOnlyList<(string name, FunctionType type)> AdditionalFuncs => AdditionalFuncsInternal;
 
 
-		// other fields are populated after initialization
-		internal DataMap(string name, IEnumerable<TypeDesc>? dataDesc = null) {
-			if (dataDesc == null) {
-				FieldDictInternal = new Dictionary<string, TypeDesc>();
-			} else {
-				try {
-					FieldDictInternal = dataDesc.ToDictionary(field => field.Name);
-				} catch (Exception e) {
-					Console.Out.WriteLineColored($"dictionary threw exception while creating datamap \"{name}\": {e.Message}");
-					throw;
-				}
+		// used during the global datamap creation
+		public DataMap(string className) {
+			_className = DataMapName = className; // datamap name may be overwritten later
+			FieldDictInternal = new Dictionary<string, TypeDesc>();
+			InputFuncsInternal = new List<DataMapFunc>();
+			AdditionalFuncsInternal = new List<(string, FunctionType)>();
+		}
+		
+		
+		// used by custom fields where the datamaps may be generated dynamically
+		public DataMap(string dataMapName, IEnumerable<TypeDesc> dataDesc) {
+			try {
+				FieldDictInternal = dataDesc.ToDictionary(field => field.Name);
+			} catch (Exception e) {
+				Console.Out.WriteLineColored($"dictionary threw exception while creating datamap \"{dataMapName}\": {e.Message}");
+				throw;
 			}
-			Name = name;
+			_className = null;
+			DataMapName = dataMapName;
 			InputFuncsInternal = new List<DataMapFunc>();
 			AdditionalFuncsInternal = new List<(string, FunctionType)>();
 		}
 
 
-		public bool InheritsFrom(string name) => Name == name || (BaseMap != null && BaseMap.InheritsFrom(name));
+		public bool InheritsFrom(string name) => DataMapName == name || (BaseMap != null && BaseMap.InheritsFrom(name));
 
 
 		public override string ToString() {
-			StringBuilder sb = new StringBuilder($"{{{Name}, {FieldDictInternal.Count} fields");
-			if (BaseMap != null)
-				sb.Append($" ({TotalFieldCount} total)");
-			sb.Append('}');
-			return sb.ToString();
+			return BaseMap == null
+				? $"datamap {{{ClassName}, {FieldDictInternal.Count} fields}}"
+				: $"datamap {{{ClassName}, {FieldDictInternal.Count} fields ({TotalFieldCount} total)}}";
 		}
 
 
 		public bool Equals(DataMap? other) {
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
-			return Name == other.Name
+			return DataMapName == other.DataMapName
 				   && Equals(BaseMap, other.BaseMap)
 				   && FieldDictInternal.Count == other.FieldDictInternal.Count && !FieldDictInternal.Except(other.FieldDictInternal).Any()
 				   && InputFuncs.SequenceEqual(other.InputFuncs); // todo
@@ -76,8 +83,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 	/// </summary>
 	public abstract class DataMapFunc {
 		
-		public readonly string InternalName; // C++ name
-		public readonly string ExternalName; // map and I/O name
+		public readonly string InternalName; // C++ dataMapName
+		public readonly string ExternalName; // hammer and I/O name
 
 
 		public DataMapFunc(string internalName, string externalName) {

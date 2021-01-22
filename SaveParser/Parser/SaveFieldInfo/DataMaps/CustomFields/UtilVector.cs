@@ -20,7 +20,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 
 		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append("UtilVector<");
-			iw.Append(ElemDesc.FieldType == FieldType.EMBEDDED ? ElemDesc.EmbeddedMap!.Name : ElemDesc.TypeString);
+			iw.Append(ElemDesc.FieldType == FieldType.EMBEDDED ? ElemDesc.EmbeddedMap!.ClassName : ElemDesc.TypeString);
 			iw.Append($">[{Array.Length}] ");
 			iw.Append($"{Desc.Name}");
 			if (Array.Length > 0) {

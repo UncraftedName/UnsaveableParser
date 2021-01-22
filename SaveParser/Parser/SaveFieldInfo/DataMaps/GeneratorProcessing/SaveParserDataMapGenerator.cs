@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
@@ -14,9 +15,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 	public class SaveParserDataMapGenerator : IDataMapInfoGeneratorHandler {
 		
 		private readonly HashSet<string> _emptyRoots;
-		private readonly List<(DataMap map, string baseClass)> _unresolvedBaseClasses;
 		private readonly Dictionary<string, string> _proxies; // name, base class
 		private readonly List<(string, TypeDesc)> _unresolvedEmbeddedFields;
+		private readonly List<(DataMap map, string className, string? templateName, bool isBase)> _unresolvedDataMapNames;
+		private readonly Dictionary<string, string> _templatedClasses;
 		private DataMap? _curMap;
 		private (string name, string baseClass)? _curProxy;
 		private bool _finished;
@@ -37,8 +39,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 			_maps = new Dictionary<string, DataMap>(100);
 			_emptyRoots = new HashSet<string>();
 			_proxies = new Dictionary<string, string>(50);
-			_unresolvedBaseClasses = new List<(DataMap map, string baseClass)>();
 			_unresolvedEmbeddedFields = new List<(string, TypeDesc)>();
+			_unresolvedDataMapNames = new List<(DataMap, string, string?, bool)>();
+			_templatedClasses = new Dictionary<string, string>();
 			_curMap = null;
 			_curProxy = null;
 			_finished = false;
@@ -48,7 +51,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 		// it's time to link all the pieces together
 		public void OnFinishedIterationOfInfoGenerators() {
 
-			// go through all proxies, if the key does not exist in the complete collection then add it
+			// go through all proxies, if the key does not exist in the map dict then add it
 			foreach ((string name, string baseClass) in _proxies) {
 				// If there exists any proxies/links A->B->C, then we want A->C.
 				// For example, consider the datamaps with this inheritance pattern - A:B, B:C, C:D, & D:E.
@@ -58,21 +61,28 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 					actualBase = nextBase;
 				
 				if (_maps.TryGetValue(name, out DataMap? existingMap)) {
-					if (existingMap.Name != actualBase)
-						throw new ConstraintException($"\"{name}\" already present in as \"{existingMap.Name}\", tried to overwrite with \"{actualBase}\"");
+					if (existingMap.DataMapName != actualBase)
+						throw new ConstraintException($"\"{name}\" already present in as \"{existingMap.DataMapName}\", tried to overwrite with \"{actualBase}\"");
 					continue;
 				}
 				_maps.Add(name, _maps[actualBase]);
 			}
-			
-			// resolve base classes
-			foreach ((DataMap map, string baseClass) in _unresolvedBaseClasses) {
+
+			// resolve base classes and datamap names
+			foreach ((DataMap map, string className, string? templateName, bool isBase) in _unresolvedDataMapNames) {
 				try {
-					string actual = _proxies.GetValueOrDefault(baseClass, baseClass)!;
-					if (!_emptyRoots.Contains(actual))
-						map.BaseMap = _maps[actual];
-				} catch (Exception e) {
-					throw new Exception($"no base class called \"{baseClass}\" found", e);
+					if (isBase) {
+						string fullName = templateName == null ? className : string.Concat(className, "<", templateName, ">");
+						string actual = _proxies.GetValueOrDefault(fullName, fullName)!;
+						if (!_emptyRoots.Contains(actual))
+							map.BaseMap = _maps[actual];
+					} else {
+						map.DataMapName = _templatedClasses[className]; // gets the custom datamap name
+					}
+				} catch {
+					throw new Exception(isBase
+						? $"could not resolve base class \"{className}\" for datamap {map.DataMapName}"
+						: $"could not resolve custom datamap name for \"{map.DataMapName}\"");
 				}
 			}
 			
@@ -104,21 +114,34 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 		}
 
 
-		public void BeginDataMap(string className, string? baseClass = null) {
+		public void BeginDataMap(string name, string? templateType, string? baseName, string? baseTemplateType) {
+			if (baseTemplateType != null)
+				Debug.Assert(baseName != null);
+			
 			CheckFinish();
 			_curProxy = null;
+			string className = templateType == null ? name : string.Concat(name, "<", templateType, ">");
 			_maps.Add(className, _curMap = new DataMap(className));
-			if (baseClass != null)
-				_unresolvedBaseClasses.Add((_curMap, baseClass));
+			// we will resolve the current templated map and the base map (if either exist) later
+			if (templateType != null)
+				_unresolvedDataMapNames.Add((_curMap, name, templateType, false));
+			if (baseName != null)
+				_unresolvedDataMapNames.Add((_curMap, baseName, baseTemplateType, true));
 		}
 
 
-		public void DataMapProxy(string name, string baseClass) {
+		public void DataMapProxy(string name, string? templateType, string baseName, string? baseTemplateType) {
 			CheckFinish();
 			_curMap = null;
-			_proxies.Add(name, baseClass);
-			_curProxy = (name, baseClass);
-			
+			string thisName = templateType == null ? name : string.Concat(name, "<", templateType, ">");
+			string bName = baseTemplateType == null ? baseName : string.Concat(baseName, "<", baseTemplateType, ">");
+			_proxies.Add(thisName, bName);
+			_curProxy = (thisName, bName);
+		}
+
+
+		public void DeclareTemplatedClass(string className, string dataMapName) {
+			_templatedClasses.Add(className, dataMapName);
 		}
 
 
@@ -133,8 +156,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 		}
 
 
-		public void DefineRootClassNoMap(string name) {
-			_emptyRoots.Add(name);
+		public void DefineRootClassNoMap(string className, string? templateName) {
+			_emptyRoots.Add(templateName == null ? className : string.Concat(className, "<", templateName, ">"));
 		}
 
 

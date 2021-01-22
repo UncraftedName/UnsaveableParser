@@ -46,6 +46,7 @@ namespace SaveParser.Parser {
 			};
 			DeterminedDatamaps = new List<DeterminedDataMap>();
 			
+			Stopwatch sw = Stopwatch.StartNew();
 			// should be last
 			DataMapGeneratorInfo info = new DataMapGeneratorInfo(game, false);
 			if (!CreatedDataMapLists.TryGetValue(info, out SDataMapLookup!)) {
@@ -54,6 +55,8 @@ namespace SaveParser.Parser {
 				SDataMapLookup = handler.CompleteDataMapCollection; // after iteration, this is the result we need
 				CreatedDataMapLists[info] = SDataMapLookup;
 			}
+			sw.Stop();
+			Console.WriteLine(sw.Elapsed);
 		}
 
 

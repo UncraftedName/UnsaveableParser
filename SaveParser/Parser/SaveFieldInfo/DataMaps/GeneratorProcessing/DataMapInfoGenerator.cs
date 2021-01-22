@@ -1,4 +1,3 @@
-using System.Data;
 using SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields;
 using static SaveParser.Parser.SaveFieldInfo.DescFlags;
 using static SaveParser.Parser.SaveFieldInfo.FieldType;
@@ -9,86 +8,101 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 	/// A class that calls a bunch of pre-determined methods that describe the structure of in-game datamaps.
 	/// </summary>
 	public abstract class DataMapInfoGenerator {
-		
-		public IDataMapInfoGeneratorHandler Handler {get;private set;}
-		protected DataMapGeneratorInfo GenInfo => Handler.GenInfo;
+
+		private IDataMapInfoGeneratorHandler _handler;
+		protected DataMapGeneratorInfo GenInfo => _handler.GenInfo;
 		protected Game Game => GenInfo.Game;
 
 
 		public void GenerateWithHandler(IDataMapInfoGeneratorHandler handler) {
-			if (!handler.GetType().IsClass)
-				throw new ConstraintException($"{nameof(handler)} must be a reference type");
-			Handler = handler;
-			GenerateDataMaps();
+			lock (handler) {
+				_handler = handler;
+				GenerateDataMaps();
+			}
 		}
 
 
 		protected abstract void GenerateDataMaps();
 
 
-		protected void BeginDataMap(string className, string? baseClass = null)
-			=> Handler.BeginDataMap(className, baseClass);
+		protected void BeginDataMap(string dataMapName, string? baseName = null)
+			=> BeginTemplatedMap(dataMapName, null, baseName, null);
+
+
+		protected void DeclareTemplatedClass(string className, string dataMapName)
+			=> _handler.DeclareTemplatedClass(className, dataMapName);
+
+
+		protected void BeginTemplatedMap(string name, string? templateType, string? baseName, string? baseTemplateType) {
+			_handler.BeginDataMap(name, templateType, baseName, baseTemplateType);
+		}
 
 
 		protected void DataMapProxy(string name, string baseClass)
-			=> Handler.DataMapProxy(name, baseClass);
+			=> _handler.DataMapProxy(name, null, baseClass, null);
+
+
+		protected void DataMapProxyToTemplated(string name, string? templateType, string baseName, string? baseTemplateType)
+			=> _handler.DataMapProxy(name, templateType, baseName, baseTemplateType);
 
 
 		protected void LinkNamesToMap(params string[] proxies)
-			=> Handler.LinkNamesToMap(proxies);
+			=> _handler.LinkNamesToMap(proxies);
 
 
-		protected void DefineRootClassNoMap(string name)
-			=> Handler.DefineRootClassNoMap(name);
+		protected void DefineRootClassNoMap(string className, string? templateName = null)
+			=> _handler.DefineRootClassNoMap(className, templateName);
 
 
 		protected void DefineField(string name, FieldType fieldType, ushort count = 1)
-			=> Handler.DefineField(name, fieldType, count);
+			=> _handler.DefineField(name, fieldType, count);
 
 
 		protected void DefineInput(string name, string inputName, FieldType fieldType, ushort count = 1)
-			=> Handler.DefineInput(name, inputName, fieldType, count);
+			=> _handler.DefineInput(name, inputName, fieldType, count);
 
 
+		// 1 or more events that fire when a condition is met (trigger touched, button pressed, etc.)
 		protected void DefineOutput(string name, string outputName)
-			=> Handler.DefineOutput(name, outputName);
+			=> _handler.DefineOutput(name, outputName);
 
 
 		protected void DefineKeyField(string name, string mapName, FieldType fieldType, ushort count = 1)
-			=> Handler.DefineKeyField(name, mapName, fieldType, count);
+			=> _handler.DefineKeyField(name, mapName, fieldType, count);
 
 
 		protected void DefineInputAndKeyField(string name, string mapName, string inputName, FieldType fieldType,
 			ushort count = 1)
-			=> Handler.DefineInputAndKeyField(name, mapName, inputName, fieldType);
+			=> _handler.DefineInputAndKeyField(name, mapName, inputName, fieldType);
 
 
 		protected void DefineGlobalField(string name, FieldType fieldType, ushort count = 1)
-			=> Handler.DefineField(name, fieldType, count, FTYPEDESC_SAVE | FTYPEDESC_GLOBAL);
+			=> _handler.DefineField(name, fieldType, count, FTYPEDESC_SAVE | FTYPEDESC_GLOBAL);
 
 
 		protected void DefineGlobalKeyField(string name, string mapName, FieldType fieldType, ushort count = 1)
-			=> Handler.DefineKeyField(name, mapName, fieldType, count, FTYPEDESC_SAVE | FTYPEDESC_GLOBAL);
+			=> _handler.DefineKeyField(name, mapName, fieldType, count, FTYPEDESC_SAVE | FTYPEDESC_KEY | FTYPEDESC_GLOBAL);
 
 
+		// probably not relevant for save files - a function that can be fired
 		protected void DefineInputFunc(string inputName, string inputFunc, FieldType fieldType)
-			=> Handler.DefineInputFunc(inputName, inputFunc, fieldType);
+			=> _handler.DefineInputFunc(inputName, inputFunc, fieldType);
 
 
 		protected void DefineFunction(string name)
-			=> Handler.DefineFunction(name, FunctionType.NORMAL);
+			=> _handler.DefineFunction(name, FunctionType.NORMAL);
 
 
 		protected void DefineThinkFunc(string name)
-			=> Handler.DefineFunction(name, FunctionType.THINK);
+			=> _handler.DefineFunction(name, FunctionType.THINK);
 
 
 		protected void DefineEntityFunc(string name)
-			=> Handler.DefineFunction(name, FunctionType.ENTITY);
+			=> _handler.DefineFunction(name, FunctionType.ENTITY);
 
 
 		protected void DefineUseFunc(string name)
-			=> Handler.DefineFunction(name, FunctionType.USE);
+			=> _handler.DefineFunction(name, FunctionType.USE);
 
 
 		protected void DefineCustomField(
@@ -96,33 +110,35 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 			CustomReadFunc customReadFunc,
 			object?[]? customParams = null,
 			DescFlags flags = FTYPEDESC_SAVE)
-			=> Handler.DefineCustomField(name, customReadFunc, customParams, flags);
+			=> _handler.DefineCustomField(name, customReadFunc, customParams, flags);
 
 
 		protected void DefineSoundPatch(string name)
-			=> Handler.DefineCustomField(name, SoundPatch.Restore);
+			=> _handler.DefineCustomField(name, SoundPatch.Restore);
 
 
 		// phys stuff is actually restored during the phys block handler, it's only queued for restore in the ents
 		protected void DefinePhysPtr(string name)
-			=> Handler.DefineCustomField(name, CPhysicsEnvironment.QueueRestore);
+			=> _handler.DefineCustomField(name, CPhysicsEnvironment.QueueRestore);
 
 
 		// an embedded field simply means that the field should be read like a data map (recursively)
 		protected void DefineEmbeddedField(string name, string embeddedMap, ushort count = 1)
-			=> Handler.DefineEmbeddedField(name, embeddedMap, count);
+			=> _handler.DefineEmbeddedField(name, embeddedMap, count);
 
 
+		// vector of embedded fields
 		protected void DefineVector(string name, string elementType, DescFlags vecFlags = FTYPEDESC_SAVE)
-			=> Handler.DefineVector(name, elementType, vecFlags);
+			=> _handler.DefineVector(name, elementType, vecFlags);
 		
 
+		// vector of fields
 		protected void DefineVector(
 			string name,
 			FieldType elemFieldType,
 			DescFlags vecFlags = FTYPEDESC_SAVE,
 			CustomReadFunc? elemReadFunc = null)
-			=> Handler.DefineVector(name, elemFieldType, vecFlags, elemReadFunc);
+			=> _handler.DefineVector(name, elemFieldType, vecFlags, elemReadFunc);
 
 
 		protected void DefineUtilMap(
@@ -132,7 +148,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 			DescFlags utlMapFlags = FTYPEDESC_SAVE,
 			CustomReadFunc? keyReadFunc = null,
 			CustomReadFunc? valReadFunc = null)
-			=> Handler.DefineUtilMap(name, keyType, valType, null, null, utlMapFlags, 
+			=> _handler.DefineUtilMap(name, keyType, valType, null, null, utlMapFlags, 
 				keyReadFunc, valReadFunc);
 
 
@@ -142,7 +158,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 			FieldType valType,
 			DescFlags utlMapFlags = FTYPEDESC_SAVE,
 			CustomReadFunc? valReadFunc = null)
-			=> Handler.DefineUtilMap(name, EMBEDDED, valType, embeddedKeyName, null, utlMapFlags, 
+			=> _handler.DefineUtilMap(name, EMBEDDED, valType, embeddedKeyName, null, utlMapFlags, 
 				null, valReadFunc);
 
 
@@ -152,7 +168,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 			string embeddedValName,
 			DescFlags utlMapFlags = FTYPEDESC_SAVE,
 			CustomReadFunc? keyReadFunc = null) 
-			=> Handler.DefineUtilMap(name, keyType, EMBEDDED, null, embeddedValName, utlMapFlags, 
+			=> _handler.DefineUtilMap(name, keyType, EMBEDDED, null, embeddedValName, utlMapFlags, 
 				keyReadFunc, null);
 
 
@@ -161,13 +177,13 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 			string embeddedKeyName,
 			string embeddedValName,
 			DescFlags utlMapFlags = FTYPEDESC_SAVE)
-			=> Handler.DefineUtilMap(name, EMBEDDED, EMBEDDED, embeddedKeyName, embeddedValName, 
+			=> _handler.DefineUtilMap(name, EMBEDDED, EMBEDDED, embeddedKeyName, embeddedValName, 
 				utlMapFlags, null, null);
 
 		
 		protected void DefinePlaceholderEmbeddedField(string name) {
 #if DEBUG
-			Handler.DefinePlaceholderEmbeddedField(name);
+			_handler.DefinePlaceholderEmbeddedField(name);
 #endif
 		}
 	}

@@ -84,7 +84,7 @@ namespace SaveParser.Parser.SaveFieldInfo {
 				return;
 			}
 			if (Desc.FieldType == EMBEDDED) {
-				iw.Append($"{Desc.EmbeddedMap!.Name}");
+				iw.Append($"{Desc.EmbeddedMap!.ClassName}");
 				if (ElemCount == 1) {
 					if (!(Field is ParsedDataMap emMap))
 						throw new Exception($"Unexpected type for embedded field: {Field!.GetType()}");

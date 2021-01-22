@@ -355,7 +355,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 
 			DataMapProxy("CAI_ExpresserHost<CAI_BaseHumanoid>", "CAI_BaseHumanoid");
 
-			BeginDataMap("CAI_BaseActor", "CAI_ExpresserHost<CAI_BaseHumanoid>");
+			BeginTemplatedMap("CAI_BaseActor", null, "CAI_ExpresserHost", "CAI_BaseHumanoid");
 			DefineField("m_fLatchedPositions", INTEGER);
 			DefineField("m_latchedEyeOrigin", VECTOR);
 			DefineField("m_latchedEyeDirection", VECTOR);
@@ -416,7 +416,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			
 			DataMapProxy("CNPCBaseInteractive<CAI_BaseNPC>", "CAI_BaseNPC");
 			
-			BeginDataMap("CNPC_SecurityCamera", "CNPCBaseInteractive<CAI_BaseNPC>");
+			BeginTemplatedMap("CNPC_SecurityCamera", null, "CNPCBaseInteractive", "CAI_BaseNPC");
 			LinkNamesToMap("npc_security_camera");
 			DefineField("m_hRopes", EHANDLE, SECURITY_CAMERA_NUM_ROPES);
 			DefineField("m_hEyeGlow", EHANDLE);
@@ -445,7 +445,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			if (Game == Game.PORTAL2)
 				DefineField("m_nTeamToLookAt", INTEGER);
 
-			BeginDataMap("CNPC_FloorTurret", "CNPCBaseInteractive<CAI_BaseNPC>");
+			BeginTemplatedMap("CNPC_FloorTurret", null, "CNPCBaseInteractive", "CAI_BaseNPC");
 			DefineField("m_iAmmoType", INTEGER);
 			DefineField("m_bAutoStart", BOOLEAN);
 			DefineField("m_bActive", BOOLEAN);

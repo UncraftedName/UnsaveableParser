@@ -95,6 +95,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 		}
 
 
+		// Given some class D whose class hierarchy is D:C, C:B, and B:A, this function gets called recursively up to
+		// the most base class, and then effectively iterated backwards (from A to D), inserting the datamap into the
+		// tree if it does not exist.
 		private TreeNode IterateAndAddNodes(ClassNode classNode) {
 			SortedDictionary<string, TreeNode> insertionLevel = classNode.BaseClass == null
 				? Roots : IterateAndAddNodes(_classNodes[classNode.BaseClass]).Children;
@@ -114,13 +117,22 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 		}
 
 
-		public void BeginDataMap(string className, string? baseClass = null) {
-			_classNodes.Add(className, new ClassNode(className, baseClass, true));
+		// I don't care about special names, although maybe I should implement this at some point
+		public void DeclareTemplatedClass(string className, string dataMapName) {}
+
+
+		public void BeginDataMap(string name, string? templateType, string? baseName, string? baseTemplateType) {
+			string thisName = templateType == null ? name : string.Concat(name, "<", templateType, ">");
+			string? bName = baseName == null ? null
+				: baseTemplateType == null ? baseName : string.Concat(baseName, "<", baseTemplateType, ">");
+			_classNodes.Add(thisName, new ClassNode(thisName, bName, true));
 		}
 
 
-		public void DataMapProxy(string name, string baseClass) {
-			_classNodes.Add(name, new ClassNode(name, baseClass, false));
+		public void DataMapProxy(string name, string? templateType, string baseName, string? baseTemplateType) {
+			string thisName = templateType == null ? name : string.Concat(name, "<", templateType, ">");
+			string bName = baseTemplateType == null ? baseName : string.Concat(baseName, "<", baseTemplateType, ">");
+			_classNodes.Add(thisName, new ClassNode(thisName, bName, false));
 		}
 
 
@@ -130,8 +142,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 		}
 
 
-		public void DefineRootClassNoMap(string name) {
-			DataMapProxy(name, null!);
+		public void DefineRootClassNoMap(string className, string? templateName) {
+			DataMapProxy(className, templateName, null!, null!);
 		}
 
 

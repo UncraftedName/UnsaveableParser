@@ -40,9 +40,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 		
 		public override void PrettyWrite(IPrettyWriter iw) {
 			iw.Append("UtilMap<");
-			iw.Append(KeyDesc.FieldType == EMBEDDED ? KeyDesc.EmbeddedMap!.Name : KeyDesc.TypeString);
+			iw.Append(KeyDesc.FieldType == EMBEDDED ? KeyDesc.EmbeddedMap!.ClassName : KeyDesc.TypeString);
 			iw.Append(",");
-			iw.Append(ValDesc.FieldType == EMBEDDED ? ValDesc.EmbeddedMap!.Name : ValDesc.TypeString);
+			iw.Append(ValDesc.FieldType == EMBEDDED ? ValDesc.EmbeddedMap!.ClassName : ValDesc.TypeString);
 			iw.Append($">[{Elements.Length}] {Desc.Name}" + (Elements.Length > 0 ? ":" : ""));
 			if (Elements.Length > 0) {
 				iw.FutureIndent++;

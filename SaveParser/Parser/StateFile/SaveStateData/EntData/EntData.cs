@@ -23,7 +23,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 			try {
 				ParsedFields = bsr.ReadDataMapRecursive(ClassMap, SaveInfo);
 			} catch (Exception e) {
-				SaveInfo.AddError($"exception while parsing map \"{ClassMap.Name}\": {e.Message}");
+				SaveInfo.AddError($"exception while parsing map \"{ClassMap.ClassName}\": {e.Message}");
 			}
 		}
 

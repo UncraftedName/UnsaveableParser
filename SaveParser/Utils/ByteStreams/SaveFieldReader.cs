@@ -104,13 +104,13 @@ namespace SaveParser.Utils.ByteStreams {
 
 		public ParsedDataMap ReadDataMap(DataMap map, SaveInfo info) {
 			if (ReadSShort() != 4)
-				throw new ConstraintException($"bad first value while parsing datamap \"{map.Name}\", expected 4");
+				throw new ConstraintException($"bad first value while parsing datamap \"{map.ClassName}\", expected 4");
 			string sym = ReadSymbol(info)!;
-			if (sym != map.Name) {
+			if (sym != map.DataMapName) {
 				info.SDataMapLookup.TryGetValue(sym, out DataMap? cmpMap);
 				if (!ReferenceEquals(cmpMap, map)) {
 					DetermineDataMapHierarchy(info, "no datamap found", AbsoluteByteIndex - 4);
-					throw new ArgumentException($"bad symbol, expected \"{map.Name}\" but read \"{sym}\"");
+					throw new ArgumentException($"bad symbol, expected \"{map.DataMapName}\" but read \"{sym}\"");
 				}
 			}
 			int fieldsSaved = ReadSInt();
@@ -127,7 +127,7 @@ namespace SaveParser.Utils.ByteStreams {
 							EndBlock(info);     // try ending the block to see if we read this correctly
 							ret.AddSaveField(f);
 						} catch (Exception e) {
-							info.AddError($"exception while reading field {s} from datamap \"{map.Name}\": {e.Message}");
+							info.AddError($"exception while reading field {s} from datamap \"{map.ClassName}\": {e.Message}");
 							SkipCurrentBlock(info);
 						}
 					} else {
@@ -135,7 +135,7 @@ namespace SaveParser.Utils.ByteStreams {
 						SkipCurrentBlock(info);
 					}
 				} else {
-					info.AddError($"skipping field \"{s}\" from datamap \"{map.Name}\" ({byteSize} bytes), no appropriate field found");
+					info.AddError($"skipping field \"{s}\" from datamap \"{map.ClassName}\" ({byteSize} bytes), no appropriate field found");
 					SkipCurrentBlock(info);
 				}
 			}

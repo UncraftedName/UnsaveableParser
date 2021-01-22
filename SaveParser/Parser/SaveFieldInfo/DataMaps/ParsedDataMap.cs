@@ -57,7 +57,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			foreach (var (key, value) in _thisFields) {
 				if (!_combinedFields.TryAdd(key, value) && !Equals(_combinedFields[key], value)) {
 					// formatting is dumb, too bad!
-					throw new ConstraintException($"duplicate field names, {DataMap.Name}::{{{_combinedFields[key].ToString()}}} does not match {dataMap.DataMap.Name}::{{{value.ToString()}}}");
+					throw new ConstraintException($"duplicate field names, {DataMap.ClassName}::{{{_combinedFields[key].ToString()}}} does not match {dataMap.DataMap.ClassName}::{{{value.ToString()}}}");
 				}
 			}
 		}
@@ -101,7 +101,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 
 
 		public override void PrettyWrite(IPrettyWriter iw) {
-			iw.Append($"{DataMap.Name}:");
+			iw.Append($"{DataMap.ClassName}:");
 			EnumerablePrettyWriteHelper(_thisFields.Values, iw);
 			var nextBase = _baseParsedMap;
 			while (nextBase != null && nextBase._thisFields.Count == 0)

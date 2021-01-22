@@ -22,7 +22,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 
 
 		public override void PrettyWrite(IPrettyWriter iw) {
-			iw.Append($"{ClassMap.Name} (version {Version}):");
+			iw.Append($"{ClassMap.ClassName} (version {Version}):");
 			iw.FutureIndent++;
 			iw.AppendLine();
 			MinPathArray.PrettyWrite(iw);

@@ -577,11 +577,26 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineEmbeddedField("m_fog", "fogparams_t");
 			DefineEmbeddedField("m_audio", "audioparams_t");
 
+			// some confusing template spaghetti, thank you valve
 			if (Game == Game.PORTAL2) {
-				BeginDataMap("PaintableEntity", "CBasePlayer"); // no source code for this :( todo this isn't quite right
+				// there exists at least one class "IPaintableEntity<T>" with a datamap called "PaintableEntity"
+				DeclareTemplatedClass("IPaintableEntity", "PaintableEntity");
+				
+				// create the datamap for the class "IPaintableEntity<CBasePlayer> : CBasePlayer" (which has the name "PaintableEntity")
+				BeginTemplatedMap("IPaintableEntity", "CBasePlayer", "CBasePlayer", null);
 				DefineField("m_iPaintPower", INTEGER); // todo paint type?
+				
+				// CBaseMultiplayer : IPaintableEntity<CBasePlayer> (no datamap)
+				DataMapProxyToTemplated("CBaseMultiplayerPlayer", null, "IPaintableEntity", "CBasePlayer");
+				
+				// CPaintableEntity<CBaseMultiplayerPlayer> : CBaseMultiplayerPlayer (no datamap)
+				DataMapProxyToTemplated("CPaintableEntity", "CBaseMultiplayerPlayer", "CBaseMultiplayerPlayer", null);
+				
+				// PaintPowerUser<CPaintableEntity<CBaseMultiplayerPlayer>> : CPaintableEntity<CBaseMultiplayerPlayer> (no datamap)
+				DataMapProxyToTemplated("PaintPowerUser", "CPaintableEntity<CBaseMultiplayerPlayer>", "CPaintableEntity", "CBaseMultiplayerPlayer");
 
-				BeginDataMap("CPortal_Player", "PaintableEntity"); // todo PaintPowerUser<CPaintableEntity<CBaseMultiplayerPlayer>>
+				// CPortal_Player : PaintPowerUser<CPaintableEntity<CBaseMultiplayerPlayer>> (this is really the thing we're after)
+				BeginTemplatedMap("CPortal_Player", null, "PaintPowerUser", "CPaintableEntity<CBaseMultiplayerPlayer>");
 			} else {
 				BeginDataMap("CPortal_Player", "CHL2_Player");
 			}
