@@ -20,7 +20,7 @@ In general, there's lots of juicy stuff in a save file and it's not necessarily 
 using var w = new IndentedTextWriter(new FileStream("your favorite file.txt", FileMode.Create));
 save.AppendToWriter(w);
 ```
-This will create a fully readable text representation of the parsed data (note that there's still lots of stuff that isn't parsed yet).
+This will create a fully readable text representation of the parsed data (note that there's still lots of stuff that isn't parsed yet). A sample of this verbose dump can be found [here](verbose-sample.txt).
 
 ## Structure
 
