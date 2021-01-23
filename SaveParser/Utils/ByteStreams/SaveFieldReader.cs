@@ -109,7 +109,7 @@ namespace SaveParser.Utils.ByteStreams {
 			if (sym != map.DataMapName) {
 				info.SDataMapLookup.TryGetValue(sym, out DataMap? cmpMap);
 				if (!ReferenceEquals(cmpMap, map)) {
-					DetermineDataMapHierarchy(info, "no datamap found", AbsoluteByteIndex - 4);
+					DetermineDataMapHierarchy(info, $"no datamap \"{sym}\" found", AbsoluteByteIndex - 4);
 					throw new ArgumentException($"bad symbol, expected \"{map.DataMapName}\" but read \"{sym}\"");
 				}
 			}
