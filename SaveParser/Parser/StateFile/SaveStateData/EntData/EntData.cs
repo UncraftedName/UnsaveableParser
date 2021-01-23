@@ -32,7 +32,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 			if (ParsedFields == null) {
 				iw.Append($"parsing fields failed for entity class: {ClassMap}");
 			} else {
-				iw.Append("parsed fields - ");
+				iw.Append($"({HeaderInfo.GetField<string>("classname").Field}) ");
 				ParsedFields.PrettyWrite(iw);
 			}
 		}

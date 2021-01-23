@@ -49,7 +49,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData {
 			base.PrettyWrite(iw);
 			iw.Append($"\n{EntData.Length} entities:");
 #pragma warning disable 8631
-			EnumerablePrettyWriteHelper(EntData, iw, enumerate: true);
+			EnumerablePrettyWriteHelper(EntData, iw);
 #pragma warning restore 8631
 		}
 	}
