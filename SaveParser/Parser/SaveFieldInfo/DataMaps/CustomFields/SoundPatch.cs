@@ -1,3 +1,4 @@
+using System;
 using SaveParser.Utils;
 using SaveParser.Utils.ByteStreams;
 
@@ -34,6 +35,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 			iw.Append($"{Patches.Length} sound patch");
 			if (Patches.Length != 1)
 				iw.Append("es");
+			iw.Append($" {Desc.Name}");
 			if (Patches.Length > 0) {
 				iw.Append(":");
 				iw.FutureIndent++;
@@ -64,20 +66,26 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.CustomFields {
 				bsr.StartBlock(info);
 				bsr.TryReadDataMapRecursive("CSoundPatch", info, out var patch);
 				bsr.EndBlock(info);
+				ParsedDataMap?[]? commands = null;
 				if (patch!.GetFieldOrDefault<int>("m_isPlaying") != 0) {
 					bsr.StartBlock(info);
 					var commandCount = bsr.ReadSInt();
-					ParsedDataMap?[] commands = new ParsedDataMap?[commandCount];
+					commands = new ParsedDataMap?[commandCount];
 					for (int j = 0; j < commandCount; j++) {
 						bsr.StartBlock(info);
 						bsr.TryReadDataMapRecursive("SoundCommand_t", info, out commands[j]);
 						bsr.EndBlock(info);
 					}
 					bsr.EndBlock(info);
-					patches[i] = (patch, commands);
 				}
+				patches[i] = (patch, commands);
 			}
-			bsr.EndBlock(info);
+			try {
+				bsr.EndBlock(info);
+			} catch (Exception e) {
+				// I've only seen this happen with m_sndPlayerInBeam, but it seems to work fine other than not ending on the correct byte
+				info.AddError($"exception while parsing {nameof(SoundPatch)} for field \"{typeDesc.Name}\": {e.Message}"); 
+			}
 			return new SoundPatch(typeDesc, patches);
 		}
 	}
