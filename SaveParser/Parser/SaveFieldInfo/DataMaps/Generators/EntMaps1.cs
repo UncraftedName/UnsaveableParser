@@ -439,6 +439,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 				DefineEmbeddedField("m_PlayerFog", "fogplayerparams_t");
 				DefineField("m_bDropEnabled", BOOLEAN);
 				DefineField("m_bDuckEnabled", BOOLEAN);
+				DefineField("m_fTimeLastHurt", FLOAT);
 			}
 			
 			BeginDataMap("CHL2PlayerLocalData");
@@ -576,26 +577,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineEmbeddedField("m_PlayerFog", "fogplayerparams_t");
 			DefineEmbeddedField("m_fog", "fogparams_t");
 			DefineEmbeddedField("m_audio", "audioparams_t");
-
-			// some confusing template spaghetti, thank you valve
+			
 			if (Game == Game.PORTAL2) {
-				// there exists at least one class "IPaintableEntity<T>" with a datamap called "PaintableEntity"
-				DeclareTemplatedClass("IPaintableEntity", "PaintableEntity");
-				DefineField("m_iPaintPower", INTEGER);
-				
-				// create the datamap for the class "IPaintableEntity<CBasePlayer> : CBasePlayer" (which has the name "PaintableEntity")
-				BeginTemplatedMap("IPaintableEntity", "CBasePlayer", "CBasePlayer", null);
-				
-				// CBaseMultiplayer : IPaintableEntity<CBasePlayer> (no datamap)
-				DataMapProxyToTemplated("CBaseMultiplayerPlayer", null, "IPaintableEntity", "CBasePlayer");
-				
-				// CPaintableEntity<CBaseMultiplayerPlayer> : CBaseMultiplayerPlayer (no datamap)
-				DataMapProxyToTemplated("CPaintableEntity", "CBaseMultiplayerPlayer", "CBaseMultiplayerPlayer", null);
-				
-				// PaintPowerUser<CPaintableEntity<CBaseMultiplayerPlayer>> : CPaintableEntity<CBaseMultiplayerPlayer> (no datamap)
-				DataMapProxyToTemplated("PaintPowerUser", "CPaintableEntity<CBaseMultiplayerPlayer>", "CPaintableEntity", "CBaseMultiplayerPlayer");
-
-				// CPortal_Player : PaintPowerUser<CPaintableEntity<CBaseMultiplayerPlayer>> (this is really the thing we're after)
+				// CPortal_Player : PaintPowerUser<CPaintableEntity<CBaseMultiplayerPlayer>>
 				BeginTemplatedMap("CPortal_Player", null, "PaintPowerUser", "CPaintableEntity<CBaseMultiplayerPlayer>");
 			} else {
 				BeginDataMap("CPortal_Player", "CHL2_Player");
@@ -641,33 +625,9 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 				DefineField("m_flHullHeight", FLOAT);
 				DefineEmbeddedField("m_PortalLocal", "CPortalPlayerLocalData");
 				DefineEmbeddedField("m_StatsThisLevel", "PortalPlayerStatistics_t");
-				
-				BeginDataMap("CPortalPlayerLocalData");
-				DefineField("m_nLocatorEntityIndices", EHANDLE, 16);
-				DefineField("m_StickNormal", VECTOR);
-				DefineField("m_OldStickNormal", VECTOR);
-				DefineField("m_Up", VECTOR);
-				DefineField("m_StandHullMin", VECTOR);
-				DefineField("m_StandHullMax", VECTOR);
-				DefineField("m_DuckHullMin", VECTOR);
-				DefineField("m_DuckHullMax", VECTOR);
-				DefineField("m_CachedStandHullMinAttempt", VECTOR);
-				DefineField("m_CachedStandHullMaxAttempt", VECTOR);
-				DefineField("m_CachedDuckHullMinAttempt", VECTOR);
-				DefineField("m_CachedDuckHullMaxAttempt", VECTOR);
-				DefineField("m_vLocalUp", VECTOR);
-				DefineField("m_PaintedPowerType", INTEGER); // todo paint type?
-				DefineField("m_flAirInputScale", FLOAT);
-				DefineField("m_flCurrentStickTime", FLOAT);
-				DefineField("m_nStickCameraState", INTEGER);
-				DefineField("m_bDoneStickInterp", BOOLEAN);
-				DefineField("m_bDoneCorrectPitch", BOOLEAN);
-
-				BeginDataMap("PortalPlayerStatistics_t");
-				DefineField("iNumPortalsPlaced", INTEGER);
-				DefineField("iNumStepsTaken", INTEGER);
-				DefineField("fNumSecondsTaken", FLOAT);
-				DefineField("fDistanceTaken", FLOAT);
+				DefineField("m_flUseKeyCooldownTime", FLOAT);
+				DefineField("m_flUseKeyStartTime", FLOAT);
+				DefineField("m_flAutoGrabLockOutTime", FLOAT);
 			}
 
 			BeginDataMap("LadderMove_t");
@@ -685,140 +645,48 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineField("m_vecRagdollOrigin", POSITION_VECTOR);
 			DefineField("m_hPlayer", EHANDLE);
 			DefineField("m_vecRagdollVelocity", VECTOR);
-
-			if (Game == Game.PORTAL2) {
-				BeginDataMap("CInfoPlacementHelper", "CBaseEntity");
-				LinkNamesToMap("info_placement_helper");
-				DefineField("m_flRadius", FLOAT);
-				
-				BeginDataMap("CPropButton", "CBaseAnimating");
-				LinkNamesToMap("prop_button");
-				DefineThinkFunc("AnimateThink");
-				DefineThinkFunc("TimerThink");
-				DefineKeyField("m_flDelayBeforeReset", "Delay", FLOAT);
-				DefineKeyField("m_bIsTimer", "IsTimer", BOOLEAN);
-				DefineKeyField("m_bPreventFastReset", "PreventFastReset", BOOLEAN);
-				DefineField("m_hActivator", EHANDLE);
-				DefineField("m_bLocked", BOOLEAN);
-				DefineField("m_bTimerCancelled", BOOLEAN);
-				DefineField("m_flGoalTime", TIME);
-				DefineField("m_UpSequence", INTEGER);
-				DefineField("m_DownSequence", INTEGER);
-				DefineField("m_IdleDownSequence", INTEGER);
-				DefineField("m_IdleUpSequence", INTEGER);
-				DefineInputFunc("Press", "InputPress", VOID);
-				DefineInputFunc("Lock", "InputLock", VOID);
-				DefineInputFunc("Unlock", "InputUnlock", VOID);
-				DefineInputFunc("CancelPress", "InputCancelPress", VOID);
-				DefineOutput("m_OnPressed", "OnPressed");
-				DefineOutput("m_OnPressedOrange", "OnPressedOrange");
-				DefineOutput("m_OnPressedBlue", "OnPressedBlue");
-				DefineOutput("m_OnButtonReset", "OnButtonReset");
-				
-				BeginDataMap("CPropTestChamberDoor", "CBaseAnimating");
-				LinkNamesToMap("prop_testchamber_door");
-				DefineField("m_nSequenceOpen", INTEGER);
-				DefineField("m_nSequenceOpenIdle", INTEGER);
-				DefineField("m_nSequenceClose", INTEGER);
-				DefineField("m_nSequenceCloseIdle", INTEGER);
-				DefineField("m_bIsOpen", BOOLEAN);
-				DefineField("m_bIsAnimating", BOOLEAN);
-				DefineField("m_bIsLocked", BOOLEAN);
-				DefineField("m_hAreaPortalWindow", EHANDLE);
-				DefineKeyField("m_strAreaPortalWindowName", "AreaPortalWindow", STRING);
-				DefineKeyField("m_bUseAreaPortalFade", "UseAreaPortalFade", BOOLEAN);
-				DefineKeyField("m_flAreaPortalFadeStartDistance", "AreaPortalFadeStart", FLOAT);
-				DefineKeyField("m_flAreaPortalFadeEndDistance", "AreaPortalFadeEnd", FLOAT);
-				DefineThinkFunc("AnimateThink");
-				DefineInputFunc("Open", "InputOpen", VOID);
-				DefineInputFunc("Close", "InputClose", VOID);
-				DefineInputFunc("Lock", "InputLock", VOID);
-				DefineInputFunc("LockOpen", "InputLockOpen", VOID);
-				DefineInputFunc("Unlock", "InputUnlock", VOID);
-				DefineOutput("m_OnOpen", "OnOpen");
-				DefineOutput("m_OnClose", "OnClose");
-				DefineOutput("m_OnFullyClosed", "OnFullyClosed");
-				DefineOutput("m_OnFullyOpen", "OnFullyOpen");
-				DefineEmbeddedField("m_BoneFollowerManager", "CBoneFollowerManager");
-				
-				BeginDataMap("CPropFloorButton", "CDynamicProp");
-				LinkNamesToMap("prop_floor_button");
-				DefineThinkFunc("AnimateThink");
-				DefineThinkFunc("PressingBoxHasSetteledThink");
-				DefineField("m_UpSequence", INTEGER);
-				DefineField("m_DownSequence", INTEGER);
-				DefineField("m_hButtonTrigger", EHANDLE);
-				DefineInputFunc("PressIn", "InputPressIn", VOID);
-				DefineInputFunc("PressOut", "InputPressOut", VOID);
-				DefineOutput("m_OnPressed", "OnPressed");
-				DefineOutput("m_OnPressedOrange", "OnPressedOrange");
-				DefineOutput("m_OnPressedBlue", "OnPressedBlue");
-				DefineOutput("m_OnUnPressed", "OnUnPressed");
-				
-				BeginDataMap("CPropIndicatorPanel", "CBaseEntity");
-				LinkNamesToMap("prop_indicator_panel");
-				DefineField("m_strIndicatorLights", STRING);
-				DefineField("m_hIndicatorPanel", EHANDLE);
-				
-				BeginDataMap("CBaseProjector", "CBaseAnimating");
-				DefineField("m_hFirstChild", EHANDLE);
-				DefineField("m_bEnabled", BOOLEAN);
-
-				BeginDataMap("CPropWallProjector", "CBaseProjector");
-				LinkNamesToMap("prop_wall_projector");
-				DefineSoundPatch("m_pAmbientSound");
-				DefineSoundPatch("m_pAmbientMusic");
-				DefineField("m_hAmbientSoundProxy", EHANDLE);
-
-				BeginDataMap("CLabIndicatorPanel", "CBaseEntity");
-				LinkNamesToMap("vgui_indicator_panel");
-				DefineField("m_bEnabled", BOOLEAN);
-				DefineField("m_iPlayerPinged", INTEGER);
-				DefineField("m_hScreen", EHANDLE);
-				
-				BeginDataMap("FizzlerMultiOriginSoundPlayer", "CBaseEntity");
-				LinkNamesToMap("fizzler_multiorigin_sound_player");
-				DefineSoundPatch("m_pSound");
-				
-				BeginDataMap("CBaseProjectedEntity", "CBaseEntity");
-				DefineField("m_vecStartPoint", VECTOR);
-				DefineField("m_vecEndPoint", VECTOR);
-				DefineField("m_iMaxRemainingRecursions", INTEGER);
-				DefineField("m_bCreatePlacementHelper", BOOLEAN);
-
-				// IPaintableEntity<CBaseProjectedEntity> : CBaseProjectedEntity
-				BeginTemplatedMap("IPaintableEntity", "CBaseProjectedEntity", "CBaseProjectedEntity", null);
-				
-				// CProjectedWallEntity : IPaintableEntity<CBaseProjectedEntity>
-				BeginTemplatedMap("CProjectedWallEntity", null, "IPaintableEntity", "CBaseProjectedEntity");
-				LinkNamesToMap("projected_wall_entity");
-				DefineField("m_vWorldSpace_WallMins", VECTOR);
-				DefineField("m_vWorldSpace_WallMaxs", VECTOR);
-				DefineField("m_flLength", FLOAT);
-				DefineField("m_flWidth", FLOAT);
-				DefineField("m_flHeight", FLOAT);
-				DefineField("m_bIsHorizontal", BOOLEAN);
-				DefineField("m_flSegmentLength", FLOAT);
-				DefineField("m_nNumSegments", INTEGER);
-				
-				BeginDataMap("CPortalStatsController", "CBaseEntity");
-				LinkNamesToMap("portal_stats_controller");
-				
-				DeclareTemplatedClass("PropPaintPowerUser");
-				DefineKeyField("m_PrePaintedPower", "PaintPower", INTEGER);
-				DefineMaterialIndexDataOps("m_nOriginalMaterialIndex"); // seems to work, not 100% sure tho
-				
-				BeginTemplatedMap("IPaintableEntity", "CPhysicsProp", "CPhysicsProp", null);
-				
-				BeginTemplatedMap("PropPaintPowerUser", "IPaintableEntity<CPhysicsProp>", "IPaintableEntity", "CPhysicsProp");
-				
-				// there might be some classes missing in this hierarcy, but it'll just be proxies so whatever
-				BeginTemplatedMap("CPropWeightedCube", null, "PropPaintPowerUser", "IPaintableEntity<CPhysicsProp>");
-				LinkNamesToMap("prop_weighted_cube");
-				DefineField("m_nCurrentPaintedType", INTEGER);
-				DefineField("m_bNewSkins", BOOLEAN);
-				DefineOutput("m_OnFizzled", "OnFizzled");
+			
+			BeginDataMap("CRevertSaved", "CPointEntity");
+			LinkNamesToMap("player_loadsaved");
+			if (GenInfo.IsDefHl1Dll) {
+				DefineKeyField("m_iszMessage", "message", STRING);
+				DefineKeyField("m_messageTime", "messagetime", FLOAT);
+				DefineFunction("MessageThink");
 			}
+			DefineKeyField("m_loadTime", "loadtime", FLOAT);
+			DefineKeyField("m_Duration", "duration", FLOAT);
+			DefineKeyField("m_HoldTime", "holdtime", FLOAT);
+			DefineInputFunc("Reload", "InputReload", VOID);
+			DefineFunction("LoadThink");
+			
+			BeginDataMap("CFuncMonitor", "CFuncBrush");
+			LinkNamesToMap("func_monitor");
+			DefineField("m_hInfoCameraLink", EHANDLE);
+			DefineInputFunc("SetCamera", "InputSetCamera", STRING);
+			
+			BeginDataMap("CPointCamera", "CBaseEntity");
+			LinkNamesToMap("point_camera");
+			DefineKeyField("m_FOV", "FOV", FLOAT);
+			DefineKeyField("m_Resolution", "resolution", FLOAT);
+			DefineKeyField("m_bFogEnable", "fogEnable", BOOLEAN);
+			DefineKeyField("m_FogColor", "fogColor", COLOR32);
+			DefineKeyField("m_flFogStart", "fogStart", FLOAT);
+			DefineKeyField("m_flFogEnd", "fogEnd", FLOAT);
+			DefineKeyField("m_flFogMaxDensity", "fogMaxDensity", FLOAT);
+			DefineKeyField("m_bUseScreenAspectRatio", "UseScreenAspectRatio", BOOLEAN);
+			DefineField("m_bActive", BOOLEAN);
+			DefineField("m_bIsOn", BOOLEAN);
+			DefineField("m_TargetFOV", FLOAT);
+			DefineField("m_DegreesPerSecond", FLOAT);
+			DefineFunction("ChangeFOVThink");
+			DefineInputFunc("ChangeFOV", "InputChangeFOV", STRING);
+			DefineInputFunc("SetOnAndTurnOthersOff", "InputSetOnAndTurnOthersOff", VOID);
+			DefineInputFunc("SetOn", "InputSetOn", VOID);
+			DefineInputFunc("SetOff", "InputSetOff", VOID);
+			
+			BeginDataMap("CFuncWall","CBaseEntity");
+			LinkNamesToMap("func_wall");
+			DefineField("m_nState", INTEGER);
 		}
 	}
 }

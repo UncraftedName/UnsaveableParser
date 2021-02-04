@@ -524,6 +524,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			if (Game == Game.PORTAL2) {
 				DefineField("m_bAlwaysUpdate", BOOLEAN);
 				DefineField("m_iStyle", INTEGER);
+				DefineField("m_iszPattern", STRING);
 			}
 			
 			BeginDataMap("CLightGlow", "CBaseEntity");
@@ -536,6 +537,43 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineKeyField("m_flGlowProxySize", "GlowProxySize", FLOAT);
 			DefineKeyField("m_flHDRColorScale", "HDRColorScale", FLOAT);
 			DefineInputFunc("Color", "InputColor", COLOR32);
+			
+			BeginDataMap("CDynamicLight", "CBaseEntity");
+			LinkNamesToMap("light_dynamic");
+			DefineField("m_ActualFlags", BYTE);
+			DefineField("m_Flags", BYTE);
+			DefineField("m_On", BOOLEAN);
+			DefineThinkFunc("DynamicLightThink");
+			DefineInput("m_Radius", "distance", FLOAT);
+			DefineInput("m_Exponent", "brightness", INTEGER);
+			DefineInput("m_InnerAngle", "_inner_cone", FLOAT);
+			DefineInput("m_OuterAngle", "_cone", FLOAT);
+			DefineInput("m_SpotRadius", "spotlight_radius", FLOAT);
+			DefineInput("m_LightStyle", "style", BYTE);
+			DefineInputFunc("TurnOn", "InputTurnOn", VOID);
+			DefineInputFunc("TurnOff", "InputTurnOff", VOID);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
+			
+			BeginDataMap("CEnvAR2Explosion", "CPointEntity");
+			LinkNamesToMap("env_ar2explosion");
+			DefineInputFunc("Explode", "InputExplode", VOID);
+			DefineKeyField("m_iszMaterialName", "material", STRING);
+			
+			BeginDataMap("CEnvWind", "CBaseEntity");
+			LinkNamesToMap("env_wind");
+			DefineKeyField("m_EnvWindShared.m_iMinWind", "minwind", INTEGER);
+			DefineKeyField("m_EnvWindShared.m_iMaxWind", "maxwind", INTEGER);
+			DefineKeyField("m_EnvWindShared.m_iMinGust", "mingust", INTEGER);
+			DefineKeyField("m_EnvWindShared.m_iMaxGust", "maxgust", INTEGER);
+			DefineKeyField("m_EnvWindShared.m_flMinGustDelay", "mingustdelay", FLOAT);
+			DefineKeyField("m_EnvWindShared.m_flMaxGustDelay", "maxgustdelay", FLOAT);
+			DefineKeyField("m_EnvWindShared.m_iGustDirChange", "gustdirchange", INTEGER);
+			DefineKeyField("m_EnvWindShared.m_flGustDuration", "gustduration", FLOAT);
+			DefineField("m_EnvWindShared.m_iWindDir", INTEGER);
+			DefineField("m_EnvWindShared.m_flWindSpeed", FLOAT);
+			DefineOutput("m_EnvWindShared.m_OnGustStart", "OnGustStart");
+			DefineOutput("m_EnvWindShared.m_OnGustEnd", "OnGustEnd");
+			DefineFunction("WindThink");
 		}
 	}
 }

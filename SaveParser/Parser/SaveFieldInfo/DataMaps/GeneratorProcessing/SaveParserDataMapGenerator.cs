@@ -166,6 +166,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 		}
 
 
+		public void LinkedNamesToOtherMap(string mapName, string[] proxies) {
+			foreach (string s in proxies)
+				_proxies.Add(s, mapName);
+		}
+
+
 		public void DefineRootClassNoMap(string className, string? templateName) {
 			_emptyRoots.Add(templateName == null ? className : string.Concat(className, "<", templateName, ">"));
 		}

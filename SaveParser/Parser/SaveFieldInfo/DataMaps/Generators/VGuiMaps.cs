@@ -55,29 +55,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineKeyField("m_iScreenHeight", "height", INTEGER);
 			DefineInputFunc("Disable", "InputDisable", VOID);
 			DefineInputFunc("Enable", "InputEnable", VOID);
-			
-			if (Game == Game.PORTAL2) {
-				BeginDataMap("CMovieDisplay", "CBaseEntity");
-				LinkNamesToMap("vgui_movie_display");
-				DefineField("m_bEnabled", BOOLEAN);
-				DefineKeyField("m_szDisplayText", "displaytext", CHARACTER, 128);
-				DefineField("m_szMovieFilename", CHARACTER, 128);
-				DefineKeyField("m_strMovieFilename", "moviefilename", STRING);
-				DefineField("m_szGroupName", CHARACTER, 128);
-				DefineKeyField("m_strGroupName", "groupname", STRING); // Screens of the same group name will play the same movie at the same time
-				DefineKeyField("m_iScreenWidth", "width", INTEGER);
-				DefineKeyField("m_iScreenHeight", "height", INTEGER);
-				DefineKeyField("m_bLooping", "looping", BOOLEAN);
-				DefineField("m_bDoFullTransmit", BOOLEAN);
-				DefineField("m_hScreen", EHANDLE);
-				DefineInputFunc("Disable", "InputDisable", VOID);
-				DefineInputFunc("Enable", "InputEnable", VOID);
-				DefineInputFunc("SetDisplayText", "InputSetDisplayText", STRING);
-				DefineField("m_bStretchToFill", BOOLEAN);
-				DefineField("m_bForcedSlave", BOOLEAN);
-				DefineField("m_flUMax", FLOAT);
-				DefineField("m_flVMax", FLOAT);
-			}
 		}
 	}
 }

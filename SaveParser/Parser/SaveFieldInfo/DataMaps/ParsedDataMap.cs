@@ -48,7 +48,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 
 		private bool _baseAdded;
 		
-		public void AddBaseParsedMap(ParsedDataMap dataMap) {
+		public void AddBaseParsedMap(ParsedDataMap dataMap, SaveInfo saveInfo) {
 			Debug.Assert(!_baseAdded);
 			_baseAdded = true;
 			_baseParsedMap = dataMap;
@@ -56,8 +56,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps {
 			// here we have the same duplicate key problem as above, but now it's with A.field == B.field where A : B
 			foreach (var (key, value) in _thisFields) {
 				if (!_combinedFields.TryAdd(key, value) && !Equals(_combinedFields[key], value)) {
-					// formatting is dumb, too bad!
-					throw new ConstraintException($"duplicate field names, {DataMap.ClassName}::{{{_combinedFields[key].ToString()}}} does not match {dataMap.DataMap.ClassName}::{{{value.ToString()}}}");
+					// each map keeps its own dict, this is a hack so that the combined dict can keep both fields
+					_combinedFields.TryAdd($"{key}_{++value.DuplicateNameCount+1}", value);
 				}
 			}
 		}

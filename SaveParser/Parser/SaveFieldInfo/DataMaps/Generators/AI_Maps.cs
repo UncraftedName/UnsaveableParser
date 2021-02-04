@@ -449,6 +449,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 				DefineField("m_nTeamToLookAt", INTEGER);
 
 			BeginTemplatedMap("CNPC_FloorTurret", null, "CNPCBaseInteractive", "CAI_BaseNPC");
+			LinkNamesToMap("npc_turret_floor");
 			DefineField("m_iAmmoType", INTEGER);
 			DefineField("m_bAutoStart", BOOLEAN);
 			DefineField("m_bActive", BOOLEAN);
@@ -504,33 +505,35 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineOutput("m_OnPhysGunPickup", "OnPhysGunPickup");
 			DefineOutput("m_OnPhysGunDrop", "OnPhysGunDrop");
 			DefineBaseNpcInteractable();
-			
-			BeginDataMap("CNPC_Portal_FloorTurret", "CNPC_FloorTurret");
-			LinkNamesToMap("npc_portal_turret_floor");
-			DefineField("m_hRopes", EHANDLE, PORTAL_FLOOR_TURRET_NUM_ROPES);
-			DefineField("m_bOutOfAmmo", BOOLEAN);
-			DefineField("m_bLaserOn", BOOLEAN);
-			DefineField("m_sLaserHaloSprite", INTEGER);
-			DefineField("m_flDistToEnemy", FLOAT);
-			DefineField("m_bShootWithBottomBarrels", BOOLEAN);
-			DefineField("m_fSearchSpeed", FLOAT);
-			DefineField("m_fMovingTargetThreashold", FLOAT);
-			DefineField("m_iLastState", INTEGER);
-			DefineField("m_fNextTalk", FLOAT);
-			DefineField("m_bDelayTippedTalk", BOOLEAN);
-			DefineKeyField("m_bDamageForce", "DamageForce", BOOLEAN);
-			DefineThinkFunc("Retire");
-			DefineThinkFunc("Deploy");
-			DefineThinkFunc("ActiveThink");
-			DefineThinkFunc("SearchThink");
-			DefineThinkFunc("AutoSearchThink");
-			DefineThinkFunc("TippedThink");
-			DefineThinkFunc("HeldThink");
-			DefineThinkFunc("InactiveThink");
-			DefineThinkFunc("SuppressThink");
-			DefineThinkFunc("DisabledThink");
-			DefineInputFunc("FireBullet", "InputFireBullet", STRING);
 
+			if (Game != Game.PORTAL2) {
+				BeginDataMap("CNPC_Portal_FloorTurret", "CNPC_FloorTurret");
+				LinkNamesToMap("npc_portal_turret_floor");
+				DefineField("m_hRopes", EHANDLE, PORTAL_FLOOR_TURRET_NUM_ROPES);
+				DefineField("m_bOutOfAmmo", BOOLEAN);
+				DefineField("m_bLaserOn", BOOLEAN);
+				DefineField("m_sLaserHaloSprite", INTEGER);
+				DefineField("m_flDistToEnemy", FLOAT);
+				DefineField("m_bShootWithBottomBarrels", BOOLEAN);
+				DefineField("m_fSearchSpeed", FLOAT);
+				DefineField("m_fMovingTargetThreashold", FLOAT);
+				DefineField("m_iLastState", INTEGER);
+				DefineField("m_fNextTalk", FLOAT);
+				DefineField("m_bDelayTippedTalk", BOOLEAN);
+				DefineKeyField("m_bDamageForce", "DamageForce", BOOLEAN);
+				DefineThinkFunc("Retire");
+				DefineThinkFunc("Deploy");
+				DefineThinkFunc("ActiveThink");
+				DefineThinkFunc("SearchThink");
+				DefineThinkFunc("AutoSearchThink");
+				DefineThinkFunc("TippedThink");
+				DefineThinkFunc("HeldThink");
+				DefineThinkFunc("InactiveThink");
+				DefineThinkFunc("SuppressThink");
+				DefineThinkFunc("DisabledThink");
+				DefineInputFunc("FireBullet", "InputFireBullet", STRING);
+			}
+			
 			BeginDataMap("CNPC_RocketTurret", "CAI_BaseNPC");
 			LinkNamesToMap("npc_rocket_turret");
 			DefineField("m_bEnabled", BOOLEAN);
@@ -728,14 +731,22 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineInputFunc("AnswerQuestionHello", "InputAnswerQuestionHello", INTEGER);
 			DefineInputFunc("EnableSpeakWhileScripting", "InputEnableSpeakWhileScripting", VOID);
 			DefineInputFunc("DisableSpeakWhileScripting", "InputDisableSpeakWhileScripting", VOID);
-
-			if (Game == Game.PORTAL2) {
-				BeginDataMap("CNPC_PersonalityCore", "CAI_PlayerAlly");
-				LinkNamesToMap("npc_personality_core");
-				DefineField("m_flNextIdleSoundTime", FLOAT);
-				DefineField("m_iIdleOverrideSequence", INTEGER);
-				DefineField("m_hProjectedTexture", EHANDLE);
-			}
+			
+			BeginDataMap("CAI_Relationship", "CBaseEntity");
+			LinkNamesToMap("ai_relationship");
+			DefineThinkFunc("ApplyRelationshipThink");
+			DefineKeyField("m_iszSubject", "subject", STRING);
+			DefineKeyField("m_iDisposition", "disposition", INTEGER);
+			DefineKeyField("m_iRank", "rank", INTEGER);
+			DefineKeyField("m_fStartActive", "StartActive", BOOLEAN);
+			DefineField("m_bIsActive", BOOLEAN);
+			DefineKeyField("m_flRadius", "radius", FLOAT);
+			DefineField("m_iPreviousDisposition", INTEGER);
+			DefineField("m_iPreviousRank", INTEGER);
+			DefineKeyField("m_bReciprocal", "reciprocal", BOOLEAN);
+			DefineInputFunc("ApplyRelationship", "InputApplyRelationship", VOID);
+			DefineInputFunc("RevertRelationship", "InputRevertRelationship", VOID);
+			DefineInputFunc("RevertToDefaultRelationship", "InputRevertToDefaultRelationship", VOID);
 		}
 	}
 }

@@ -14,32 +14,34 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 		
 		
 		protected override void GenerateDataMaps() {
-			BeginDataMap("CProp_Portal", "CBaseAnimating");
-			LinkNamesToMap("prop_portal");
-			DefineField("m_hLinkedPortal", EHANDLE);
-			DefineKeyField("m_iLinkageGroupID", "LinkageGroupID", CHARACTER);
-			DefineField("m_matrixThisToLinked", VMATRIX);
-			DefineKeyField("m_bActivated", "Activated", BOOLEAN);
-			DefineKeyField("m_bIsPortal2", "PortalTwo", BOOLEAN);
-			DefineField("m_vPrevForward", VECTOR);
-			DefineField("m_hMicrophone", EHANDLE);
-			DefineField("m_hSpeaker", EHANDLE);
-			DefineSoundPatch("m_pAmbientSound");
-			DefineField("m_vAudioOrigin", VECTOR);
-			DefineField("m_vDelayedPosition", VECTOR);
-			DefineField("m_qDelayedAngles", VECTOR);
-			DefineField("m_iDelayedFailure", INTEGER);
-			DefineField("m_hPlacedBy", EHANDLE);
-			DefineField("m_bSharedEnvironmentConfiguration", BOOLEAN);
-			DefineField("m_vPortalCorners", POSITION_VECTOR, 4);
-			DefineThinkFunc("DelayedPlacementThink");
-			DefineThinkFunc("TestRestingSurfaceThink");
-			DefineThinkFunc("FizzleThink");
-			DefineInputFunc("SetActivatedState", "InputSetActivatedState", BOOLEAN);
-			DefineInputFunc("Fizzle", "InputFizzle", VOID);
-			DefineInputFunc("NewLocation", "InputNewLocation", STRING);
-			DefineOutput("m_OnPlacedSuccessfully", "OnPlacedSuccessfully");
-			
+			if (Game == Game.PORTAL1_3420) {
+				BeginDataMap("CProp_Portal", "CBaseAnimating");
+				LinkNamesToMap("prop_portal");
+				DefineField("m_hLinkedPortal", EHANDLE);
+				DefineKeyField("m_iLinkageGroupID", "LinkageGroupID", CHARACTER);
+				DefineField("m_matrixThisToLinked", VMATRIX);
+				DefineKeyField("m_bActivated", "Activated", BOOLEAN);
+				DefineKeyField("m_bIsPortal2", "PortalTwo", BOOLEAN);
+				DefineField("m_vPrevForward", VECTOR);
+				DefineField("m_hMicrophone", EHANDLE);
+				DefineField("m_hSpeaker", EHANDLE);
+				DefineSoundPatch("m_pAmbientSound");
+				DefineField("m_vAudioOrigin", VECTOR);
+				DefineField("m_vDelayedPosition", VECTOR);
+				DefineField("m_qDelayedAngles", VECTOR);
+				DefineField("m_iDelayedFailure", INTEGER);
+				DefineField("m_hPlacedBy", EHANDLE);
+				DefineField("m_bSharedEnvironmentConfiguration", BOOLEAN);
+				DefineField("m_vPortalCorners", POSITION_VECTOR, 4);
+				DefineThinkFunc("DelayedPlacementThink");
+				DefineThinkFunc("TestRestingSurfaceThink");
+				DefineThinkFunc("FizzleThink");
+				DefineInputFunc("SetActivatedState", "InputSetActivatedState", BOOLEAN);
+				DefineInputFunc("Fizzle", "InputFizzle", VOID);
+				DefineInputFunc("NewLocation", "InputNewLocation", STRING);
+				DefineOutput("m_OnPlacedSuccessfully", "OnPlacedSuccessfully");
+			}
+
 			BeginDataMap("CFuncPortalBumper", "CBaseEntity");
 			LinkNamesToMap("func_portal_bumper");
 			DefineField("m_bActive", BOOLEAN);
@@ -207,6 +209,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineField("m_bLowered", BOOLEAN);
 			DefineField("m_flRaiseTime", TIME);
 			DefineField("m_flHolsterTime", TIME);
+			if (Game == Game.PORTAL2) {
+				DefineField("m_flNextRepeatPrimaryAttack", FLOAT);
+				DefineField("m_flNextRepeatSecondaryAttack", FLOAT);
+			}
 			
 			BeginDataMap("CWeaponPortalgun", "CBasePortalCombatWeapon");
 			LinkNamesToMap("weapon_portalgun");
@@ -233,6 +239,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			if (Game == Game.PORTAL2) {
 				DefineField("m_vecBluePortalPos", VECTOR);
 				DefineField("m_vecOrangePortalPos", VECTOR);
+				DefineField("m_bShowingPotatos", BOOLEAN);
 			}
 			
 			BeginDataMap("CBoneFollower", "CBaseEntity");
@@ -441,6 +448,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			if (Game == Game.PORTAL2) {
 				DefineInputFunc("SetSpeedDirAccel", "InputSetSpeedDirAccel", FLOAT);
 				DefineOutput("m_OnArrivedAtDestinationNode", "OnArrivedAtDestinationNode");
+				DefineField("m_strPathTarget", STRING);
 			}
 			DefineOutput("m_OnStart", "OnStart");
 			DefineOutput("m_OnNext", "OnNextPoint");

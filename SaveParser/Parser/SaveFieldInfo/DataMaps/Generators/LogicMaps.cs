@@ -85,8 +85,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineOutput("m_OutValue", "OutValue");
 			DefineOutput("m_OnHitMin", "OnHitMin");
 			DefineOutput("m_OnHitMax", "OnHitMax");
+			if (Game == Game.PORTAL2) {
+				DefineOutput("m_OnChangedFromMin", "OnChangedFromMin");
+				DefineOutput("m_OnChangedFromMax", "OnChangedFromMax");
+			}
 			DefineOutput("m_OnGetValue", "OnGetValue");
-			
+
 			// compares a float to a predefined value, firing output to indicate the result
 			BeginDataMap("CLogicCompare", "CLogicalEntity");
 			LinkNamesToMap("logic_compare");
@@ -115,6 +119,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineKeyField("m_skyboxData.fog.start", "fogstart", FLOAT);
 			DefineKeyField("m_skyboxData.fog.end", "fogend", FLOAT);
 			DefineKeyField("m_skyboxData.fog.maxdensity", "fogmaxdensity", FLOAT);
+			if (Game == Game.PORTAL2)
+				DefineKeyField("m_skyboxData.fog.HDRColorScale", "fogcolorscale", FLOAT); // todo check
 			
 			// see logic_achievement.cpp for a string list of (some?) of the achievements
 			BeginDataMap("CLogicAchievement", "CLogicalEntity");
@@ -126,6 +132,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineInputFunc("Disable", "InputDisable", VOID);
 			DefineInputFunc("Toggle", "InputToggle", VOID);
 			DefineOutput("m_OnFired", "OnFired");
+			if (Game == Game.PORTAL2)
+				DefineField("m_iszAchievementName", STRING);
 			
 			// relays I/O from player to world and vice versa
 			BeginDataMap("CLogicPlayerProxy", "CLogicalEntity");
@@ -147,6 +155,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineInputFunc("DisableCappedPhysicsDamage", "InputDisableCappedPhysicsDamage", VOID);
 			DefineInputFunc("SetLocatorTargetEntity", "InputSetLocatorTargetEntity", STRING);
 			DefineField("m_hPlayer", EHANDLE);
+			if (Game == Game.PORTAL2) {
+				DefineOutput("m_OnJump", "OnJump");
+				DefineOutput("m_OnDuck", "OnDuck");
+				DefineOutput("m_OnUnDuck", "OnUnDuck");
+			}
 			
 			BeginDataMap("CPhysConvert", "CLogicalEntity");
 			LinkNamesToMap("phys_convert");
@@ -296,6 +309,61 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineInputFunc("Display", "InputDisplay", VOID);
 			if (Game == Game.PORTAL2)
 				DefineInputFunc("SetText", "InputSetText", STRING);
+			
+			BeginDataMap("CFuncMoveLinear", "CBaseToggle");
+			LinkNamesToMap("func_movelinear", "momentary_door", "func_water_analog");
+			DefineKeyField("m_vecMoveDir", "movedir", VECTOR);
+			DefineKeyField("m_soundStart", "StartSound", SOUNDNAME);
+			DefineKeyField("m_soundStop", "StopSound", SOUNDNAME);
+			DefineField("m_currentSound", SOUNDNAME);
+			DefineKeyField("m_flBlockDamage", "BlockDamage", FLOAT);
+			DefineKeyField("m_flStartPosition", "StartPosition", FLOAT);
+			DefineKeyField("m_flMoveDistance", "MoveDistance", FLOAT);
+			DefineInputFunc("Open", "InputOpen", VOID);
+			DefineInputFunc("Close", "InputClose", VOID);
+			DefineInputFunc("SetPosition", "InputSetPosition", FLOAT);
+			DefineInputFunc("SetSpeed", "InputSetSpeed", FLOAT);
+			DefineOutput("m_OnFullyOpen", "OnFullyOpen");
+			DefineOutput("m_OnFullyClosed", "OnFullyClosed");
+			DefineFunction("StopMoveSound");
+			
+			BeginDataMap("CInfoCameraLink", "CLogicalEntity");
+			LinkNamesToMap("info_camera_link");
+			DefineKeyField("m_strPointCamera", "PointCamera", STRING);
+			DefineField("m_hCamera", EHANDLE);
+			DefineField("m_hTargetEntity", EHANDLE);
+			DefineInputFunc("SetCamera", "InputSetCamera", STRING);
+
+			BeginDataMap("CGameEnd", "CRulePointEntity");
+			LinkNamesToMap("game_end");
+			DefineInputFunc("EndGame", "InputGameEnd", VOID);
+			
+			BeginDataMap("CEnvGlobal", "CLogicalEntity");
+			LinkNamesToMap("env_global");
+			DefineKeyField("m_globalstate", "globalstate", STRING);
+			DefineField("m_triggermode", INTEGER);
+			DefineKeyField("m_initialstate", "initialstate", INTEGER);
+			DefineKeyField("m_counter", "counter", INTEGER);
+			DefineInputFunc("TurnOn", "InputTurnOn", VOID);
+			DefineInputFunc("TurnOff", "InputTurnOff", VOID);
+			DefineInputFunc("Remove", "InputRemove", VOID);
+			DefineInputFunc("Toggle", "InputToggle", VOID);
+			DefineInputFunc("SetCounter", "InputSetCounter", INTEGER);
+			DefineInputFunc("AddToCounter", "InputAddToCounter", INTEGER);
+			DefineInputFunc("GetCounter", "InputGetCounter", VOID);
+			DefineOutput("m_outCounter", "Counter");
+			
+			BeginDataMap("CMathRemap", "CLogicalEntity");
+			LinkNamesToMap("math_remap");
+			DefineInputFunc("InValue", "InputValue", FLOAT);
+			DefineOutput("m_OutValue", "OutValue");
+			DefineKeyField("m_flInMin", "in1", FLOAT);
+			DefineKeyField("m_flInMax", "in2", FLOAT);
+			DefineKeyField("m_flOut1", "out1", FLOAT);
+			DefineKeyField("m_flOut2", "out2", FLOAT);
+			DefineField("m_bEnabled", BOOLEAN);
+			DefineInputFunc("Enable", "InputEnable", VOID);
+			DefineInputFunc("Disable", "InputDisable", VOID);
 		}
 	}
 }

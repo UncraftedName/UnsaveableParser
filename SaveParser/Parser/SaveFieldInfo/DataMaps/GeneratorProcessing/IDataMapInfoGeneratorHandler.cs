@@ -26,7 +26,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 			new StateFileDataMaps(),
 			new TriggerMaps(),
 			new VPhysicsMaps(),
-			new VGuiMaps()
+			new VGuiMaps(),
+			new P2SpecificMaps()
 		};
 		
 		
@@ -79,6 +80,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 
 		// similar to a proxy, except that proxies are are actual classes in the game code, this is just "another name"
 		public void LinkNamesToMap(params string[] proxies);
+		
+		
+		// link names to any map, not just the current one
+		public void LinkedNamesToOtherMap(string mapName, string[] proxies);
 
 
 		// use if a class with a datamap inherits from one without

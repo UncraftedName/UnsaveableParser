@@ -55,13 +55,12 @@ namespace SaveParser.Utils.ByteStreams {
 		}
 		
 
-		// todo, for base maps that overlap (e.g. paintable entity,  make their names not possible to look up in the global list)
 		public ParsedDataMap ReadDataMapRecursive(DataMap map, SaveInfo info) {
 			if (map.BaseMap == null)
 				return ReadDataMap(map, info);
 			ParsedDataMap baseMap = ReadDataMapRecursive(map.BaseMap, info);
 			ParsedDataMap thisMap = ReadDataMap(map, info);
-			thisMap.AddBaseParsedMap(baseMap);
+			thisMap.AddBaseParsedMap(baseMap, info);
 			return thisMap;
 		}
 
@@ -109,7 +108,7 @@ namespace SaveParser.Utils.ByteStreams {
 			if (sym != map.DataMapName) {
 				info.SDataMapLookup.TryGetValue(sym, out DataMap? cmpMap);
 				if (!ReferenceEquals(cmpMap, map)) {
-					DetermineDataMapHierarchy(info, $"no datamap \"{sym}\" found", AbsoluteByteIndex - 4);
+					DetermineDataMapHierarchy(info, $"\"{sym}\" does not match \"{map.DataMapName}\"", AbsoluteByteIndex - 4);
 					throw new ArgumentException($"bad symbol, expected \"{map.DataMapName}\" but read \"{sym}\"");
 				}
 			}

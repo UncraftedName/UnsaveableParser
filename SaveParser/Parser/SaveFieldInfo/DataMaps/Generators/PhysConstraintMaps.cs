@@ -107,6 +107,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineKeyField("m_zfriction", "zfriction", FLOAT);
 
 			BeginDataMap("CBreakable", "CBaseEntity");
+			LinkNamesToMap("func_breakable");
 			DefineField("m_Material", INTEGER);
 			DefineKeyField("m_Explosion", "explosion", INTEGER);
 			DefineKeyField("m_GibDir", "gibdir", VECTOR);
@@ -296,6 +297,22 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineField("m_bDisabled", BOOLEAN);
 			DefineInputFunc("Enable", "InputEnable", VOID);
 			DefineInputFunc("Disable", "InputDisable", VOID);
+			
+			BeginDataMap("CPhysicsSpring", "CBaseEntity");
+			LinkNamesToMap("phys_spring");
+			DefinePhysPtr("m_pSpring");
+			DefineKeyField("m_tempConstant", "constant", FLOAT);
+			DefineKeyField("m_tempLength", "length", FLOAT);
+			DefineKeyField("m_tempDamping", "damping", FLOAT);
+			DefineKeyField("m_tempRelativeDamping", "relativedamping", FLOAT);
+			DefineKeyField("m_nameAttachStart", "attach1", STRING);
+			DefineKeyField("m_nameAttachEnd", "attach2", STRING);
+			DefineField("m_start", POSITION_VECTOR);
+			DefineKeyField("m_end", "springaxis", POSITION_VECTOR);
+			DefineField("m_isLocal", BOOLEAN);
+			DefineInputFunc("SetSpringConstant", "InputSetSpringConstant", FLOAT);
+			DefineInputFunc("SetSpringLength", "InputSetSpringLength", FLOAT);
+			DefineInputFunc("SetSpringDamping", "InputSetSpringDamping", FLOAT);
 		}
 	}
 }

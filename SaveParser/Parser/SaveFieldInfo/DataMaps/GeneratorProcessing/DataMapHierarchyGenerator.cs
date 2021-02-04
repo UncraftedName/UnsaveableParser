@@ -87,11 +87,13 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 		public DataMapGeneratorInfo GenInfo {get;}
 		public SortedDictionary<string, TreeNode> Roots;
 		private readonly OrderedDictionary<string, ClassNode> _classNodes;
+		private readonly Dictionary<string, string> _unresolvedProxies;
 
 
 		public DataMapHierarchyGenerator(DataMapGeneratorInfo genInfo) {
 			GenInfo = genInfo;
 			_classNodes = new OrderedDictionary<string, ClassNode>();
+			_unresolvedProxies = new Dictionary<string, string>();
 		}
 
 
@@ -111,6 +113,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 
 
 		public void OnFinishedIterationOfInfoGenerators() {
+			foreach ((string p, string to) in _unresolvedProxies)
+				_classNodes[to].LinkedNames.Add(p);
 			Roots = new SortedDictionary<string, TreeNode>(new LowerStringComparer());
 			foreach (ClassNode classNode in _classNodes.Values)
 				IterateAndAddNodes(classNode);
@@ -139,6 +143,12 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 		public void LinkNamesToMap(params string[] proxies) {
 			foreach (string proxy in proxies)
 				_classNodes.Last().Value.LinkedNames.Add(proxy);
+		}
+
+
+		public void LinkedNamesToOtherMap(string mapName, string[] proxies) {
+			foreach (string s in proxies)
+				_unresolvedProxies.Add(s, mapName);
 		}
 
 

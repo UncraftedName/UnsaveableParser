@@ -15,7 +15,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 			base.Parse(ref bsr);
 			if (ParsedFields != null) {
 				Vector3 parentSpaceOffset = default; // todo modelSpaceOffset
-				if (!ParsedFields.TryGetField("m_pParent", out ParsedSaveField<Ehandle>? _))
+				if (!ParsedFields.ParsedFields.ContainsKey("m_pParent"))
 					parentSpaceOffset += SaveInfo.LandmarkPos; // parent is the world
 				var origin = ParsedFields.GetFieldOrDefault<Vector3>("m_vecAbsOrigin");
 				Matrix3X4? coordFrame = ParsedFields.GetFieldOrDefault<Matrix3X4>("m_rgflCoordinateFrame");

@@ -68,13 +68,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			
 			DataMapProxy("CPointEntity", "CBaseEntity");
 			LinkNamesToMap("info_landmark", "info_player_start", "info_teleport_destination", "info_target_helicopter_crash");
-			if (Game == Game.PORTAL2)
-				LinkNamesToMap("info_landmark_entry", "info_landmark_exit", "projected_entity_ambient_sound_proxy"); // the last one is just a guess
-
-			if (Game == Game.PORTAL2) {
-				BeginDataMap("CPointChangelevel", "CBaseEntity");
-				LinkNamesToMap("point_changelevel");
-			}
 
 			BeginDataMap("CRopeKeyframe", "CBaseEntity");
 			LinkNamesToMap("move_rope", "keyframe_rope");
@@ -156,8 +149,10 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineOutput("m_pOutputAnimOver", "OnAnimationDone");
 			DefineThinkFunc("AnimThink");
 			DefineEmbeddedField("m_BoneFollowerManager", "CBoneFollowerManager");
-			if (Game == Game.PORTAL2)
+			if (Game == Game.PORTAL2) {
 				DefineField("m_bAnimationDone", BOOLEAN);
+				DefineField("m_bAnimateEveryFrame", BOOLEAN);
+			}
 
 			BeginDataMap("CBaseToggle", "CBaseEntity");
 			DefineField("m_toggle_state", INTEGER);

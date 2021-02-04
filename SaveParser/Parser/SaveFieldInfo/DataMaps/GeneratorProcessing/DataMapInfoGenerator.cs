@@ -47,8 +47,13 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.GeneratorProcessing {
 			=> _handler.DataMapProxy(name, templateType, baseName, baseTemplateType);
 
 
+		// sets up proxies for the most recent map/proxy
 		protected void LinkNamesToMap(params string[] proxies)
 			=> _handler.LinkNamesToMap(proxies);
+
+
+		protected void LinkedNamesToOtherMap(string mapName, params string[] proxies)
+			=> _handler.LinkedNamesToOtherMap(mapName, proxies);
 
 
 		protected void DefineRootClassNoMap(string className, string? templateName = null)

@@ -12,6 +12,7 @@ namespace SaveParser.Parser.SaveFieldInfo {
 
 		public readonly TypeDesc Desc;
 		public int ByteIndex {get; private set;}
+		internal int DuplicateNameCount = 0; // hack to allow squeezing fields with the same name into a dict
 
 
 		protected ParsedSaveField(TypeDesc desc) {
@@ -52,6 +53,7 @@ namespace SaveParser.Parser.SaveFieldInfo {
 		}
 		
 		
+		// don't compare description, we want fields from different maps to be comparable
 		public override bool Equals(ParsedSaveField? other) { // todo test
 			if (other == null || !(other is ParsedSaveField<T> otherParsedField))
 				return false;
@@ -59,7 +61,7 @@ namespace SaveParser.Parser.SaveFieldInfo {
 				return otherParsedField.Field == null;
 			else if (otherParsedField.Field == null)
 				return false;
-			if (ElemCount != otherParsedField.ElemCount || !Equals(Desc, otherParsedField.Desc))
+			if (ElemCount != otherParsedField.ElemCount)
 				return false;
 			if (ElemCount == 1) {
 				return Field.Equals(otherParsedField.Field);

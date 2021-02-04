@@ -124,6 +124,8 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			LinkNamesToMap("trigger_push");
 			DefineKeyField("m_vecPushDir", "pushdir", VECTOR);
 			DefineKeyField("m_flAlternateTicksFix", "alternateticksfix", FLOAT);
+			if (Game == Game.PORTAL2)
+				DefineField("m_flSpeed", FLOAT);
 			
 			BeginDataMap("CTriggerSave", "CBaseTrigger");
 			LinkNamesToMap("trigger_autosave");
@@ -166,6 +168,11 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineInputFunc("Disable", "InputDisable", VOID);
 			DefineFunction("FollowTarget");
 			DefineOutput("m_OnEndFollow", "OnEndFollow");
+			if (Game == Game.PORTAL2) {
+				DefineField("m_trackSpeed", FLOAT); // todo check
+				DefineField("m_fov", FLOAT);
+				DefineField("m_fovSpeed", FLOAT);
+			}
 			
 			BeginDataMap("CTriggerTeleport", "CBaseTrigger");
 			LinkNamesToMap("trigger_teleport");
@@ -179,25 +186,6 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			if (Game == Game.PORTAL2) {
 				DefineInputFunc("TeleportEntity", "InputTeleportEntity", STRING);
 				DefineInputFunc("TeleportToCurrentPos", "InputTeleportToCurrentPos", VOID);
-			}
-
-			if (Game == Game.PORTAL2) {
-				BeginDataMap("CPortalButtonTrigger", "CBaseTrigger");
-				LinkNamesToMap("trigger_portal_button");
-				DefineField("m_pOwnerButton", CLASSPTR);
-				
-				BeginDataMap("CTriggerCatapult", "CBaseTrigger");
-				LinkNamesToMap("trigger_catapult");
-				DefineField("m_flPlayerVelocity", FLOAT);
-				DefineField("m_flPhysicsVelocity", FLOAT);
-				DefineField("m_strLaunchTarget", STRING);
-				DefineField("m_bUseThresholdCheck", BOOLEAN);
-				DefineField("m_bUseExactVelocity", BOOLEAN);
-				DefineField("m_flLowerThreshold", FLOAT);
-				DefineField("m_flUpperThreshold", FLOAT);
-				DefineField("m_flAirControlSupressionTime", FLOAT);
-				DefineField("m_hLaunchTarget", EHANDLE);
-
 			}
 		}
 	}
