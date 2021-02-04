@@ -47,7 +47,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 
 
 		public override void PrettyWrite(IPrettyWriter iw) {
-			iw.Append($"{ClassMap.ClassName}:");
+			iw.Append($"({HeaderProxyName}) {ClassMap.ClassName}:");
 			iw.FutureIndent++;
 			iw.Append("\nextra data for CAI_BaseNPC:");
 			iw.FutureIndent++;
@@ -63,7 +63,7 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 				iw.AppendLine();
 			}
 			iw.FutureIndent--;
-			base.PrettyWrite(iw);
+			base.PrettyWrite(iw, false);
 			iw.FutureIndent--;
 		}
 		

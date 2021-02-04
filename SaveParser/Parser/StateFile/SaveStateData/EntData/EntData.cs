@@ -11,6 +11,8 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 		public readonly ParsedDataMap HeaderInfo;
 		public readonly DataMap ClassMap;
 		public ParsedDataMap? ParsedFields;
+		// the name of this ent in the ent header section, probably hammer name. e.g. "worldspawn" or "player"
+		public string HeaderProxyName => HeaderInfo.GetField<string>("classname");
 		
 		
 		public ParsedEntData(SourceSave saveRef, ParsedDataMap headerInfo, DataMap classMap) : base(saveRef) {
@@ -29,10 +31,16 @@ namespace SaveParser.Parser.StateFile.SaveStateData.EntData {
 
 
 		public override void PrettyWrite(IPrettyWriter iw) {
+			PrettyWrite(iw, true);
+		}
+
+
+		internal void PrettyWrite(IPrettyWriter iw, bool showClassName) {
 			if (ParsedFields == null) {
 				iw.Append($"parsing fields failed for entity class: {ClassMap}");
 			} else {
-				iw.Append($"({HeaderInfo.GetField<string>("classname").Field}) ");
+				if (showClassName)
+					iw.Append($"({HeaderProxyName}) ");
 				ParsedFields.PrettyWrite(iw);
 			}
 		}
