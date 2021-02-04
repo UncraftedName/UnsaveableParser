@@ -120,7 +120,7 @@ namespace SaveParser.Parser.SaveFieldInfo.DataMaps.Generators {
 			DefineKeyField("m_skyboxData.fog.end", "fogend", FLOAT);
 			DefineKeyField("m_skyboxData.fog.maxdensity", "fogmaxdensity", FLOAT);
 			if (Game == Game.PORTAL2)
-				DefineKeyField("m_skyboxData.fog.HDRColorScale", "fogcolorscale", FLOAT); // todo check
+				DefineKeyField("m_skyboxData.fog.HDRColorScale", "fogcolorscale", FLOAT);
 			
 			// see logic_achievement.cpp for a string list of (some?) of the achievements
 			BeginDataMap("CLogicAchievement", "CLogicalEntity");
